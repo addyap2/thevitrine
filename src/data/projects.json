@@ -1,1 +1,242 @@
-[]
+[
+  {
+    "slug": "addys-english-pro",
+    "title": "Antony Addy",
+    "description": "My main site: professional English training, generative-AI workshops and websites — one point of contact, across the Var, Alpes-Maritimes and online.",
+    "url": "https://www.antonyaddy.com",
+    "repo": "https://github.com/addyap/addys-english-pro",
+    "maker": "Antony",
+    "tags": [
+      "Training"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-21T18:19:32Z",
+    "image": "/shots/addys-english-pro.jpg"
+  },
+  {
+    "slug": "speakup-ai-english-trainer",
+    "title": "SpeakUp AI",
+    "description": "An AI English coach for real conversations — interviews, travel and business across 38 scenarios, with instant CEFR feedback in 12 interface languages.",
+    "url": "https://speak.antonyaddy.com",
+    "repo": "https://github.com/addyap/speakup-ai-english-trainer",
+    "maker": "Antony",
+    "tags": [
+      "Learning"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-21T13:48:36Z",
+    "image": "/shots/speakup-ai-english-trainer.jpg"
+  },
+  {
+    "slug": "toeic-success-hub",
+    "title": "ToeicPath",
+    "description": "Complete, guided TOEIC preparation across all four skills and every Listening & Reading part — with mock tests and adaptive practice, no account required.",
+    "url": "https://www.antonyaddy.com/toeic",
+    "repo": "https://github.com/addyap/toeic-success-hub",
+    "maker": "Antony",
+    "tags": [
+      "Learning"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-21T13:48:29Z",
+    "image": "/shots/toeic-success-hub.jpg"
+  },
+  {
+    "slug": "addy-genai-training",
+    "title": "Formation IA Générative",
+    "description": "A service site for hands-on generative-AI training — ChatGPT, Claude and Copilot for companies and freelancers, delivered in French or English.",
+    "url": "https://www.antonyaddy.com/ia",
+    "repo": "https://github.com/addyap/addy-genai-training",
+    "maker": "Antony",
+    "tags": [
+      "Training"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-21T13:48:23Z",
+    "image": "/shots/addy-genai-training.jpg"
+  },
+  {
+    "slug": "adventure-books",
+    "title": "English Reading Adventures",
+    "description": "Interactive branching stories where the learner is the hero — read at your own level, with meaning available in eight languages.",
+    "url": "https://www.antonyaddy.com/books",
+    "repo": "https://github.com/addyap2/adventure-books",
+    "maker": "Antony",
+    "tags": [
+      "Learning"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-21T08:12:56Z",
+    "image": "/shots/adventure-books.jpg"
+  },
+  {
+    "slug": "wall-street",
+    "title": "Wall Street Fréjus",
+    "description": "A pub and restaurant in Fréjus — live music, big-screen match days and generous homemade food, with a weekly menu and online booking.",
+    "url": "https://www.wallstreetfrejus.fr",
+    "repo": "https://github.com/addyap2/wall-street",
+    "maker": "Antony",
+    "tags": [
+      "Business"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-19T12:26:59Z",
+    "image": "/shots/wall-street.jpg"
+  },
+  {
+    "slug": "english-grammar-hub",
+    "title": "Grammatica",
+    "description": "English grammar explained in nine languages, with self-correcting exercises — so learners study each rule in the language they actually think in.",
+    "url": "https://www.antonyaddy.com/grammatica",
+    "repo": "https://github.com/addyap/english-grammar-hub",
+    "maker": "Antony",
+    "tags": [
+      "Learning"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-19T06:42:53Z",
+    "image": "/shots/english-grammar-hub.jpg"
+  },
+  {
+    "slug": "cloe-prep-path",
+    "title": "CLOE Prep",
+    "description": "Workplace-focused preparation for the CLOE English certification — the four skills plus speaking, built around the English people really use at work.",
+    "url": "https://cloe.antonyaddy.com",
+    "repo": "https://github.com/addyap/cloe-prep-path",
+    "maker": "Antony",
+    "tags": [
+      "Learning"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-19T06:42:50Z",
+    "image": "/shots/cloe-prep-path.jpg"
+  },
+  {
+    "slug": "filton-athletic-fc",
+    "title": "Filton Athletic FC",
+    "description": "A football club site for north Bristol — fixtures, results, league tables, matchday programmes and clear ways to get involved.",
+    "url": "https://filtonathletic.co.uk",
+    "repo": "https://github.com/addyap/filton-athletic-fc",
+    "maker": "Antony",
+    "tags": [
+      "Community"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-17T21:40:55Z",
+    "image": "/shots/filton-athletic-fc.jpg"
+  },
+  {
+    "slug": "planb-global-connect",
+    "title": "Plan B Concept",
+    "description": "A bilingual project-management site for the Côte d'Azur — 30+ years of build experience, from first sketch to final handover.",
+    "url": "https://www.planb-concept.com",
+    "repo": "https://github.com/addyap/planb-global-connect",
+    "maker": "Antony",
+    "tags": [
+      "Business"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-15T12:30:47Z",
+    "image": "/shots/planb-global-connect.jpg"
+  },
+  {
+    "slug": "ristorante-lola",
+    "title": "Ristorante da Lola",
+    "description": "A warm, four-language site for a family Marche-region restaurant in Fermignano — menu, gallery and booking, with an unmistakable sense of place.",
+    "url": "https://www.ristorantedalola.it",
+    "repo": "https://github.com/addyap/ristorante-lola",
+    "maker": "Antony",
+    "tags": [
+      "Business"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-07T22:07:10Z",
+    "image": "/shots/ristorante-lola.jpg"
+  },
+  {
+    "slug": "so-good-diner",
+    "title": "So Good Diner",
+    "description": "A gourmet diner in Fréjus — homemade burgers and generous kumpir, baker's bread and butcher's meat, prepared before your eyes. Menu, reviews and directions.",
+    "url": "https://so-good-diner.vercel.app",
+    "repo": "https://github.com/addyap2/so-good-diner",
+    "maker": "Antony",
+    "tags": [
+      "Business"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-07T21:58:47Z",
+    "image": "/shots/so-good-diner.jpg"
+  },
+  {
+    "slug": "filton-social-club",
+    "title": "Filton & District Social Club",
+    "description": "A community site for the Filton & District Social Club — events, facilities and membership, presented simply and clearly.",
+    "url": "https://www.filtonsocialclub.co.uk",
+    "repo": "https://github.com/addyap/filton-social-club",
+    "maker": "Antony",
+    "tags": [
+      "Community"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-10-05T15:06:31Z",
+    "image": "/shots/filton-social-club.jpg"
+  },
+  {
+    "slug": "stephanie",
+    "title": "SR Bien-être",
+    "description": "A wellbeing practitioner's site in Saint-Raphaël — sophrology, energy healing, lymphatic drainage and children's yoga, with online booking.",
+    "url": "https://www.srbienetre.fr",
+    "repo": "https://github.com/addyap2/stephanie",
+    "maker": "Antony",
+    "tags": [
+      "Business"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": "2026-09-29T13:24:56Z",
+    "image": "/shots/stephanie.jpg"
+  },
+  {
+    "slug": "student-mark-tracker",
+    "title": "Student Mark Tracker",
+    "description": "A private, secure workspace for a training business — documents, marks and individual student progress, kept clean and separate behind sign-in.",
+    "url": "https://student-mark-tracker.vercel.app",
+    "repo": "https://github.com/addyap/student-mark-tracker",
+    "maker": "Antony",
+    "tags": [
+      "Training"
+    ],
+    "featured": false,
+    "inProgress": true,
+    "order": null,
+    "updated": "2026-07-15T17:52:40Z",
+    "image": "/shots/student-mark-tracker.jpg"
+  }
+]
