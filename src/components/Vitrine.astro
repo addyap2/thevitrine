@@ -38,12 +38,18 @@ const canonical = new URL(homePath[lang], Astro.site);
       // page transition (the language switch) skips the hero's intro.
       document.documentElement.classList.add("js");
       addEventListener("pagereveal", (e) => e.viewTransition && document.documentElement.classList.add("no-intro"));
+      // Choosing a language by hand is remembered for a year; it overrides the
+      // browser-language redirect on / (see vercel.json).
+      addEventListener("click", (e) => {
+        const a = e.target.closest && e.target.closest("a.lang[hreflang]");
+        if (a) document.cookie = "lang=" + a.hreflang + "; path=/; max-age=31536000; SameSite=Lax";
+      });
     </script>
     <title>{t.title}</title>
     <meta name="description" content={t.description} />
     <link rel="canonical" href={canonical} />
     {langs.map((l) => <link rel="alternate" hreflang={l} href={new URL(homePath[l], Astro.site)} />)}
-    <link rel="alternate" hreflang="x-default" href={new URL(homePath.en, Astro.site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL(homePath.fr, Astro.site)} />
     <meta property="og:title" content={t.title} />
     <meta property="og:description" content={t.description} />
     <meta property="og:url" content={canonical} />

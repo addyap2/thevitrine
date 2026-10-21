@@ -1,8 +1,8 @@
 export const langs = ["en", "fr"] as const;
 export type Lang = (typeof langs)[number];
 
-// The home page path for each language.
-export const homePath: Record<Lang, string> = { en: "/", fr: "/fr/" };
+// French is the main language and lives at the root; English is at /en/.
+export const homePath: Record<Lang, string> = { fr: "/", en: "/en/" };
 
 export const strings = {
   en: {

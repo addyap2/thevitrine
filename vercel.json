@@ -1,0 +1,23 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/fr", "destination": "/", "permanent": true },
+    { "source": "/fr/", "destination": "/", "permanent": true },
+    {
+      "source": "/",
+      "has": [{ "type": "cookie", "key": "lang", "value": "en" }],
+      "destination": "/en/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "header", "key": "accept-language" }],
+      "missing": [
+        { "type": "cookie", "key": "lang" },
+        { "type": "header", "key": "accept-language", "value": "^\\s*[Ff][Rr].*" }
+      ],
+      "destination": "/en/",
+      "permanent": false
+    }
+  ]
+}

@@ -20,8 +20,13 @@ together with the name to show as its maker.
 
 ## Languages
 
-The site is in English at `/` and in French at `/fr/`, and each page links to
-the other. All interface text lives in [`src/i18n.ts`](src/i18n.ts). Category
+French is the main language, at `/`. English is at `/en/`, and each page links
+to the other. On `/`, [`vercel.json`](vercel.json) sends visitors whose
+browser's first language isn't French to `/en/`. Visitors whose browser sends
+no language, such as search engines, stay on the French page. Picking a
+language with the switch sets a `lang` cookie for a year, which overrides the
+browser check. The old `/fr/` address redirects to `/`.
+All interface text lives in [`src/i18n.ts`](src/i18n.ts). Category
 labels and project descriptions in `overrides.json` are written as
 `{ "en": "...", "fr": "..." }`. When a repo has no override, its GitHub
 description is used in both languages, so give every new project a French
