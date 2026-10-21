@@ -54,6 +54,24 @@
     "image": "/shots/so-good-diner.jpg"
   },
   {
+    "repo": null,
+    "category": "food",
+    "tags": [],
+    "featured": false,
+    "inProgress": true,
+    "order": 4,
+    "updated": null,
+    "slug": "tandoor-global",
+    "title": "Mr. Tandoors",
+    "url": "https://tandoor-global.vercel.app",
+    "description": {
+      "en": "An ordering-focused site for a 100% halal Indian tandoor restaurant in Fréjus — menu, story and click-to-order takeaway.",
+      "fr": "Un site orienté commande pour un restaurant indien tandoor 100% halal à Fréjus — menu, histoire et commande à emporter en un clic."
+    },
+    "maker": "Antony",
+    "image": "/shots/tandoor-global.jpg"
+  },
+  {
     "slug": "planb-global-connect",
     "title": "Plan B Concept",
     "description": {
@@ -288,6 +306,60 @@
     "image": "/shots/adventure-books.jpg"
   },
   {
+    "repo": null,
+    "category": "languages",
+    "tags": [],
+    "featured": false,
+    "inProgress": false,
+    "order": 6,
+    "updated": null,
+    "slug": "listening-english-antonyaddy",
+    "title": "ListenUp",
+    "url": "https://www.antonyaddy.com/listening",
+    "description": {
+      "en": "English listening practice with AI audio, word-by-word karaoke highlighting, comprehension quizzes and instant translations in ten-plus languages.",
+      "fr": "De la compréhension orale en anglais avec audio IA, surlignage karaoké mot à mot, quiz de compréhension et traductions instantanées en plus de dix langues."
+    },
+    "maker": "Antony",
+    "image": "/shots/listening-english-antonyaddy.jpg"
+  },
+  {
+    "repo": null,
+    "category": "languages",
+    "tags": [],
+    "featured": false,
+    "inProgress": false,
+    "order": 7,
+    "updated": null,
+    "slug": "anglais-a-distance-learn",
+    "title": "Anglais à Distance",
+    "url": "https://www.anglaisadistance.fr",
+    "description": {
+      "en": "Online English for French-speaking adults — grammar, phrasal verbs, audio dialogues and vocabulary quizzes in one place.",
+      "fr": "De l'anglais en ligne pour adultes francophones — grammaire, phrasal verbs, dialogues audio et quiz de vocabulaire, réunis au même endroit."
+    },
+    "maker": "Antony",
+    "image": "/shots/anglais-a-distance-learn.jpg"
+  },
+  {
+    "repo": null,
+    "category": "languages",
+    "tags": [],
+    "featured": false,
+    "inProgress": false,
+    "order": 8,
+    "updated": null,
+    "slug": "biz-fluent-coach",
+    "title": "TP English Pro",
+    "url": "https://ad.antonyaddy.com",
+    "description": {
+      "en": "A professional-English platform for France's TP Assistant de Direction qualification — interactive exercises, an exam simulator and administrative vocabulary.",
+      "fr": "Une plateforme d'anglais professionnel pour le TP Assistant de Direction — exercices interactifs, simulateur d'examen et vocabulaire administratif."
+    },
+    "maker": "Antony",
+    "image": "/shots/biz-fluent-coach.jpg"
+  },
+  {
     "slug": "addys-english-pro",
     "title": "Antony Addy",
     "description": {
@@ -322,6 +394,24 @@
     "order": 2,
     "updated": "2026-10-21T13:48:23Z",
     "image": "/shots/addy-genai-training.jpg"
+  },
+  {
+    "repo": null,
+    "category": "training",
+    "tags": [],
+    "featured": false,
+    "inProgress": false,
+    "order": 3,
+    "updated": null,
+    "slug": "addy-sap-connect",
+    "title": "SAP MM Training",
+    "url": "https://sap.antonyaddy.com",
+    "description": {
+      "en": "A training site for SAP Materials Management — practical, hands-on procurement, inventory and master-data training from a bilingual EN/FR trainer.",
+      "fr": "Un site de formation SAP Materials Management — achats, gestion des stocks et données de base, en pratique, par un formateur bilingue EN/FR."
+    },
+    "maker": "Antony",
+    "image": "/shots/addy-sap-connect.jpg"
   },
   {
     "slug": "student-mark-tracker",
