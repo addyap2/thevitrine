@@ -26,6 +26,7 @@ browser's first language isn't French to `/en/`. Visitors whose browser sends
 no language, such as search engines, stay on the French page. Picking a
 language with the switch sets a `lang` cookie for a year, which overrides the
 browser check. The old `/fr/` address redirects to `/`.
+
 All interface text lives in [`src/i18n.ts`](src/i18n.ts). Category
 labels and project descriptions in `overrides.json` are written as
 `{ "en": "...", "fr": "..." }`. When a repo has no override, its GitHub
