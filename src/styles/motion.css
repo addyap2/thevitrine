@@ -1,0 +1,108 @@
+/* The Vitrine motion system. See MOTION.md for the choreography behind these values.
+   Every animation reads its timing from these tokens, so the whole site can be
+   retuned (or calmed) in one place. */
+
+:root {
+  /* Easing. Things arrive fast and settle slowly; they leave quickly and quietly. */
+  --ease-arrive: cubic-bezier(0.16, 1, 0.3, 1); /* entrances, reveals: expo-out */
+  --ease-move: cubic-bezier(0.65, 0, 0.35, 1); /* layout changes, items trading places */
+  --ease-leave: cubic-bezier(0.5, 0, 0.75, 0); /* exits: accelerate away */
+  --ease-hover: cubic-bezier(0.3, 0.7, 0.4, 1); /* pointer feedback: quick, no overshoot */
+
+  /* Duration. Scales with the distance and size of what moves. */
+  --dur-press: 90ms; /* button press */
+  --dur-micro: 160ms; /* colour, border, icon nudges */
+  --dur-short: 260ms; /* hover lift, exits */
+  --dur-base: 460ms; /* filtering, page transitions */
+  --dur-reveal: 820ms; /* content entering on scroll */
+  --dur-scene: 1200ms; /* large, slow moves: hero, horizon lines, image settle */
+
+  --stagger: 70ms; /* gap between siblings revealing together */
+  --rise: 28px; /* how far content travels as it reveals */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No travel, no stagger: content still fades in, briefly, so state changes stay legible. */
+  :root {
+    --rise: 0px;
+    --stagger: 0ms;
+    --dur-reveal: 180ms;
+    --dur-scene: 180ms;
+    --dur-base: 1ms;
+  }
+}
+
+/* ---- Scroll reveals -------------------------------------------------------
+   Only hidden once JS has said it will reveal them (html.js), so content is
+   never lost without scripts. --i is set per batch for a short stagger. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, var(--rise), 0);
+  transition:
+    opacity var(--dur-reveal) var(--ease-arrive),
+    transform var(--dur-reveal) var(--ease-arrive);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+}
+html.js [data-reveal="heading"] {
+  clip-path: inset(0 0 100% 0);
+  transition-property: opacity, transform, clip-path;
+}
+html.js [data-reveal="line"] {
+  opacity: 1;
+  transform: scaleX(0);
+  transition: transform var(--dur-scene) var(--ease-arrive);
+}
+html.js [data-reveal].in {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 -20% 0);
+}
+
+/* A warm horizon that draws itself between scenes. */
+.horizon {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent) 30%, var(--brand) 70%, transparent);
+  transform-origin: 50% 50%;
+}
+
+/* ---- Pressable things: a short, physical acknowledgement ------------------ */
+:where(button, .cta, .lang):active {
+  transform: scale(0.97);
+  transition-duration: var(--dur-press);
+}
+
+/* ---- Page transition between languages (cross-document View Transitions) - */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+::view-transition-group(*) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-move);
+}
+::view-transition-old(root) {
+  animation: vt-fade-out var(--dur-short) var(--ease-leave) both;
+}
+::view-transition-new(root) {
+  animation: vt-fade-in var(--dur-base) var(--ease-arrive) both;
+}
+@keyframes vt-fade-in { from { opacity: 0; } }
+@keyframes vt-fade-out { to { opacity: 0; } }
+
+@keyframes tick {
+  from { opacity: 0; transform: translateY(-45%); }
+}
+.tick {
+  display: inline-block;
+  animation: tick var(--dur-short) var(--ease-arrive);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  .tick { animation: none; }
+}

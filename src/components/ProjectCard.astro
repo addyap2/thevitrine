@@ -22,7 +22,7 @@ const description = p.description[lang];
 const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
 ---
 
-<article class="card" data-maker={p.maker}>
+<article class="card" data-maker={p.maker} data-reveal>
   <a class="shot" href={p.url ?? p.repo ?? undefined} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
     {p.image ? (
       <img src={p.image} alt="" width="1280" height="800" loading={eager ? "eager" : "lazy"} decoding="async" />
@@ -43,7 +43,7 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
       <ul class="tags">{p.tags.map((t) => <li>{t}</li>)}</ul>
     )}
     <div class="links">
-      {p.url && <a href={p.url} target="_blank" rel="noopener">{host} <span aria-hidden="true">↗</span></a>}
+      {p.url && <a href={p.url} target="_blank" rel="noopener">{host} <span class="arrow" aria-hidden="true">↗</span></a>}
       {p.repo && <a class="code" href={p.repo} target="_blank" rel="noopener">{t.code}</a>}
     </div>
   </div>
@@ -57,10 +57,12 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
     border: 1px solid var(--line);
     border-radius: 14px;
     overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      transform var(--dur-short) var(--ease-hover),
+      box-shadow var(--dur-short) var(--ease-hover);
   }
   .card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
     box-shadow: 0 14px 30px -18px var(--shadow);
   }
   .card[hidden] { display: none; }
@@ -77,7 +79,13 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
     object-fit: cover;
     object-position: top;
     display: block;
+    transition:
+      opacity var(--dur-base) var(--ease-arrive),
+      transform var(--dur-scene) var(--ease-arrive);
   }
+  /* Screenshots settle into place as they load, then lean in slightly on hover. */
+  :global(html.js) .shot img:not(.loaded) { opacity: 0; transform: scale(1.04); }
+  .card:hover .shot img { transform: scale(1.03); }
   .placeholder {
     display: grid;
     place-items: center;
@@ -135,6 +143,12 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
     font-size: 0.9rem;
   }
   .links a { color: var(--ink); font-weight: 500; text-decoration: none; overflow-wrap: anywhere; }
+  .links a { transition: color var(--dur-micro) var(--ease-hover); }
   .links a:hover { color: var(--accent); }
+  .arrow { display: inline-block; transition: transform var(--dur-short) var(--ease-hover); }
+  .links a:hover .arrow { transform: translate(2px, -2px); }
+  @media (prefers-reduced-motion: reduce) {
+    .card:hover, .card:hover .shot img { transform: none; }
+  }
   .links .code { color: var(--ink-soft); flex-shrink: 0; overflow-wrap: normal; }
 </style>
