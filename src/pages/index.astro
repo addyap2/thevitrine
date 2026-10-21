@@ -1,0 +1,185 @@
+---
+import ProjectCard from "../components/ProjectCard.astro";
+import projects from "../data/projects.json";
+
+const makers = [...new Set(projects.map((p) => p.maker))].sort();
+const tags = [...new Set(projects.flatMap((p) => p.tags))].sort();
+const title = "The Vitrine";
+const description = "Websites and apps we've built with AI, all in one shop window.";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {projects[0]?.image && <meta property="og:image" content={new URL(projects[0].image, Astro.site)} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
+    />
+  </head>
+  <body>
+    <header class="wrap">
+      <p class="mark">The Vitrine</p>
+      <h1>Websites and apps we've built with&nbsp;AI.</h1>
+      <p class="lede">
+        A shop window of our work. Each one is live: click through and try it.
+      </p>
+    </header>
+
+    <main class="wrap">
+      {projects.length === 0 ? (
+        <p class="empty">
+          Nothing in the window yet. Add the <code>thevitrine</code> topic to a GitHub repo, then run <code>npm run sync</code>.
+        </p>
+      ) : (
+        <>
+          <nav class="filters" aria-label="Filter projects">
+            {makers.length > 1 && (
+              <div class="group" data-filter="maker">
+                <button type="button" aria-pressed="true" data-value="">Everyone</button>
+                {makers.map((m) => <button type="button" aria-pressed="false" data-value={m}>{m}</button>)}
+              </div>
+            )}
+            {tags.length > 1 && (
+              <div class="group" data-filter="tag">
+                <button type="button" aria-pressed="true" data-value="">All</button>
+                {tags.map((t) => <button type="button" aria-pressed="false" data-value={t}>{t}</button>)}
+              </div>
+            )}
+            <p class="count" aria-live="polite"><span id="count">{projects.length}</span> projects</p>
+          </nav>
+          <div class="grid">
+            {projects.map((p, i) => <ProjectCard project={p} eager={i < 3} />)}
+          </div>
+        </>
+      )}
+    </main>
+
+    <footer class="wrap">
+      <p>Made by Antony Addy and Julien.</p>
+    </footer>
+
+    <script>
+      const state: Record<string, string> = { maker: "", tag: "" };
+      const cards = [...document.querySelectorAll<HTMLElement>(".card")];
+      const count = document.getElementById("count");
+
+      document.querySelectorAll<HTMLElement>(".filters .group").forEach((group) => {
+        group.addEventListener("click", (e) => {
+          const btn = (e.target as HTMLElement).closest("button");
+          if (!btn) return;
+          group.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+          state[group.dataset.filter!] = btn.dataset.value ?? "";
+          let shown = 0;
+          for (const card of cards) {
+            const ok =
+              (!state.maker || card.dataset.maker === state.maker) &&
+              (!state.tag || card.dataset.tags!.split("|").includes(state.tag));
+            card.hidden = !ok;
+            if (ok) shown++;
+          }
+          if (count) count.textContent = String(shown);
+        });
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #f6f3ee;
+    --surface: #fffdf9;
+    --ink: #1d1b18;
+    --ink-soft: #5d574f;
+    --line: #e4ded4;
+    --muted-bg: #eee9e1;
+    --accent: #a8431f;
+    --shadow: rgb(60 40 20 / 0.35);
+    --display: "Fraunces", Georgia, serif;
+    --text: "Inter", system-ui, -apple-system, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161412;
+      --surface: #1f1c19;
+      --ink: #f2ede6;
+      --ink-soft: #b3aca2;
+      --line: #34302b;
+      --muted-bg: #2a2622;
+      --accent: #ec8a62;
+      --shadow: rgb(0 0 0 / 0.7);
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+  @media (min-width: 640px) { .wrap { padding: 0 2rem; } }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<style>
+  header { padding-top: 4rem; padding-bottom: 2.5rem; }
+  .mark {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin: 0 0 2.5rem;
+  }
+  h1 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 14ch;
+    margin: 0;
+  }
+  .lede { font-size: 1.15rem; color: var(--ink-soft); max-width: 40ch; margin: 1.25rem 0 0; }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    align-items: center;
+    padding: 1rem 0 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+  .group { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .group button {
+    font: inherit;
+    font-size: 0.875rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 99px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .group button:hover { color: var(--ink); border-color: var(--ink-soft); }
+  .group button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .count { margin: 0 0 0 auto; font-size: 0.875rem; color: var(--ink-soft); }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr));
+    gap: 1.5rem;
+  }
+  .empty { padding: 3rem 0; color: var(--ink-soft); }
+  footer { padding-top: 4rem; padding-bottom: 3rem; color: var(--ink-soft); font-size: 0.9rem; }
+</style>

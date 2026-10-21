@@ -1,0 +1,42 @@
+name: Sync projects
+
+# Once a day (and on demand), pick up newly tagged repos and take their screenshots.
+# Any change is committed to main, and Vercel redeploys on that push.
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run sync
+        env:
+          # Add a VITRINE_TOKEN secret (a fine-grained token with read access) to include private repos.
+          GITHUB_TOKEN: ${{ secrets.VITRINE_TOKEN || secrets.GITHUB_TOKEN }}
+      - name: Commit changes
+        run: |
+          git add src/data/projects.json public/shots
+          if git diff --cached --quiet; then
+            echo "Nothing new."
+          else
+            git config user.name "vitrine-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Sync projects from GitHub"
+            git push
+          fi
