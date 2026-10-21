@@ -1,9 +1,11 @@
 ---
+import { strings, type Lang } from "../i18n";
+
 interface Props {
   project: {
     slug: string;
     title: string;
-    description: string;
+    description: Record<Lang, string>;
     url: string | null;
     repo: string | null;
     maker: string;
@@ -11,9 +13,12 @@ interface Props {
     inProgress: boolean;
     image: string | null;
   };
+  lang: Lang;
   eager?: boolean;
 }
-const { project: p, eager = false } = Astro.props;
+const { project: p, lang, eager = false } = Astro.props;
+const t = strings[lang];
+const description = p.description[lang];
 const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
 ---
 
@@ -28,18 +33,18 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
   <div class="body">
     <div class="meta">
       <span class="maker">{p.maker}</span>
-      {p.inProgress && <span class="badge">In progress</span>}
+      {p.inProgress && <span class="badge">{t.inProgress}</span>}
     </div>
     <h3>
       {p.url ? <a href={p.url} target="_blank" rel="noopener">{p.title}</a> : p.title}
     </h3>
-    {p.description && <p>{p.description}</p>}
+    {description && <p>{description}</p>}
     {p.tags.length > 0 && (
       <ul class="tags">{p.tags.map((t) => <li>{t}</li>)}</ul>
     )}
     <div class="links">
       {p.url && <a href={p.url} target="_blank" rel="noopener">{host} <span aria-hidden="true">↗</span></a>}
-      {p.repo && <a class="code" href={p.repo} target="_blank" rel="noopener">Code</a>}
+      {p.repo && <a class="code" href={p.repo} target="_blank" rel="noopener">{t.code}</a>}
     </div>
   </div>
 </article>

@@ -41,6 +41,9 @@ async function searchRepos() {
   return all ? items.filter((r) => r.homepage) : items;
 }
 
+// Descriptions are { en, fr }; a plain string (such as a GitHub description) serves both.
+const bilingual = (d) => (typeof d === "string" ? { en: d, fr: d } : d);
+
 const titleCase = (name) =>
   name.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -50,7 +53,7 @@ function fromRepo(repo) {
   return {
     slug: repo.name,
     title: o.title ?? titleCase(repo.name),
-    description: o.description ?? repo.description ?? "",
+    description: bilingual(o.description ?? repo.description ?? ""),
     url: o.url ?? (repo.homepage || null),
     repo: repo.private ? null : repo.html_url,
     maker: o.maker ?? makerByLogin[repo.owner.login.toLowerCase()] ?? repo.owner.login,
@@ -66,7 +69,7 @@ function fromRepo(repo) {
 function fromExtra(e) {
   return {
     repo: null, category: null, tags: [], featured: false, inProgress: false, order: null, updated: null,
-    description: "", ...e,
+    ...e, description: bilingual(e.description ?? ""),
   };
 }
 

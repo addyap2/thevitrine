@@ -18,6 +18,15 @@ except the small filter script.
 The account must be listed in [`vitrine.config.json`](vitrine.config.json),
 together with the name to show as its maker.
 
+## Languages
+
+The site is in English at `/` and in French at `/fr/`, and each page links to
+the other. All interface text lives in [`src/i18n.ts`](src/i18n.ts). Category
+labels and project descriptions in `overrides.json` are written as
+`{ "en": "...", "fr": "..." }`. When a repo has no override, its GitHub
+description is used in both languages, so give every new project a French
+description in `overrides.json`.
+
 ## Polish a project
 
 [`src/data/overrides.json`](src/data/overrides.json) has three parts:

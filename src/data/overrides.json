@@ -2,34 +2,55 @@
   "categories": [
     {
       "id": "food",
-      "label": "Restaurants & bars"
+      "label": {
+        "en": "Restaurants & bars",
+        "fr": "Restaurants & bars"
+      }
     },
     {
       "id": "services",
-      "label": "Local businesses"
+      "label": {
+        "en": "Local businesses",
+        "fr": "Commerces & services"
+      }
     },
     {
       "id": "wellbeing",
-      "label": "Health & wellbeing"
+      "label": {
+        "en": "Health & wellbeing",
+        "fr": "Santé & bien-être"
+      }
     },
     {
       "id": "community",
-      "label": "Clubs & community"
+      "label": {
+        "en": "Clubs & community",
+        "fr": "Clubs & associations"
+      }
     },
     {
       "id": "languages",
-      "label": "Language learning"
+      "label": {
+        "en": "Language learning",
+        "fr": "Apprendre les langues"
+      }
     },
     {
       "id": "training",
-      "label": "Training & AI"
+      "label": {
+        "en": "Training & AI",
+        "fr": "Formation & IA"
+      }
     }
   ],
   "projects": {
     "ristorante-lola": {
       "title": "Ristorante da Lola",
       "url": "https://www.ristorantedalola.it",
-      "description": "A warm, four-language site for a family Marche-region restaurant in Fermignano — menu, gallery and booking, with an unmistakable sense of place.",
+      "description": {
+        "en": "A warm, four-language site for a family Marche-region restaurant in Fermignano — menu, gallery and booking, with an unmistakable sense of place.",
+        "fr": "Un site chaleureux en quatre langues pour un restaurant familial des Marches à Fermignano — menu, galerie et réservation, avec une vraie identité de lieu."
+      },
       "maker": "Antony",
       "category": "food",
       "order": 1
@@ -37,7 +58,10 @@
     "wall-street": {
       "title": "Wall Street Fréjus",
       "url": "https://www.wallstreetfrejus.fr",
-      "description": "A pub and restaurant in Fréjus — live music, big-screen match days and generous homemade food, with a weekly menu and online booking.",
+      "description": {
+        "en": "A pub and restaurant in Fréjus — live music, big-screen match days and generous homemade food, with a weekly menu and online booking.",
+        "fr": "Un pub-restaurant à Fréjus — concerts live, matchs sur écran géant et cuisine généreuse faite maison, avec menu de la semaine et réservation en ligne."
+      },
       "maker": "Antony",
       "category": "food",
       "order": 2
@@ -45,7 +69,10 @@
     "so-good-diner": {
       "title": "So Good Diner",
       "url": "https://so-good-diner.vercel.app",
-      "description": "A gourmet diner in Fréjus — homemade burgers and generous kumpir, baker's bread and butcher's meat, prepared before your eyes. Menu, reviews and directions.",
+      "description": {
+        "en": "A gourmet diner in Fréjus — homemade burgers and generous kumpir, baker's bread and butcher's meat, prepared before your eyes. Menu, reviews and directions.",
+        "fr": "Un diner gourmet à Fréjus — burgers maison et kumpir généreux, pain du boulanger et viande du boucher, préparés sous vos yeux. Menu, avis et itinéraire."
+      },
       "maker": "Antony",
       "category": "food",
       "order": 3
@@ -53,7 +80,10 @@
     "tandoor-global": {
       "title": "Mr. Tandoors",
       "url": "https://tandoor-global.vercel.app",
-      "description": "An ordering-focused site for a 100% halal Indian tandoor restaurant in Fréjus — menu, story and click-to-order takeaway.",
+      "description": {
+        "en": "An ordering-focused site for a 100% halal Indian tandoor restaurant in Fréjus — menu, story and click-to-order takeaway.",
+        "fr": "Un site orienté commande pour un restaurant indien tandoor 100% halal à Fréjus — menu, histoire et commande à emporter en un clic."
+      },
       "maker": "Antony",
       "inProgress": true,
       "category": "food",
@@ -62,7 +92,10 @@
     "stephanie": {
       "title": "SR Bien-être",
       "url": "https://www.srbienetre.fr",
-      "description": "A wellbeing practitioner's site in Saint-Raphaël — sophrology, energy healing, lymphatic drainage and children's yoga, with online booking.",
+      "description": {
+        "en": "A wellbeing practitioner's site in Saint-Raphaël — sophrology, energy healing, lymphatic drainage and children's yoga, with online booking.",
+        "fr": "Le site d'une praticienne du bien-être à Saint-Raphaël — sophrologie, soins énergétiques, drainage lymphatique et yoga enfants, avec réservation en ligne."
+      },
       "maker": "Antony",
       "category": "wellbeing",
       "order": 1
@@ -70,7 +103,10 @@
     "planb-global-connect": {
       "title": "Plan B Concept",
       "url": "https://www.planb-concept.com",
-      "description": "A bilingual project-management site for the Côte d'Azur — 30+ years of build experience, from first sketch to final handover.",
+      "description": {
+        "en": "A bilingual project-management site for the Côte d'Azur — 30+ years of build experience, from first sketch to final handover.",
+        "fr": "Un site bilingue de gestion de projet pour la Côte d'Azur — plus de 30 ans d'expérience du bâtiment, du premier croquis à la livraison finale."
+      },
       "maker": "Antony",
       "category": "services",
       "order": 1
@@ -78,7 +114,10 @@
     "lumbacure": {
       "title": "LumbaCure",
       "url": "https://lumba-phi.vercel.app",
-      "description": "The product site for LumbaCure, a robotic seat that moves the pelvis and lower back — for rehabilitation, prevention, sport and healthy ageing, backed by a hospital pilot study. Bilingual FR/EN.",
+      "description": {
+        "en": "The product site for LumbaCure, a robotic seat that moves the pelvis and lower back — for rehabilitation, prevention, sport and healthy ageing, backed by a hospital pilot study. Bilingual FR/EN.",
+        "fr": "Le site produit de LumbaCure, un siège robotisé qui mobilise le bassin et le bas du dos — pour la rééducation, la prévention, le sport et le bien vieillir, appuyé par une étude pilote hospitalière. Bilingue FR/EN."
+      },
       "maker": "Antony",
       "category": "wellbeing",
       "order": 3
@@ -86,7 +125,10 @@
     "filton-athletic-fc": {
       "title": "Filton Athletic FC",
       "url": "https://filtonathletic.co.uk",
-      "description": "A football club site for north Bristol — fixtures, results, league tables, matchday programmes and clear ways to get involved.",
+      "description": {
+        "en": "A football club site for north Bristol — fixtures, results, league tables, matchday programmes and clear ways to get involved.",
+        "fr": "Le site d'un club de football du nord de Bristol — calendrier, résultats, classements, programmes de match et moyens simples de s'impliquer."
+      },
       "maker": "Antony",
       "category": "community",
       "order": 1
@@ -94,7 +136,10 @@
     "filton-social-club": {
       "title": "Filton & District Social Club",
       "url": "https://www.filtonsocialclub.co.uk",
-      "description": "A community site for the Filton & District Social Club — events, facilities and membership, presented simply and clearly.",
+      "description": {
+        "en": "A community site for the Filton & District Social Club — events, facilities and membership, presented simply and clearly.",
+        "fr": "Le site associatif du Filton & District Social Club — événements, installations et adhésion, présentés simplement et clairement."
+      },
       "maker": "Antony",
       "category": "community",
       "order": 2
@@ -102,7 +147,10 @@
     "english-grammar-hub": {
       "title": "Grammatica",
       "url": "https://www.antonyaddy.com/grammatica",
-      "description": "English grammar explained in nine languages, with self-correcting exercises — so learners study each rule in the language they actually think in.",
+      "description": {
+        "en": "English grammar explained in nine languages, with self-correcting exercises — so learners study each rule in the language they actually think in.",
+        "fr": "La grammaire anglaise expliquée en neuf langues, avec des exercices auto-corrigés — pour étudier chaque règle dans la langue où l'on pense vraiment."
+      },
       "maker": "Antony",
       "category": "languages",
       "order": 4
@@ -110,7 +158,10 @@
     "speakup-ai-english-trainer": {
       "title": "SpeakUp AI",
       "url": "https://speak.antonyaddy.com",
-      "description": "An AI English coach for real conversations — interviews, travel and business across 38 scenarios, with instant CEFR feedback in 12 interface languages.",
+      "description": {
+        "en": "An AI English coach for real conversations — interviews, travel and business across 38 scenarios, with instant CEFR feedback in 12 interface languages.",
+        "fr": "Un coach d'anglais IA pour de vraies conversations — entretiens, voyages et affaires à travers 38 scénarios, avec un retour CECR instantané en 12 langues d'interface."
+      },
       "maker": "Antony",
       "category": "languages",
       "order": 1
@@ -118,7 +169,10 @@
     "toeic-success-hub": {
       "title": "ToeicPath",
       "url": "https://www.antonyaddy.com/toeic",
-      "description": "Complete, guided TOEIC preparation across all four skills and every Listening & Reading part — with mock tests and adaptive practice, no account required.",
+      "description": {
+        "en": "Complete, guided TOEIC preparation across all four skills and every Listening & Reading part — with mock tests and adaptive practice, no account required.",
+        "fr": "Une préparation au TOEIC complète et guidée, sur les quatre compétences et toutes les parties Listening & Reading — avec examens blancs et entraînement adaptatif, sans compte."
+      },
       "maker": "Antony",
       "category": "languages",
       "order": 2
@@ -126,7 +180,10 @@
     "cloe-prep-path": {
       "title": "CLOE Prep",
       "url": "https://cloe.antonyaddy.com",
-      "description": "Workplace-focused preparation for the CLOE English certification — the four skills plus speaking, built around the English people really use at work.",
+      "description": {
+        "en": "Workplace-focused preparation for the CLOE English certification — the four skills plus speaking, built around the English people really use at work.",
+        "fr": "Une préparation à la certification d'anglais CLOE orientée entreprise — les quatre compétences plus l'oral, autour de l'anglais réellement utilisé au travail."
+      },
       "maker": "Antony",
       "category": "languages",
       "order": 3
@@ -134,7 +191,10 @@
     "listening-english": {
       "title": "ListenUp",
       "url": "https://www.antonyaddy.com/listening",
-      "description": "English listening practice with AI audio, word-by-word karaoke highlighting, comprehension quizzes and instant translations in ten-plus languages.",
+      "description": {
+        "en": "English listening practice with AI audio, word-by-word karaoke highlighting, comprehension quizzes and instant translations in ten-plus languages.",
+        "fr": "De la compréhension orale en anglais avec audio IA, surlignage karaoké mot à mot, quiz de compréhension et traductions instantanées en plus de dix langues."
+      },
       "maker": "Antony",
       "category": "languages",
       "order": 6
@@ -142,7 +202,10 @@
     "adventure-books": {
       "title": "English Reading Adventures",
       "url": "https://www.antonyaddy.com/books",
-      "description": "Interactive branching stories where the learner is the hero — read at your own level, with meaning available in eight languages.",
+      "description": {
+        "en": "Interactive branching stories where the learner is the hero — read at your own level, with meaning available in eight languages.",
+        "fr": "Des histoires interactives à embranchements où l'apprenant est le héros — à lire à son niveau, avec le sens disponible en huit langues."
+      },
       "maker": "Antony",
       "category": "languages",
       "order": 5
@@ -150,7 +213,10 @@
     "anglais-a-distance": {
       "title": "Anglais à Distance",
       "url": "https://www.anglaisadistance.fr",
-      "description": "Online English for French-speaking adults — grammar, phrasal verbs, audio dialogues and vocabulary quizzes in one place.",
+      "description": {
+        "en": "Online English for French-speaking adults — grammar, phrasal verbs, audio dialogues and vocabulary quizzes in one place.",
+        "fr": "De l'anglais en ligne pour adultes francophones — grammaire, phrasal verbs, dialogues audio et quiz de vocabulaire, réunis au même endroit."
+      },
       "maker": "Antony",
       "category": "languages",
       "order": 7
@@ -158,7 +224,10 @@
     "biz-fluent-coach": {
       "title": "TP English Pro",
       "url": "https://ad.antonyaddy.com",
-      "description": "A professional-English platform for France's TP Assistant de Direction qualification — interactive exercises, an exam simulator and administrative vocabulary.",
+      "description": {
+        "en": "A professional-English platform for France's TP Assistant de Direction qualification — interactive exercises, an exam simulator and administrative vocabulary.",
+        "fr": "Une plateforme d'anglais professionnel pour le TP Assistant de Direction — exercices interactifs, simulateur d'examen et vocabulaire administratif."
+      },
       "maker": "Antony",
       "category": "languages",
       "order": 8
@@ -166,7 +235,10 @@
     "addys-english-pro": {
       "title": "Antony Addy",
       "url": "https://www.antonyaddy.com",
-      "description": "My main site: professional English training, generative-AI workshops and websites — one point of contact, across the Var, Alpes-Maritimes and online.",
+      "description": {
+        "en": "Antony's main site: professional English training, generative-AI workshops and websites — one point of contact, across the Var, Alpes-Maritimes and online.",
+        "fr": "Le site principal d'Antony : formations d'anglais professionnel, ateliers d'IA générative et création de sites web — un seul interlocuteur, dans le Var, les Alpes-Maritimes et à distance."
+      },
       "maker": "Antony",
       "category": "training",
       "order": 1
@@ -174,7 +246,10 @@
     "addy-genai-training": {
       "title": "Formation IA Générative",
       "url": "https://www.antonyaddy.com/ia",
-      "description": "A service site for hands-on generative-AI training — ChatGPT, Claude and Copilot for companies and freelancers, delivered in French or English.",
+      "description": {
+        "en": "A service site for hands-on generative-AI training — ChatGPT, Claude and Copilot for companies and freelancers, delivered in French or English.",
+        "fr": "Un site de services pour des formations pratiques en IA générative — ChatGPT, Claude et Copilot pour entreprises et indépendants, en français ou en anglais."
+      },
       "maker": "Antony",
       "category": "training",
       "order": 2
@@ -182,7 +257,10 @@
     "addy-sap-connect": {
       "title": "SAP MM Training",
       "url": "https://sap.antonyaddy.com",
-      "description": "A training site for SAP Materials Management — practical, hands-on procurement, inventory and master-data training from a bilingual EN/FR trainer.",
+      "description": {
+        "en": "A training site for SAP Materials Management — practical, hands-on procurement, inventory and master-data training from a bilingual EN/FR trainer.",
+        "fr": "Un site de formation SAP Materials Management — achats, gestion des stocks et données de base, en pratique, par un formateur bilingue EN/FR."
+      },
       "maker": "Antony",
       "category": "training",
       "order": 3
@@ -190,7 +268,10 @@
     "student-mark-tracker": {
       "title": "Student Mark Tracker",
       "url": "https://student-mark-tracker.vercel.app",
-      "description": "A private, secure workspace for a training business — documents, marks and individual student progress, kept clean and separate behind sign-in.",
+      "description": {
+        "en": "A private, secure workspace for a training business — documents, marks and individual student progress, kept clean and separate behind sign-in.",
+        "fr": "Un espace de travail privé et sécurisé pour un organisme de formation — documents, notes et progression de chaque apprenant, au propre et protégés par connexion."
+      },
       "maker": "Antony",
       "inProgress": true,
       "category": "training",
@@ -204,7 +285,10 @@
       "url": "https://autoecole-smoky.vercel.app",
       "repo": "https://github.com/bourgoisju/autoecole",
       "maker": "Julien",
-      "description": "A driving school in Fréjus, voted one of France's best for 2026 — car, motorbike and supervised-driving courses, with nearly 30 years of experience behind it.",
+      "description": {
+        "en": "A driving school in Fréjus, voted one of France's best for 2026 — car, motorbike and supervised-driving courses, with nearly 30 years of experience behind it.",
+        "fr": "Une auto-école à Fréjus, élue parmi les Meilleures Auto-Écoles de France 2026 — permis voiture, moto et conduite accompagnée, avec près de 30 ans d'expérience."
+      },
       "category": "services",
       "order": 2
     },
@@ -214,7 +298,10 @@
       "url": "https://annick-taquet-assoignons.vercel.app",
       "repo": "https://github.com/bourgoisju/taquet",
       "maker": "Julien",
-      "description": "The author site of a clinical psychologist — her books on carers, family caregivers and growing older, presented with warmth and care.",
+      "description": {
+        "en": "The author site of a clinical psychologist — her books on carers, family caregivers and growing older, presented with warmth and care.",
+        "fr": "Le site d'auteure d'une psychologue clinicienne — ses livres sur les soignants, les proches aidants et l'avancée en âge, présentés avec chaleur et délicatesse."
+      },
       "category": "wellbeing",
       "order": 2
     },
@@ -224,7 +311,10 @@
       "url": "https://emconcept.vercel.app",
       "repo": "https://github.com/bourgoisju/E-Mconcept",
       "maker": "Julien",
-      "description": "An audio-visual integrator and electrician in the Var and Alpes-Maritimes — home cinema, sound systems, cameras, networks and wiring, with free quotes.",
+      "description": {
+        "en": "An audio-visual integrator and electrician in the Var and Alpes-Maritimes — home cinema, sound systems, cameras, networks and wiring, with free quotes.",
+        "fr": "Un intégrateur son, vidéo et réseau, électricien dans le Var et les Alpes-Maritimes — home cinéma, sonorisation, caméras, Wi-Fi et électricité, devis gratuit."
+      },
       "category": "services",
       "order": 3
     },
@@ -234,7 +324,10 @@
       "url": "https://julienb.vercel.app",
       "repo": "https://github.com/bourgoisju/julienb",
       "maker": "Julien",
-      "description": "My own studio site: made-to-measure websites for tradespeople, shops and independents — fast, built for mobile, quoted per project.",
+      "description": {
+        "en": "Julien's own studio: made-to-measure websites for tradespeople, shops and independents — fast, built for mobile, quoted per project.",
+        "fr": "Le studio de Julien : des sites vitrines sur mesure pour artisans, commerces et indépendants — rapides, pensés pour le mobile, sur devis."
+      },
       "category": "services",
       "order": 4
     }
