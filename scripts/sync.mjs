@@ -54,6 +54,7 @@ function fromRepo(repo) {
     url: o.url ?? (repo.homepage || null),
     repo: repo.private ? null : repo.html_url,
     maker: o.maker ?? makerByLogin[repo.owner.login.toLowerCase()] ?? repo.owner.login,
+    category: o.category ?? null,
     tags: o.tags ?? repo.topics.filter((t) => t !== config.topic),
     featured: o.featured ?? false,
     inProgress: o.inProgress ?? false,
@@ -64,7 +65,7 @@ function fromRepo(repo) {
 
 function fromExtra(e) {
   return {
-    repo: null, tags: [], featured: false, inProgress: false, order: null, updated: null,
+    repo: null, category: null, tags: [], featured: false, inProgress: false, order: null, updated: null,
     description: "", ...e,
   };
 }
@@ -106,9 +107,14 @@ for (const p of projects) {
   p.image = (await exists(`public/shots/${p.slug}.jpg`)) ? `/shots/${p.slug}.jpg` : null;
 }
 
-// Featured first, then any explicit order, then most recently worked on.
+// By category, then featured first, then any explicit order, then most recently worked on.
+const categoryRank = (p) => {
+  const i = overrides.categories.findIndex((c) => c.id === p.category);
+  return i === -1 ? Infinity : i;
+};
 projects.sort(
   (a, b) =>
+    categoryRank(a) - categoryRank(b) ||
     b.featured - a.featured ||
     (a.order ?? Infinity) - (b.order ?? Infinity) ||
     (b.updated ?? "").localeCompare(a.updated ?? ""),

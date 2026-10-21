@@ -1,9 +1,19 @@
 ---
 import ProjectCard from "../components/ProjectCard.astro";
 import projects from "../data/projects.json";
+import { categories } from "../data/overrides.json";
 
 const makers = [...new Set(projects.map((p) => p.maker))].sort();
-const tags = [...new Set(projects.flatMap((p) => p.tags))].sort();
+// One section per category, in the order overrides.json lists them; anything
+// uncategorised (a freshly tagged repo) lands in "More" until it gets one.
+const sections = [...categories, { id: "more", label: "More" }]
+  .map((c) => ({
+    ...c,
+    projects: projects.filter((p) =>
+      c.id === "more" ? !categories.some((k) => k.id === p.category) : p.category === c.id,
+    ),
+  }))
+  .filter((s) => s.projects.length > 0);
 const title = "The Vitrine";
 const description = "Websites and apps we've built with AI, all in one shop window.";
 ---
@@ -49,17 +59,24 @@ const description = "Websites and apps we've built with AI, all in one shop wind
                 {makers.map((m) => <button type="button" aria-pressed="false" data-value={m}>{m}</button>)}
               </div>
             )}
-            {tags.length > 1 && (
-              <div class="group" data-filter="tag">
+            {sections.length > 1 && (
+              <div class="group" data-filter="category">
                 <button type="button" aria-pressed="true" data-value="">All</button>
-                {tags.map((t) => <button type="button" aria-pressed="false" data-value={t}>{t}</button>)}
+                {sections.map((s) => <button type="button" aria-pressed="false" data-value={s.id}>{s.label}</button>)}
               </div>
             )}
             <p class="count" aria-live="polite"><span id="count">{projects.length}</span> projects</p>
           </nav>
-          <div class="grid">
-            {projects.map((p, i) => <ProjectCard project={p} eager={i < 3} />)}
-          </div>
+          {sections.map((s, si) => (
+            <section class="category" data-category={s.id} aria-labelledby={`cat-${s.id}`}>
+              <h2 id={`cat-${s.id}`}>
+                {s.label} <span class="n">{s.projects.length}</span>
+              </h2>
+              <div class="grid">
+                {s.projects.map((p, i) => <ProjectCard project={p} eager={si === 0 && i < 3} />)}
+              </div>
+            </section>
+          ))}
         </>
       )}
     </main>
@@ -69,8 +86,8 @@ const description = "Websites and apps we've built with AI, all in one shop wind
     </footer>
 
     <script>
-      const state: Record<string, string> = { maker: "", tag: "" };
-      const cards = [...document.querySelectorAll<HTMLElement>(".card")];
+      const state: Record<string, string> = { maker: "", category: "" };
+      const sections = [...document.querySelectorAll<HTMLElement>("section.category")];
       const count = document.getElementById("count");
 
       document.querySelectorAll<HTMLElement>(".filters .group").forEach((group) => {
@@ -80,12 +97,18 @@ const description = "Websites and apps we've built with AI, all in one shop wind
           group.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
           state[group.dataset.filter!] = btn.dataset.value ?? "";
           let shown = 0;
-          for (const card of cards) {
-            const ok =
-              (!state.maker || card.dataset.maker === state.maker) &&
-              (!state.tag || card.dataset.tags!.split("|").includes(state.tag));
-            card.hidden = !ok;
-            if (ok) shown++;
+          for (const section of sections) {
+            const inCategory = !state.category || section.dataset.category === state.category;
+            let visible = 0;
+            for (const card of section.querySelectorAll<HTMLElement>(".card")) {
+              const ok = inCategory && (!state.maker || card.dataset.maker === state.maker);
+              card.hidden = !ok;
+              if (ok) visible++;
+            }
+            section.hidden = visible === 0;
+            const n = section.querySelector(".n");
+            if (n) n.textContent = String(visible);
+            shown += visible;
           }
           if (count) count.textContent = String(shown);
         });
@@ -180,6 +203,19 @@ const description = "Websites and apps we've built with AI, all in one shop wind
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr));
     gap: 1.5rem;
   }
+  .category { margin-top: 2.5rem; }
+  .category:first-of-type { margin-top: 0.5rem; }
+  .category h2 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    letter-spacing: -0.01em;
+    margin: 0 0 1.1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+  .category h2 .n { font-family: var(--text); font-size: 0.9rem; font-weight: 500; color: var(--ink-soft); }
   .empty { padding: 3rem 0; color: var(--ink-soft); }
   footer { padding-top: 4rem; padding-bottom: 3rem; color: var(--ink-soft); font-size: 0.9rem; }
   footer a { color: var(--ink); text-underline-offset: 3px; }
