@@ -192,5 +192,50 @@
       "inProgress": true
     }
   },
-  "extra": []
+  "extra": [
+    {
+      "slug": "autoecole",
+      "title": "Auto-école La Tour de Mare",
+      "url": "https://autoecole-smoky.vercel.app",
+      "repo": "https://github.com/bourgoisju/autoecole",
+      "maker": "Julien",
+      "tags": [
+        "Business"
+      ],
+      "description": "A driving school in Fréjus, voted one of France's best for 2026 — car, motorbike and supervised-driving courses, with nearly 30 years of experience behind it."
+    },
+    {
+      "slug": "taquet",
+      "title": "Annick Taquet-Assoignons",
+      "url": "https://annick-taquet-assoignons.vercel.app",
+      "repo": "https://github.com/bourgoisju/taquet",
+      "maker": "Julien",
+      "tags": [
+        "Business"
+      ],
+      "description": "The author site of a clinical psychologist — her books on carers, family caregivers and growing older, presented with warmth and care."
+    },
+    {
+      "slug": "E-Mconcept",
+      "title": "EM Concept",
+      "url": "https://emconcept.vercel.app",
+      "repo": "https://github.com/bourgoisju/E-Mconcept",
+      "maker": "Julien",
+      "tags": [
+        "Business"
+      ],
+      "description": "An audio-visual integrator and electrician in the Var and Alpes-Maritimes — home cinema, sound systems, cameras, networks and wiring, with free quotes."
+    },
+    {
+      "slug": "julienb",
+      "title": "Julien Bourgois",
+      "url": "https://julienb.vercel.app",
+      "repo": "https://github.com/bourgoisju/julienb",
+      "maker": "Julien",
+      "tags": [
+        "Business"
+      ],
+      "description": "My own studio site: made-to-measure websites for tradespeople, shops and independents — fast, built for mobile, quoted per project."
+    }
+  ]
 }

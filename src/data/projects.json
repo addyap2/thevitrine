@@ -238,5 +238,69 @@
     "order": null,
     "updated": "2026-07-15T17:52:40Z",
     "image": "/shots/student-mark-tracker.jpg"
+  },
+  {
+    "repo": "https://github.com/bourgoisju/autoecole",
+    "tags": [
+      "Business"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": null,
+    "description": "A driving school in Fréjus, voted one of France's best for 2026 — car, motorbike and supervised-driving courses, with nearly 30 years of experience behind it.",
+    "slug": "autoecole",
+    "title": "Auto-école La Tour de Mare",
+    "url": "https://autoecole-smoky.vercel.app",
+    "maker": "Julien",
+    "image": "/shots/autoecole.jpg"
+  },
+  {
+    "repo": "https://github.com/bourgoisju/taquet",
+    "tags": [
+      "Business"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": null,
+    "description": "The author site of a clinical psychologist — her books on carers, family caregivers and growing older, presented with warmth and care.",
+    "slug": "taquet",
+    "title": "Annick Taquet-Assoignons",
+    "url": "https://annick-taquet-assoignons.vercel.app",
+    "maker": "Julien",
+    "image": "/shots/taquet.jpg"
+  },
+  {
+    "repo": "https://github.com/bourgoisju/E-Mconcept",
+    "tags": [
+      "Business"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": null,
+    "description": "An audio-visual integrator and electrician in the Var and Alpes-Maritimes — home cinema, sound systems, cameras, networks and wiring, with free quotes.",
+    "slug": "E-Mconcept",
+    "title": "EM Concept",
+    "url": "https://emconcept.vercel.app",
+    "maker": "Julien",
+    "image": "/shots/E-Mconcept.jpg"
+  },
+  {
+    "repo": "https://github.com/bourgoisju/julienb",
+    "tags": [
+      "Business"
+    ],
+    "featured": false,
+    "inProgress": false,
+    "order": null,
+    "updated": null,
+    "description": "My own studio site: made-to-measure websites for tradespeople, shops and independents — fast, built for mobile, quoted per project.",
+    "slug": "julienb",
+    "title": "Julien Bourgois",
+    "url": "https://julienb.vercel.app",
+    "maker": "Julien",
+    "image": "/shots/julienb.jpg"
   }
 ]

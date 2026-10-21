@@ -27,7 +27,8 @@ together with the name to show as its maker.
   The others are `featured: true` to pin it first, `order: 1` for manual order,
   `inProgress: true` to show a badge, and `hidden: true` to leave it out.
 - **`extra`**: projects that aren't on GitHub. Each one needs `slug`, `title`,
-  `url` and `maker`.
+  `url` and `maker`. Once a repo with the same name as an extra's `slug` gets the
+  topic, the repo version replaces the extra.
 
 To use your own screenshot, put a 16:10 image at `public/shots/<repo-name>.jpg`.
 

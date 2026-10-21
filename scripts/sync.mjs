@@ -94,9 +94,11 @@ async function screenshot(projects) {
 }
 
 const repos = await searchRepos();
+const tagged = repos.map(fromRepo).filter(Boolean);
+// An extra steps aside once its repo is tagged, so nothing shows twice.
 const projects = [
-  ...repos.map(fromRepo).filter(Boolean),
-  ...overrides.extra.map(fromExtra),
+  ...tagged,
+  ...overrides.extra.filter((e) => !tagged.some((p) => p.slug === e.slug)).map(fromExtra),
 ];
 
 await screenshot(projects);
