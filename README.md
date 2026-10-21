@@ -4,8 +4,8 @@ A shop window for the websites and apps Antony and Julien build with AI. Every
 project stays in its own GitHub account and Vercel project. This site only
 collects and links to them.
 
-Built with [Astro](https://astro.build). The motion system is documented in [MOTION.md](MOTION.md). The site has no runtime JavaScript
-except the small filter script.
+Built with [Astro](https://astro.build), with no front-end framework and no
+animation library. The motion system is documented in [MOTION.md](MOTION.md).
 
 ## Add a project
 
