@@ -220,6 +220,9 @@
       "inProgress": true,
       "category": "training",
       "order": 4
+    },
+    "osteoflo": {
+      "hidden": true
     }
   },
   "extra": [
@@ -334,18 +337,6 @@
       },
       "maker": "Antony",
       "category": "training",
-      "order": 3
-    },
-    {
-      "slug": "osteoflo",
-      "title": "Florian Bozzetti",
-      "url": "https://osteoflo.vercel.app",
-      "maker": "Julien",
-      "description": {
-        "en": "The practice of an osteopath in Puget-sur-Argens — his approach, reasons to consult, how a session works, prices, and a live sign showing whether the practice is open.",
-        "fr": "Le cabinet d'un ostéopathe D.O. à Puget-sur-Argens — approche, motifs de consultation, déroulé d'une séance, tarifs, et un encart qui indique en direct si le cabinet est ouvert."
-      },
-      "category": "wellbeing",
       "order": 3
     }
   ]

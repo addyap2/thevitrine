@@ -307,35 +307,6 @@ export const cases: Record<string, CaseStudy> = {
     },
   },
 
-  osteoflo: {
-    status: "published",
-    place: { fr: "Puget-sur-Argens, Var", en: "Puget-sur-Argens, Var" },
-    client: {
-      fr: "Florian Bozzetti est ostéopathe D.O. à Puget-sur-Argens, près de Fréjus. Spécialisé en thérapie manuelle mécaniste, il soigne toute la famille, des nourrissons aux seniors en passant par les sportifs et les femmes enceintes, en cherchant l'origine des douleurs plutôt que leurs seuls symptômes.",
-      en: "Florian Bozzetti is an osteopath (D.O.) in Puget-sur-Argens, near Fréjus. He specialises in mechanistic manual therapy and treats the whole family, from babies to seniors, including athletes and pregnant women, looking for the cause of pain rather than just its symptoms.",
-    },
-    built: {
-      fr: [
-        "Un encart qui indique en direct si le cabinet est ouvert, avec l'adresse et les horaires.",
-        "L'approche du praticien : ostéopathie, étiopathie et thérapie mécaniste, et les motifs de consultation.",
-        "Une section « Pour qui ? » par public : adultes et seniors, sportifs, enfants et nourrissons, femmes enceintes.",
-        "Le déroulé d'une séance en quatre étapes, le parcours du praticien et ses formations.",
-        "Tarifs, horaires détaillés, accès et prise de rendez-vous par téléphone.",
-      ],
-      en: [
-        "A live sign showing whether the practice is open, with the address and opening hours.",
-        "The practitioner's approach (osteopathy, etiopathy and mechanistic therapy) and the reasons people consult.",
-        "A \"Who is it for?\" section by patient: adults and seniors, athletes, children and babies, pregnant women.",
-        "How a session works in four steps, plus the practitioner's background and training.",
-        "Prices, full opening hours, directions and booking by phone.",
-      ],
-    },
-    design: {
-      fr: "Un cabinet au ton calme et rassurant : vert profond, typographie élégante et beaucoup d'espace. Les informations qui comptent avant d'appeler, le tarif, les horaires, le parking, sont visibles dès le premier écran, et le numéro du cabinet reste toujours à portée de main.",
-      en: "A calm, reassuring practice: deep green, elegant type and plenty of space. What people need to know before calling, the price, the hours and parking, is visible on the first screen, and the practice's phone number is always within reach.",
-    },
-  },
-
   "filton-athletic-fc": {
     status: "published",
     place: { fr: "Filton, Bristol (Royaume-Uni)", en: "Filton, Bristol (UK)" },
