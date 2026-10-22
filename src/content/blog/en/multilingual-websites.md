@@ -5,7 +5,7 @@ lang: en
 slug: multilingual-websites
 key: multilingual-websites
 date: 2026-10-22
-status: draft
+status: published
 ---
 
 On the French Riviera, some of your customers don't speak French, or would rather read in their own language. A multilingual website isn't a luxury for big companies: it's often the simplest way not to lose those visitors on the first page.

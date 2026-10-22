@@ -5,7 +5,7 @@ lang: en
 slug: why-have-a-website
 key: why-a-website
 date: 2026-10-22
-status: draft
+status: published
 ---
 
 It's the question we hear most. You've got a Facebook page, an Instagram account and a Google Maps listing with reviews: why add a website?

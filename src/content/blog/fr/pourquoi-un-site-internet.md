@@ -5,7 +5,7 @@ lang: fr
 slug: pourquoi-un-site-internet
 key: why-a-website
 date: 2026-10-22
-status: draft
+status: published
 ---
 
 C'est la question que l'on nous pose le plus souvent. Vous avez une page Facebook, un compte Instagram, une fiche Google Maps avec des avis : à quoi bon un site en plus ?

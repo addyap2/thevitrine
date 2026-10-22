@@ -5,7 +5,7 @@ lang: fr
 slug: site-en-plusieurs-langues
 key: multilingual-websites
 date: 2026-10-22
-status: draft
+status: published
 ---
 
 Sur la Côte d'Azur, une partie de vos clients ne parle pas français, ou préfère lire dans sa langue. Un site multilingue n'est pas un luxe réservé aux grandes entreprises : c'est souvent la façon la plus simple de ne pas perdre ces visiteurs à la première page.

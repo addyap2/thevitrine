@@ -141,7 +141,8 @@ Ticked items were verified in this audit. Unticked ones are still to do.
 
 ### Blog
 - [x] Blog at `/blog/` and `/en/blog/`, with 5 draft articles in each language (in `src/content/blog/`)
-- [ ] Review the articles, then set `status: published` in each file's front matter (both languages): that indexes them, adds them to the sitemap and adds a "Blog" link to the homepage footer
+- [x] All five articles published in both languages (indexed, in the sitemap, "Blog" link in the homepage footer)
+- [ ] The articles link to case studies that are still drafts (noindex): publishing those case studies makes the links count for search
 
 ### Analytics
 - [ ] Turn on Vercel Web Analytics or Plausible (B)
