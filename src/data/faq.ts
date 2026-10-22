@@ -93,8 +93,8 @@ export const faq: Faq[] = [
     id: "where",
     q: { fr: "Travaillez-vous en dehors du Var ?", en: "Do you work outside the Var?" },
     a: {
-      fr: "Oui. Nous travaillons dans tout le Var et les Alpes-Maritimes, et tout peut aussi se faire à distance : nos sites tournent déjà à Bristol et en Italie.",
-      en: "Yes. We work across the Var and Alpes-Maritimes, and everything can also be done remotely: our sites already run in Bristol and Italy.",
+      fr: "Oui. Nous travaillons dans tout le Var et les Alpes-Maritimes, et tout peut aussi se faire à distance : nos sites tournent déjà au Royaume-Uni et en Italie.",
+      en: "Yes. We work across the Var and Alpes-Maritimes, and everything can also be done remotely: our sites already run in the United Kingdom and Italy.",
     },
   },
   // Placeholders: write the answer to show the question.
