@@ -42,7 +42,9 @@ export async function readJson(req, maxBytes) {
 /** Who receives form emails: DEVIS_TO (comma-separated) or Antony and Julien. */
 export const recipients = () =>
   (process.env.DEVIS_TO || "antony@antonyaddy.com,bourgois.ju@gmail.com").split(",").map((s) => s.trim()).filter(Boolean);
-export const sender = () => process.env.DEVIS_FROM || "The Vitrine <devis@antonyaddy.com>";
+// thevitrine.fr is verified in Resend (DKIM-signed), which lets it pass the domain's
+// strict DMARC policy even though the domain itself receives no mail.
+export const sender = () => process.env.DEVIS_FROM || "The Vitrine <devis@thevitrine.fr>";
 
 export async function send(key, msg) {
   const r = await fetch("https://api.resend.com/emails", {

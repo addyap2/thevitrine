@@ -3,7 +3,7 @@
 //
 // Environment variables (Vercel → Project → Settings → Environment Variables):
 //   RESEND_API_KEY  required  API key from resend.com
-//   DEVIS_FROM      optional  verified sender, default "The Vitrine <devis@antonyaddy.com>"
+//   DEVIS_FROM      optional  verified sender, default "The Vitrine <devis@thevitrine.fr>"
 //   DEVIS_TO        optional  comma-separated recipients, default Antony and Julien
 
 import { checkToken, limited, clientIp, isJson, greetingName } from "./_guard.js";
