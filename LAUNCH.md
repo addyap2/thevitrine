@@ -54,7 +54,7 @@ the page scroll sideways by 57 px on phones in both WebKit and Chromium.
 |---|---|---|---|---|
 | A | High | Legal | French law (LCEN, art. 6) requires *mentions légales* on a professional site: publisher name and status (SIRET if any), publication director, host (Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, USA) and a contact. | The page is built (`/mentions-legales/` and `/en/legal-notice/`, linked from the footer and the 404 page), with publishers, host, intellectual property, privacy and cookies, and external links. Antony's details, the publication director and the contact are filled in. Julien's fields show as "to be completed" placeholders until they're added to `src/data/legal.ts`; the build log warns about them. No cookie banner is needed while the site sets no tracking cookies. |
 | B | High | Analytics | There is no analytics, so you can't tell how many visitors reach a contact link. | Turn on **Vercel Web Analytics** (no cookies, so no banner). Then I'll add its script and track clicks on the CTAs and contact cards. Custom events need a Vercel Pro plan; otherwise Plausible does the same. |
-| C | Medium | Deployment | ~~The site URL is still `thevitrine-eta.vercel.app`.~~ Moved to **thevitrine.fr**. | `site` in `astro.config.mjs` is `https://thevitrine.fr`; `vercel.json` sends the old vercel.app address and `www.` there permanently. Submit HSTS preload only once the domain has settled. |
+| C | Medium | Deployment | ~~The site URL is still `thevitrine-eta.vercel.app`.~~ Live on **thevitrine.fr** since 22 October 2026. | `site` in `astro.config.mjs` is `https://thevitrine.fr`. In Vercel (Settings → Domains), `www.thevitrine.fr` and `thevitrine-eta.vercel.app` redirect permanently (308) to it, path included. Submit HSTS preload only once the domain has settled. |
 | D | Medium | Conversion | Both contact cards leave the site. There's no direct email, phone or WhatsApp. | Add a direct link to each card (Julien already publishes his email and phone on his site). Your call, for spam and privacy reasons. |
 | E | Medium | Conversion | Antony's card on the English page opens `antonyaddy.com/contact?sujet=sites`. | Check that page works for English speakers, or point the English page at an English contact page. |
 | F | Low | Content | The "Code" links speak to developers, but your visitors are restaurants and shops. | Keep them, make them less prominent, or remove them. |
@@ -166,5 +166,5 @@ Ticked items were verified in this audit. Unticked ones are still to do.
 ### Deployment
 - [x] `npm run build` passes cleanly (WebP copies, fonts, CSP and both pages)
 - [x] `vercel.json` sets the build command to `npm run build`, so the WebP step runs on Vercel
-- [x] Custom domain thevitrine.fr connected, `site` updated, old address and www redirect permanently (C)
+- [x] Custom domain thevitrine.fr live (DNS at Vercel), `site` updated; www and the old vercel.app address redirect permanently via Vercel's domain settings (C)
 - [ ] After the first deploy: open `/`, `/en/`, `/sitemap.xml`, `/robots.txt`, `/og/fr.jpg` and an unknown address, and check that French and English browsers land on the right page
