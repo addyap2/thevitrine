@@ -476,6 +476,19 @@ const ld = {
           swap();
         });
       });
+
+      // Arriving with ?maker=Julien (from the About page): start with that maker's sites.
+      const wanted = new URLSearchParams(location.search).get("maker");
+      if (wanted) {
+        const group = document.querySelector<HTMLElement>('.filters .group[data-filter="maker"]');
+        const btn = group?.querySelector<HTMLButtonElement>(`button[data-value="${CSS.escape(wanted)}"]`);
+        if (group && btn) {
+          group.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+          state.maker = wanted;
+          apply();
+          place(group, false);
+        }
+      }
     </script>
   </body>
 </html>

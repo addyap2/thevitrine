@@ -2,14 +2,14 @@
 // The top-right of every header: page links (Contact included), the lit
 // "Lancer votre projet" button for the questionnaire, and the FR | EN toggle. On narrow screens the links fold into a "Menu"
 // button; the language toggle always stays visible.
-import { strings, homePath, blogPath, contactPath, questionnairePath, type Lang } from "../i18n";
+import { strings, homePath, blogPath, contactPath, questionnairePath, aboutPath, type Lang } from "../i18n";
 
 interface Props {
   lang: Lang;
   /** The same page in the other language. */
   altHref: string;
   /** Marks the matching link as the current page. */
-  current?: "blog" | "contact" | "project";
+  current?: "blog" | "contact" | "project" | "about";
 }
 const { lang, altHref, current } = Astro.props;
 const t = strings[lang];
@@ -18,6 +18,7 @@ const home = homePath[lang];
 const links = [
   { href: `${home}#work`, label: t.navWork },
   { href: `${home}#services`, label: t.navServices },
+  { href: aboutPath[lang], label: t.navAbout, current: current === "about" },
   { href: `${home}#faq`, label: t.navFaq },
   { href: blogPath[lang], label: t.navBlog, current: current === "blog" },
   { href: contactPath[lang], label: t.navContact, current: current === "contact" },

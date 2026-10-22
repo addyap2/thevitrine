@@ -8,6 +8,8 @@ export const legalPath: Record<Lang, string> = { fr: "/mentions-legales/", en: "
 export const questionnairePath: Record<Lang, string> = { fr: "/devis/", en: "/en/quote/" };
 /** The contact form. */
 export const contactPath: Record<Lang, string> = { fr: "/contact/", en: "/en/contact/" };
+/** The people behind The Vitrine. */
+export const aboutPath: Record<Lang, string> = { fr: "/a-propos/", en: "/en/about/" };
 /** Blog: /blog/ in French, /en/blog/ in English. */
 export const blogPath: Record<Lang, string> = { fr: "/blog/", en: "/en/blog/" };
 export const postPath = (lang: Lang, slug: string) => `${blogPath[lang]}${slug}/`;
@@ -131,6 +133,17 @@ export const strings = {
     msgCta: "Send a message",
     heroContact: "A question?",
     heroContactLink: "Write to us",
+    navAbout: "About",
+    aboutTitle: "About: Antony Addy and Julien Bourgois | The Vitrine",
+    aboutDescription: "Meet Antony Addy and Julien Bourgois, the two makers behind The Vitrine: who they are, how they work, and the websites they build.",
+    aboutEyebrow: "About",
+    aboutH1: "Two makers, one shop window",
+    aboutLead: "The Vitrine brings together the websites Antony Addy and Julien Bourgois build, each in their own way, for restaurants, shops, clubs, practitioners and trainers. Two different paths, one standard: fast, polished sites, and one person to talk to from the first call to launch.",
+    aboutCount: "{n} sites in the window",
+    aboutSeeWork: "See his work",
+    aboutSite: "His website",
+    aboutShared: "What we share",
+    aboutNext: "Got a project in mind?",
     legalLink: "Legal notice",
     shotAlt: "Home page of the {title} website ({host})",
     portfolioName: "Websites built by The Vitrine",
@@ -268,6 +281,17 @@ export const strings = {
     msgCta: "Envoyer un message",
     heroContact: "Une question ?",
     heroContactLink: "Écrivez-nous",
+    navAbout: "À propos",
+    aboutTitle: "À propos : Antony Addy et Julien Bourgois | The Vitrine",
+    aboutDescription: "Antony Addy et Julien Bourgois, les deux créateurs de The Vitrine : qui ils sont, comment ils travaillent, et les sites qu'ils créent.",
+    aboutEyebrow: "À propos",
+    aboutH1: "Deux créateurs, une même vitrine",
+    aboutLead: "The Vitrine réunit les sites qu'Antony Addy et Julien Bourgois créent, chacun à sa façon, pour des restaurants, des commerces, des clubs, des praticiens et des formateurs. Deux parcours différents, une même exigence : des sites rapides et soignés, et un seul interlocuteur du premier échange à la mise en ligne.",
+    aboutCount: "{n} sites dans la vitrine",
+    aboutSeeWork: "Voir ses réalisations",
+    aboutSite: "Son site",
+    aboutShared: "Ce qui nous rassemble",
+    aboutNext: "Un projet en tête ?",
     legalLink: "Mentions légales",
     shotAlt: "Page d'accueil du site {title} ({host})",
     portfolioName: "Sites réalisés par The Vitrine",
