@@ -2,7 +2,7 @@
 // "L'heure bleue": a lit shop window at dusk. Live sites hang in the window as
 // glass panes in depth, the front one cycling through our work, while warm
 // light spills onto a reflective floor. Transforms and opacity only, no WebGL.
-import { strings, homePath, questionnairePath, type Lang } from "../i18n";
+import { strings, homePath, questionnairePath, contactPath, type Lang } from "../i18n";
 import { srcset, src800, sizes } from "../img";
 import Brand from "./Brand.astro";
 import Nav from "./Nav.astro";
@@ -51,9 +51,10 @@ const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
       </h1>
       <p class="sub reveal d360">{t.heroSub}</p>
       <div class="ctas reveal d480">
-        <a class="cta primary" href="#work">{t.heroCta.replace("{n}", String(total))} <span aria-hidden="true">↓</span></a>
-        <a class="cta ghost" href={questionnairePath[lang]}>{t.heroCta2}</a>
+        <a class="cta primary" href={questionnairePath[lang]}>{t.heroCta2} <span aria-hidden="true">→</span></a>
+        <a class="cta ghost" href="#work">{t.heroCta.replace("{n}", String(total))} <span aria-hidden="true">↓</span></a>
       </div>
+      <p class="hero-contact reveal d540">{t.heroContact} <a href={contactPath[lang]}>{t.heroContactLink} <span aria-hidden="true">→</span></a></p>
       <p class="proof reveal d600">{t.heroProof.replace("{n}", String(total))}</p>
     </div>
 
@@ -387,6 +388,9 @@ const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
   .cta.ghost { color: var(--text-hi); border: 1px solid rgb(255 255 255 / 0.22); background: rgb(255 255 255 / 0.04); }
   .cta:active, .cta.primary:active { transform: scale(0.97); transition-duration: var(--dur-press); }
   .cta.ghost:hover { border-color: rgb(255 255 255 / 0.5); background: rgb(255 255 255 / 0.08); }
+  .hero-contact { margin: 1.1rem 0 0; font-size: 0.95rem; color: var(--text-lo); }
+  .hero-contact a { color: var(--text-hi); font-weight: 600; text-decoration: none; border-bottom: 1px solid rgb(255 194 125 / 0.5); padding-bottom: 1px; transition: border-color var(--dur-micro) var(--ease-hover), color var(--dur-micro) var(--ease-hover); }
+  .hero-contact a:hover { color: var(--lamp-hot); border-color: var(--lamp); }
   .proof { margin: 1.6rem 0 0; font-size: 0.85rem; color: var(--text-lo); letter-spacing: 0.01em; }
 
   /* The window: panes hung in depth, tilted toward the reader. */
@@ -588,6 +592,7 @@ const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
   .d180 { --d: 180ms; }
   .d360 { --d: 360ms; }
   .d480 { --d: 480ms; }
+  .d540 { --d: 540ms; }
   .d600 { --d: 600ms; }
   h1 .line > .reveal { animation-name: rise-mask; animation-duration: 1.1s; }
   @keyframes rise { from { opacity: 0; transform: translateY(18px); } }

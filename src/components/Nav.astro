@@ -1,15 +1,15 @@
 ---
-// The top-right of every header: page links, a "Contact" pill and the
-// FR | EN language toggle. On narrow screens the links fold into a "Menu"
+// The top-right of every header: page links (Contact included), the lit
+// "Lancer votre projet" button for the questionnaire, and the FR | EN toggle. On narrow screens the links fold into a "Menu"
 // button; the language toggle always stays visible.
-import { strings, homePath, blogPath, contactPath, type Lang } from "../i18n";
+import { strings, homePath, blogPath, contactPath, questionnairePath, type Lang } from "../i18n";
 
 interface Props {
   lang: Lang;
   /** The same page in the other language. */
   altHref: string;
   /** Marks the matching link as the current page. */
-  current?: "blog";
+  current?: "blog" | "contact" | "project";
 }
 const { lang, altHref, current } = Astro.props;
 const t = strings[lang];
@@ -20,7 +20,9 @@ const links = [
   { href: `${home}#services`, label: t.navServices },
   { href: `${home}#faq`, label: t.navFaq },
   { href: blogPath[lang], label: t.navBlog, current: current === "blog" },
+  { href: contactPath[lang], label: t.navContact, current: current === "contact" },
 ];
+const project = { href: questionnairePath[lang], label: t.heroCta2, current: current === "project" };
 const toggle = {
   fr: { code: "FR", name: "Français" },
   en: { code: "EN", name: "English" },
@@ -31,7 +33,7 @@ const toggle = {
   <nav class="links-wide" aria-label={t.navLabel}>
     <ul>
       {links.map((l) => <li><a href={l.href} aria-current={l.current ? "page" : undefined}>{l.label}</a></li>)}
-      <li><a class="contact-pill" href={contactPath[lang]}>{t.navContact}</a></li>
+      <li><a class="project-pill" href={project.href} aria-current={project.current ? "page" : undefined}>{project.label}</a></li>
     </ul>
   </nav>
 
@@ -43,7 +45,7 @@ const toggle = {
     <nav class="links-panel" aria-label={t.navLabel}>
       <ul>
         {links.map((l) => <li><a href={l.href} aria-current={l.current ? "page" : undefined}>{l.label}</a></li>)}
-        <li><a class="contact-pill" href={contactPath[lang]}>{t.navContact}</a></li>
+        <li><a class="project-pill" href={project.href} aria-current={project.current ? "page" : undefined}>{project.label}</a></li>
       </ul>
     </nav>
   </details>
@@ -87,14 +89,14 @@ const toggle = {
   .navbox { display: flex; align-items: center; gap: 1.25rem; --focus: var(--lamp); }
 
   /* Desktop links: quiet text on the night bar, a lamp underline that grows on hover. */
-  .links-wide ul { display: flex; align-items: center; gap: 1.6rem; margin: 0; padding: 0; list-style: none; }
+  .links-wide ul { display: flex; align-items: center; gap: 1.5rem; margin: 0; padding: 0; list-style: none; }
   .links-wide a, .links-panel a { color: var(--text-lo); text-decoration: none; font-size: 0.92rem; font-weight: 500; }
-  .links-wide a:not(.contact-pill) {
+  .links-wide a:not(.project-pill) {
     position: relative;
     padding: 0.4rem 0;
     transition: color var(--dur-micro) var(--ease-hover);
   }
-  .links-wide a:not(.contact-pill)::after {
+  .links-wide a:not(.project-pill)::after {
     content: "";
     position: absolute;
     left: 0;
@@ -109,18 +111,21 @@ const toggle = {
   }
   .links-wide a:hover, .links-wide a[aria-current="page"] { color: var(--text-hi); }
   .links-wide a:hover::after, .links-wide a[aria-current="page"]::after { transform: scaleX(1); }
-  .contact-pill {
+  /* The one lit button in the bar: the questionnaire. */
+  .project-pill {
     display: inline-flex;
     align-items: center;
-    min-height: 36px;
-    padding: 0 1rem;
+    min-height: 38px;
+    padding: 0 1.1rem;
     border-radius: 99px;
-    color: var(--text-hi) !important;
-    border: 1px solid rgb(255 226 184 / 0.45);
-    background: rgb(255 194 125 / 0.08);
-    transition: background var(--dur-micro) var(--ease-hover), border-color var(--dur-micro) var(--ease-hover);
+    color: #1a0f04 !important;
+    font-weight: 600 !important;
+    white-space: nowrap;
+    background: linear-gradient(180deg, var(--lamp-hot), var(--lamp));
+    box-shadow: 0 8px 22px -10px rgb(255 178 102 / 0.85), inset 0 1px 0 rgb(255 255 255 / 0.6);
+    transition: transform var(--dur-short) var(--ease-hover), box-shadow var(--dur-short) var(--ease-hover);
   }
-  .contact-pill:hover { background: rgb(255 194 125 / 0.18); border-color: var(--lamp); }
+  @media (hover: hover) { .project-pill:hover { transform: translateY(-1px); box-shadow: 0 12px 26px -10px rgb(255 178 102 / 0.95), inset 0 1px 0 rgb(255 255 255 / 0.6); } }
 
   /* Language toggle: a glass track, the current language lit like the hero's lamp. */
   .langs {
@@ -203,9 +208,9 @@ const toggle = {
   .links-panel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
   .links-panel a { display: block; padding: 0.75rem 0.9rem; border-radius: 10px; font-size: 1rem; }
   .links-panel a:hover, .links-panel a[aria-current="page"] { color: var(--text-hi); background: rgb(255 255 255 / 0.06); }
-  .links-panel .contact-pill { display: flex; justify-content: center; margin-top: 0.35rem; min-height: 44px; }
+  .links-panel .project-pill { display: flex; justify-content: center; margin-top: 0.35rem; min-height: 44px; }
 
-  @media (max-width: 879px) {
+  @media (max-width: 1099px) {
     .links-wide { display: none; }
     .menu { display: block; }
     .navbox { gap: 0.6rem; }

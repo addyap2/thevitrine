@@ -132,6 +132,7 @@ The active chip scrolls into view inside its row on mobile.
 | Hero front pane | Edge lights up warm | Opens the live site |
 | Contact card (glass, at night) | Lifts 2 px, edge and glow turn warm, arrow nudges | — |
 | Menu link | Text brightens; a lamp underline grows from the left over `--dur-short` (it stays on the current page's link) | — |
+| "Lancer votre projet" (menu) | Rises 1 px and its lamp glow deepens over `--dur-short` | — |
 | Language toggle (FR \| EN) | The current language is lit in lamp light; the other brightens on hover | `scale(.96)` |
 | Phone menu | The two bars turn into a cross; the panel drops in 6 px over `--dur-short` | — |
 | Count | Number ticks in from 45 % above | — |

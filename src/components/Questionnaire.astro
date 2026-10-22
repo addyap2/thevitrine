@@ -11,7 +11,7 @@ const { lang } = Astro.props;
 const u = UI[lang];
 ---
 
-<SubPage lang={lang} title={u.title} description={u.description} paths={questionnairePath}>
+<SubPage lang={lang} title={u.title} description={u.description} paths={questionnairePath} current="project">
   <main class="dv" id="devis-main" data-lang={lang}>
     <div class="dv-wrap">
       <div class="dv-intro">
