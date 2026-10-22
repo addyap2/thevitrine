@@ -1,5 +1,7 @@
 ---
 title: "Pourquoi un site internet, quand on est déjà sur Facebook et Google Maps ?"
+seoTitle: "Pourquoi créer son propre site internet ?"
+updated: 2026-10-22
 description: "Les réseaux sociaux et Google Maps sont utiles, mais ils ne vous appartiennent pas. Ce qu'un site apporte en plus, et ce qu'il doit faire pour être utile."
 lang: fr
 slug: pourquoi-un-site-internet

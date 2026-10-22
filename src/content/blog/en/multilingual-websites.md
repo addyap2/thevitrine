@@ -1,5 +1,7 @@
 ---
 title: "A website in several languages: who it's for, and how to get it right"
+seoTitle: "Getting multilingual websites right"
+updated: 2026-10-22
 description: "Tourists, overseas owners, learners: who a multilingual website really helps, and the simple rules that make one work."
 lang: en
 slug: multilingual-websites

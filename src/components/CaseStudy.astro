@@ -26,7 +26,8 @@ const c = cases[slug];
 const prev = withCases[(i - 1 + withCases.length) % withCases.length];
 const next = withCases[(i + 1) % withCases.length];
 
-const urlSlug = caseSlug(p.title);
+const mobileImage = ["ristorante-lola", "filton-athletic-fc", "student-mark-tracker"].includes(p.slug) ? `/shots/mobile/${p.slug}.webp` : null;
+const urlSlug = caseSlug(p.slug);
 const canonical = new URL(casePath(lang, urlSlug), Astro.site);
 const abs = (path: string) => new URL(path, Astro.site).href;
 const category = categories.find((k) => k.id === p.category)?.label[lang] ?? t.more;
@@ -142,7 +143,7 @@ const ld = {
       <div class="sill horizon" aria-hidden="true"></div>
     </header>
 
-    <main class="wrap article">
+    <main id="main-content" tabindex="-1" class="wrap article">
       <section class="glance" aria-labelledby="glance" data-reveal>
         <h2 id="glance">{t.caseGlance}</h2>
         <dl>
@@ -165,6 +166,13 @@ const ld = {
         <h2 id="design">{t.caseDesign}</h2>
         <p>{c.design[lang]}</p>
       </section>
+      {mobileImage && <section class="mobile-proof" aria-labelledby="mobile-proof" data-reveal>
+        <div><h2 id="mobile-proof">{fr ? "Le site sur mobile" : "The site on mobile"}</h2>
+          <p>{p.slug === "student-mark-tracker" ? (fr ? "L’accès au tableau de bord commence par une connexion : e-mail et mot de passe, ou compte Google. Les données de suivi ne sont pas affichées publiquement." : "Dashboard access starts with sign-in: email and password, or a Google account. Tracking data is not shown publicly.") : fr ? "Une capture du site réel sur un écran de 390 px : la hiérarchie, le texte et les actions restent visibles dans leur contexte d’utilisation." : "A capture of the real site on a 390 px screen: hierarchy, text and actions shown in their actual context of use."}</p>
+          <p>{fr ? "Cette présentation décrit les fonctionnalités visibles. Nous ne publions pas de chiffres de fréquentation ou de conversion sans données vérifiées." : "This walkthrough describes visible features. We do not publish traffic or conversion figures without verified data."}</p>
+        </div>
+        <figure><img src={mobileImage} alt={p.slug === "student-mark-tracker" ? (fr ? "Student Mark Tracker : écran de connexion sur mobile" : "Student Mark Tracker: mobile sign-in screen") : (fr ? `${p.title} : page d’accueil sur mobile` : `${p.title}: home page on mobile`)} width="390" height="844" loading="lazy" decoding="async" /><figcaption>{fr ? "Capture du site · 22 octobre 2026" : "Site capture · 22 October 2026"}</figcaption></figure>
+      </section>}
       {p.url && (
         <p class="visit" data-reveal>
           <a href={p.url} target="_blank" rel="noopener">{t.caseVisit}{fr ? "\u00a0: " : ": "}{host} <span aria-hidden="true">↗</span></a>
@@ -172,11 +180,11 @@ const ld = {
       )}
 
       <nav class="pager" aria-label={fr ? "Autres projets" : "More projects"}>
-        <a href={casePath(lang, caseSlug(prev.title))} rel="prev">
+        <a href={casePath(lang, caseSlug(prev.slug))} rel="prev">
           <span class="dir"><span aria-hidden="true">←</span> {t.casePrev}</span>
           <span class="name">{prev.title}</span>
         </a>
-        <a href={casePath(lang, caseSlug(next.title))} rel="next" class="next">
+        <a href={casePath(lang, caseSlug(next.slug))} rel="next" class="next">
           <span class="dir">{t.caseNext} <span aria-hidden="true">→</span></span>
           <span class="name">{next.title}</span>
         </a>
@@ -247,13 +255,6 @@ const ld = {
       linear-gradient(180deg, var(--night-2) 0%, var(--night) 70%);
     padding-bottom: 4rem;
   }
-  .bar { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; }
-  .lang {
-    font-size: 0.875rem; font-weight: 500; color: var(--text-hi); text-decoration: none;
-    padding: 0.45rem 0.9rem; border: 1px solid rgb(255 255 255 / 0.18); border-radius: 99px;
-    background: rgb(255 255 255 / 0.04); view-transition-name: lang-switch;
-  }
-  .lang:hover { border-color: rgb(255 255 255 / 0.4); }
   .hero-grid { display: grid; gap: 2.5rem; align-items: center; padding-top: 3rem; }
   @media (min-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 3.5rem; padding-top: 3.5rem; } }
   .crumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.85rem; color: var(--text-lo); margin-bottom: 1.75rem; }
@@ -309,6 +310,11 @@ const ld = {
 
   /* The write-up: a readable column on paper. */
   .article { max-width: 46rem; padding-top: 4rem; padding-bottom: 4rem; }
+  .mobile-proof { display: grid; gap: 2rem; align-items: start; }
+  .mobile-proof figure { margin: 0; max-width: 280px; justify-self: center; }
+  .mobile-proof img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 20px 50px -30px var(--shadow); }
+  .mobile-proof figcaption { margin-top: .75rem; color: var(--ink-soft); font-size: .8rem; text-align: center; }
+  @media(min-width: 640px) { .mobile-proof { grid-template-columns: minmax(0, 1fr) 250px; } }
   .article section + section { margin-top: 2.75rem; }
   .article h2 {
     display: flex;

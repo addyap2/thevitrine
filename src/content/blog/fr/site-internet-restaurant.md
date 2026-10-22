@@ -1,5 +1,7 @@
 ---
 title: "Site internet de restaurant : ce qu'il doit faire, avant tout"
+seoTitle: "Site de restaurant : les indispensables"
+updated: 2026-10-22
 description: "Horaires, carte, réservation, itinéraire : ce que vos clients cherchent sur le site de votre restaurant, et comment le leur donner en quelques secondes."
 lang: fr
 slug: site-internet-restaurant

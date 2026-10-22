@@ -1,5 +1,7 @@
 ---
 title: "Building websites with AI: what changes, and what doesn't"
+seoTitle: "Building websites with AI: our approach"
+updated: 2026-10-22
 description: "We use AI to design and build your website. Here's what it really does, what it doesn't, and why your site won't end up looking like everyone else's."
 lang: en
 slug: building-websites-with-ai

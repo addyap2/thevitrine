@@ -1,17 +1,5 @@
-// Shared spam / abuse protection for the questionnaire endpoint (ported from antonyaddy.com). No third-party service,
-// no database. (The leading underscore keeps Vercel from exposing this file as a route.)
-//
-//  - Signed form tokens: /api/form-token hands the page a timestamp signed with a
-//    server secret. The form sends it back, so the fill time is measured by the
-//    server instead of trusted from the browser, and a script that never loads
-//    the page has no token.
-//  - Rate limits per IP and per recipient address. They live in the function's
-//    memory, so they are best effort (each warm instance counts separately), but
-//    they stop the burst-style abuse that matters here.
-//
-// Secret: FORM_SECRET if set, otherwise derived from RESEND_API_KEY, so nothing
-// new has to be configured.
-
+// Signed form tokens and abuse limits. Shared Redis is used when configured;
+// the bounded in-memory fallback remains best effort until Redis is connected.
 import crypto from "node:crypto";
 
 const TOKEN_MAX_AGE_MS = 24 * 60 * 60 * 1000;
@@ -36,7 +24,7 @@ function issueToken() {
 const spent = new Map();
 
 // → "ok" | "invalid" | "young". "young" means filled faster than a person could.
-function checkToken(token, minAgeMs) {
+async function checkToken(token, minAgeMs) {
   const key = secret();
   if (!key || typeof token !== "string" || token.length > 200) return "invalid";
   const parts = token.split(".");
@@ -48,8 +36,13 @@ function checkToken(token, minAgeMs) {
   const age = Date.now() - Number(parts[0]);
   if (!(age >= 0) || age > TOKEN_MAX_AGE_MS) return "invalid";
   if (age < minAgeMs) return "young";
+  if (redisConfigured()) {
+    const claimed = await redis(["SET", `vitrine:nonce:${parts[1]}`, "1", "NX", "PX", TOKEN_MAX_AGE_MS]);
+    return claimed === "OK" ? "ok" : "invalid";
+  }
   if (spent.has(parts[1])) return "invalid";
   sweep(spent, TOKEN_MAX_AGE_MS);
+  if (spent.size >= 10000) return "invalid";
   spent.set(parts[1], Date.now());
   return "ok";
 }
@@ -67,12 +60,18 @@ function sweep(map, windowMs) {
 }
 
 // true when the key has already hit `max` times within `windowMs`; otherwise records a hit.
-function limited(name, key, max, windowMs) {
+async function limited(name, key, max, windowMs) {
   if (!key) return false;
-  const id = `${name}:${key}`;
+  // Store only keyed hashes, never raw visitor IPs or email addresses.
+  const id = crypto.createHmac("sha256", secret() || "local-test").update(`${name}:${key}`).digest("hex");
+  if (redisConfigured()) {
+    const lua = "local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('PEXPIRE',KEYS[1],ARGV[1]) end; return n";
+    return (await redis(["EVAL", lua, "1", `vitrine:limit:${id}`, String(windowMs)])) > max;
+  }
   const now = Date.now();
   const hits = (buckets.get(id) || []).filter((t) => now - t < windowMs);
   if (hits.length >= max) { buckets.set(id, hits); return true; }
+  if (buckets.size >= 10000 && !buckets.has(id)) return true;
   hits.push(now);
   buckets.set(id, hits);
   sweep(buckets, 24 * 60 * 60 * 1000);
@@ -102,3 +101,28 @@ function countLinks(s) {
 }
 
 export { issueToken, checkToken, limited, clientIp, isJson, greetingName, countLinks };
+
+export function redisConfigured() {
+  return !!((process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL) && (process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN));
+}
+export async function redis(command) {
+  const response = await fetch(process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL, {
+    method: "POST", headers: { Authorization: `Bearer ${process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN}`, "Content-Type": "application/json" },
+    body: JSON.stringify(command), signal: AbortSignal.timeout(3000),
+  });
+  if (!response.ok) throw new Error("Shared protection unavailable");
+  const body = await response.json();
+  if (body.error) throw new Error("Shared protection failed");
+  return body.result;
+}
+
+export async function countConversion(form, lang, requestKey) {
+  if (!redisConfigured()) return;
+  const key = `vitrine:events:${new Date().toISOString().slice(0, 10)}`;
+  try {
+    const first = await redis(["SET", `vitrine:conversion:${requestKey}`, "1", "NX", "EX", 86400]);
+    if (first !== "OK") return;
+    await redis(["HINCRBY", key, `${form}_received:${lang}`, "1"]);
+    await redis(["EXPIRE", key, 90 * 86400]);
+  } catch { console.error(JSON.stringify({ event: "conversion_count_failed", form })); }
+}

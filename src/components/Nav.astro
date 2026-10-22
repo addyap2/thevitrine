@@ -62,19 +62,13 @@ const toggle = {
       l === lang ? (
         <span class="seg on" lang={l} aria-current="true" title={toggle[l].name}>{toggle[l].code}</span>
       ) : (
-        <a class="seg lang" href={altHref} hreflang={l} lang={l} aria-label={t.switchLabel} title={toggle[l].name}>{toggle[l].code}</a>
+        <a class="seg lang" href={altHref} hreflang={l} lang={l} aria-label={`${toggle[l].code} — ${t.switchLabel}`} title={toggle[l].name}>{toggle[l].code}</a>
       ),
     )}
   </div>
 </div>
 
 <script>
-  // Remember a hand-picked language (it overrides the browser-language redirect on /).
-  document.querySelectorAll<HTMLAnchorElement>(".langs a[hreflang]").forEach((a) =>
-    a.addEventListener("click", () => {
-      document.cookie = `lang=${a.hreflang}; path=/; max-age=31536000; SameSite=Lax`;
-    }),
-  );
   // The phone menu closes on a link tap, an outside tap or Escape.
   document.querySelectorAll<HTMLDetailsElement>("[data-menu]").forEach((menu) => {
     const close = () => menu.removeAttribute("open");
@@ -191,6 +185,9 @@ const toggle = {
   .menu[open] .bars i:first-child { top: 4.5px; transform: rotate(45deg); }
   .menu[open] .bars i:last-child { top: 4.5px; transform: rotate(-45deg); }
   .links-panel {
+    max-height: calc(100vh - var(--site-header-height) - 24px);
+    max-height: calc(100dvh - var(--site-header-height) - 24px);
+    overflow-y: auto; overscroll-behavior: contain;
     position: absolute;
     right: 0;
     top: calc(100% + 0.6rem);

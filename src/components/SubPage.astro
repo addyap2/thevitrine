@@ -5,7 +5,7 @@ import { Font } from "astro:assets";
 import SiteHeader from "./SiteHeader.astro";
 import "../styles/motion.css";
 import "../styles/tokens.css";
-import { strings, homePath, legalPath, questionnairePath, type Lang } from "../i18n";
+import { strings, homePath, legalPath, questionnairePath, contactPath, type Lang } from "../i18n";
 
 interface Props {
   lang: Lang;
@@ -71,9 +71,12 @@ const ogImage = new URL(`/og/${lang}.jpg`, Astro.site);
     <footer class="contact">
       <div class="sill horizon" aria-hidden="true"></div>
       <div class="wrap">
+        {current !== "project" && <>
         <h2 data-reveal>{t.contactLead} <em>{t.contactAccent}</em>{t.contactTail}</h2>
         <p class="contact-lede" data-reveal>{t.contactLede}</p>
         <a class="cta" href={questionnairePath[lang]} data-reveal>{t.heroCta2} <span aria-hidden="true">→</span></a>
+        </>}
+        {current === "project" && <a class="cta" href={contactPath[lang]}>{lang === "fr" ? "Une question avant de commencer ? Contactez-nous" : "A question before you start? Contact us"} <span aria-hidden="true">→</span></a>}
         <p class="small">
           <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
           <a href={legalPath[lang]}>{t.legalLink}</a>
@@ -120,21 +123,6 @@ const ogImage = new URL(`/og/${lang}.jpg`, Astro.site);
 <style>
   .notice { margin: 0; padding: 0.6rem 1rem; text-align: center; font-size: 0.85rem; font-weight: 500; color: #1a0f04; background: var(--lamp); }
 
-  .top {
-    position: relative;
-    --focus: var(--lamp);
-    color-scheme: dark;
-    background:
-      radial-gradient(60% 120% at 80% 0%, rgb(255 178 102 / 0.18), transparent 70%),
-      linear-gradient(180deg, var(--night-2), var(--night));
-  }
-  .bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 0.9rem; padding-bottom: 0.9rem; }
-  .lang {
-    font-size: 0.875rem; font-weight: 500; color: var(--text-hi); text-decoration: none;
-    padding: 0.45rem 0.9rem; border: 1px solid rgb(255 255 255 / 0.18); border-radius: 99px;
-    background: rgb(255 255 255 / 0.04); view-transition-name: lang-switch;
-  }
-  .lang:hover { border-color: rgb(255 255 255 / 0.4); }
   .sill { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, var(--lamp) 35%, var(--blue) 75%, transparent); opacity: 0.8; }
 
   .contact {

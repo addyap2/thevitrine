@@ -1,0 +1,25 @@
+<script>
+  import { inject } from "@vercel/analytics";
+  if (navigator.doNotTrack !== "1") inject({ mode: "production", beforeSend: (event) => {
+    const url = new URL(event.url);
+    url.search = ""; url.hash = "";
+    return { ...event, url: url.href };
+  } });
+  document.cookie = "lang=; path=/; max-age=0; SameSite=Lax";
+  const lang = document.documentElement.lang === "en" ? "en" : "fr";
+  const record = (event: string) => {
+    if (navigator.doNotTrack === "1") return;
+    fetch("/api/event/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event, lang }), keepalive: true }).catch(() => {});
+  };
+  document.addEventListener("click", (e) => {
+    if (!(e.target instanceof Element)) return;
+    const a = e.target.closest<HTMLAnchorElement>("a[href]");
+    if (!a) return;
+    if (a.hasAttribute("data-wa")) record("whatsapp_click");
+    else if (/^\/(devis|en\/quote)\/?$/.test(new URL(a.href).pathname)) record("quote_click");
+    else if (/^\/(contact|en\/contact)\/?$/.test(new URL(a.href).pathname)) record("contact_click");
+  });
+  document.querySelectorAll<HTMLFormElement>("#cf-form, #dv-form").forEach((form) => {
+    form.addEventListener("input", () => record(form.id === "cf-form" ? "contact_started" : "quote_started"), { once: true });
+  });
+</script>

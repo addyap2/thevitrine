@@ -1,5 +1,7 @@
 ---
 title: "Why have a website when you're already on Facebook and Google Maps?"
+seoTitle: "Why have your own website?"
+updated: 2026-10-22
 description: "Social media and Google Maps are useful, but they don't belong to you. What a website adds, and what it has to do to be worth having."
 lang: en
 slug: why-have-a-website

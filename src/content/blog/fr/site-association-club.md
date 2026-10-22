@@ -1,5 +1,7 @@
 ---
 title: "Associations et clubs : un site simple pour faire vivre votre communauté"
+seoTitle: "Sites web pour associations et clubs"
+updated: 2026-10-22
 description: "Prochain match, prochaine soirée, adhésion, partenaires : ce dont les membres et les curieux ont besoin sur le site d'une association ou d'un club."
 lang: fr
 slug: site-association-club

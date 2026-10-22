@@ -29,7 +29,7 @@ const description = p.description[lang];
 const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
 // Once its case study is published, the card's title leads there (an internal
 // link); until then it goes straight to the live site.
-const caseHref = cases[p.slug]?.status === "published" ? casePath(lang, caseSlug(p.title)) : null;
+const caseHref = cases[p.slug]?.status === "published" ? casePath(lang, caseSlug(p.slug)) : null;
 const titleHref = caseHref ?? p.url;
 ---
 

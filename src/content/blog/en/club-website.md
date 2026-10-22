@@ -1,5 +1,7 @@
 ---
 title: "Clubs and associations: a simple website that keeps your community going"
+seoTitle: "Websites for clubs and associations"
+updated: 2026-10-22
 description: "Next match, next event, membership, sponsors: what members and newcomers need from the website of a club or association."
 lang: en
 slug: club-and-association-website

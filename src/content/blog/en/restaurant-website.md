@@ -1,5 +1,7 @@
 ---
 title: "Restaurant websites: what they have to do first"
+seoTitle: "Restaurant website essentials"
+updated: 2026-10-22
 description: "Opening hours, menu, booking, directions: what diners look for on your restaurant's website, and how to give it to them in seconds."
 lang: en
 slug: restaurant-website

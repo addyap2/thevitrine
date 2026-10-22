@@ -696,12 +696,35 @@ export const cases: Record<string, CaseStudy> = {
   },
 };
 
-/** URL-safe slug from a project title: "Auto-école La Tour de Mare" → "auto-ecole-la-tour-de-mare". */
-export const caseSlug = (title: string) =>
-  title
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/&/g, " ")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+// Published URLs are permanent even when a project changes its display title.
+const publishedSlugs: Record<string, string> = {
+  "ristorante-lola": "ristorante-da-lola",
+  "wall-street": "wall-street-frejus",
+  "so-good-diner": "so-good-diner",
+  "tandoor-global": "mr-tandoors",
+  "planb-global-connect": "plan-b-concept",
+  "autoecole": "auto-ecole-la-tour-de-mare",
+  "E-Mconcept": "em-concept",
+  "julienb": "julien-bourgois",
+  "stephanie": "sr-bien-etre",
+  "taquet": "annick-taquet-assoignons",
+  "filton-athletic-fc": "filton-athletic-fc",
+  "filton-social-club": "filton-district-social-club",
+  "speakup-ai-english-trainer": "speakup-ai",
+  "toeic-success-hub": "toeicpath",
+  "cloe-prep-path": "cloe-prep",
+  "english-grammar-hub": "grammatica",
+  "adventure-books": "english-reading-adventures",
+  "listening-english-antonyaddy": "listenup",
+  "anglais-a-distance-learn": "anglais-a-distance",
+  "biz-fluent-coach": "tp-english-pro",
+  "addys-english-pro": "antony-addy",
+  "addy-genai-training": "formation-ia-generative",
+  "addy-sap-connect": "sap-mm-training",
+  "student-mark-tracker": "student-mark-tracker"
+};
+export const caseSlug = (projectId: string) => {
+  const slug = publishedSlugs[projectId];
+  if (!slug) throw new Error(`Missing permanent case-study URL: ${projectId}`);
+  return slug;
+};

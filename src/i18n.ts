@@ -18,7 +18,7 @@ export const casePath = (lang: Lang, slug: string) => (lang === "fr" ? `/realisa
 
 export const strings = {
   en: {
-    title: "Website design on the French Riviera & in the United Kingdom | The Vitrine",
+    title: "Bespoke websites · French Riviera & UK | The Vitrine",
     description: "Fast, polished websites for individuals, associations, institutions and businesses, on the French Riviera and beyond, in any language. Browse our {n} live sites.",
     heading: "Websites and apps we've built with AI.",
     lede: "A shop window of our work. Each one is live: click through and try it.",
@@ -138,7 +138,7 @@ export const strings = {
     aboutDescription: "Meet Antony Addy and Julien Bourgois, the two makers behind The Vitrine: who they are, how they work, and the websites they build.",
     aboutEyebrow: "About",
     aboutH1: "Two makers, one shop window",
-    aboutLead: "The Vitrine brings together the websites Antony Addy and Julien Bourgois build, each in their own way, for restaurants, shops, clubs, practitioners and trainers. Two different paths, one standard: fast, polished sites, and one person to talk to from the first call to launch.",
+    aboutLead: "The Vitrine brings together the websites Antony Addy and Julien Bourgois build, each in their own way, for individuals, associations, institutions and businesses of every size, in the languages their audiences need. Two different paths, one standard: fast, polished sites, and one person to talk to from the first call to launch.",
     aboutCount: "{n} sites in the window",
     aboutSeeWork: "See his work",
     aboutSite: "His website",
@@ -166,7 +166,7 @@ export const strings = {
     legalUpdated: "Last updated:",
   },
   fr: {
-    title: "Création de sites vitrines dans le Var et sur la Côte d'Azur | The Vitrine",
+    title: "Création de sites web sur mesure | The Vitrine",
     description: "Sites rapides et soignés pour particuliers, associations, institutions et entreprises, dans le Var, les Alpes-Maritimes et au-delà. Découvrez nos {n} sites.",
     heading: "Des sites et des applis créés avec l'IA.",
     lede: "La vitrine de notre travail. Tout est en ligne : cliquez et essayez.",
@@ -286,7 +286,7 @@ export const strings = {
     aboutDescription: "Antony Addy et Julien Bourgois, les deux créateurs de The Vitrine : qui ils sont, comment ils travaillent, et les sites qu'ils créent.",
     aboutEyebrow: "À propos",
     aboutH1: "Deux créateurs, une même vitrine",
-    aboutLead: "The Vitrine réunit les sites qu'Antony Addy et Julien Bourgois créent, chacun à sa façon, pour des restaurants, des commerces, des clubs, des praticiens et des formateurs. Deux parcours différents, une même exigence : des sites rapides et soignés, et un seul interlocuteur du premier échange à la mise en ligne.",
+    aboutLead: "The Vitrine réunit les sites qu'Antony Addy et Julien Bourgois créent, chacun à sa façon, pour les particuliers, les associations, les institutions et les entreprises de toute taille, dans les langues de leurs publics. Deux parcours différents, une même exigence : des sites rapides et soignés, et un seul interlocuteur du premier échange à la mise en ligne.",
     aboutCount: "{n} sites dans la vitrine",
     aboutSeeWork: "Voir ses réalisations",
     aboutSite: "Son site",

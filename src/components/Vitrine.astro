@@ -140,12 +140,6 @@ const ld = {
       // show everything rather than leave content hidden.
       setTimeout(function () { if (!window.__vitrine) document.documentElement.classList.add("reveal-all"); }, 3000);
       addEventListener("pagereveal", (e) => e.viewTransition && document.documentElement.classList.add("no-intro"));
-      // Choosing a language by hand is remembered for a year; it overrides the
-      // browser-language redirect on / (see vercel.json).
-      addEventListener("click", (e) => {
-        const a = e.target.closest && e.target.closest("a.lang[hreflang]");
-        if (a) document.cookie = "lang=" + a.hreflang + "; path=/; max-age=31536000; SameSite=Lax";
-      });
     </script>
     <title>{t.title}</title>
     <meta name="description" content={description} />
@@ -174,7 +168,7 @@ const ld = {
   <body>
     <Hero lang={lang} projects={projects} total={projects.length} />
 
-    <main class="wrap">
+    <main id="main-content" tabindex="-1" class="wrap">
       <div id="work">
       {projects.length === 0 ? (
         <p class="empty">{t.empty}</p>
@@ -205,6 +199,10 @@ const ld = {
               </div>
             )}
           </nav>
+          <div class="empty" id="filter-empty" hidden role="status">
+            <p>{lang === "fr" ? "Aucune réalisation ne correspond à ces filtres." : "No projects match these filters."}</p>
+            <button type="button" id="filter-reset">{lang === "fr" ? "Voir toutes les réalisations" : "Show all projects"}</button>
+          </div>
           {sections.map((s, si) => (
             <section class="category" data-category={s.id} aria-labelledby={`cat-${s.id}`}>
               <div class="cat-head" data-reveal="heading">
@@ -408,6 +406,7 @@ const ld = {
           if (n) n.textContent = String(visible).padStart(2, "0");
           shown += visible;
         }
+        document.getElementById("filter-empty")!.hidden = shown !== 0;
         if (count && count.textContent !== String(shown)) {
           count.textContent = String(shown);
           count.classList.remove("tick");
@@ -476,6 +475,13 @@ const ld = {
           if (reduced.matches) return apply();
           swap();
         });
+      });
+
+      document.getElementById("filter-reset")?.addEventListener("click", () => {
+        state.maker = ""; state.category = "";
+        groups.forEach((g) => g.querySelectorAll<HTMLButtonElement>("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.value === ""))));
+        apply(); placeAll(); revealAll();
+        groups[0]?.querySelector<HTMLButtonElement>("button")?.focus();
       });
 
       // Arriving with ?maker=Julien (from the About page): start with that maker's sites.
@@ -556,6 +562,7 @@ const ld = {
   :focus-visible { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; }
   .hero, .contact { --focus: var(--lamp); }
   /* Keyboard focus never lands hidden under the pinned filter bar. */
+  #filter-empty button { min-height: 44px; padding: .7rem 1.2rem; border: 1px solid var(--ink-soft); border-radius: 99px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
   main :is(a, button) { scroll-margin-top: 9rem; }
 </style>
 

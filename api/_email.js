@@ -3,6 +3,8 @@
 // in Outlook and Gmail, and the request helpers both endpoints need.
 // (The leading underscore keeps Vercel from exposing this file as a route.)
 
+import crypto from "node:crypto";
+
 export const SITE = "https://thevitrine.fr";
 export const LOGO = `${SITE}/brand/logo-email.png`; // 500×128, shown at 190×49
 
@@ -23,7 +25,7 @@ export const clip = (s, n) => String(s == null ? "" : s).slice(0, n).trim();
 export const oneLine = (s, n) => clip(s, n).replace(/[\r\n]+/g, " ");
 export const isEmail = (s) => /^[^\s@<>",;]+@[^\s@<>",;]+\.[^\s@<>",;]+$/.test(s) && s.length <= 254;
 
-const ALLOWED_HOSTS = [/^thevitrine\.fr$/, /^www\.thevitrine\.fr$/, /\.vercel\.app$/, /^localhost(:\d+)?$/, /^127\.0\.0\.1(:\d+)?$/];
+const ALLOWED_HOSTS = [/^thevitrine\.fr$/, /^www\.thevitrine\.fr$/, /^thevitrine(?:-[a-z0-9-]+)?\.vercel\.app$/, /^localhost(:\d+)?$/, /^127\.0\.0\.1(:\d+)?$/];
 export function originOk(req) {
   const o = req.headers.origin || req.headers.referer || "";
   if (!o) return true; // some privacy tools strip both; the other checks still apply
@@ -32,8 +34,11 @@ export function originOk(req) {
 }
 
 export async function readJson(req, maxBytes) {
-  if (req.body && typeof req.body === "object") return req.body;
-  if (typeof req.body === "string") return JSON.parse(req.body);
+  if (req.body !== undefined) {
+    const raw = typeof req.body === "string" ? req.body : JSON.stringify(req.body);
+    if (Buffer.byteLength(raw, "utf8") > maxBytes) throw new Error("too large");
+    return JSON.parse(raw);
+  }
   const chunks = []; let size = 0;
   for await (const c of req) { size += c.length; if (size > maxBytes) throw new Error("too large"); chunks.push(c); }
   return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
@@ -46,11 +51,16 @@ export const recipients = () =>
 // strict DMARC policy even though the domain itself receives no mail.
 export const sender = () => process.env.DEVIS_FROM || "The Vitrine <devis@thevitrine.fr>";
 
-export async function send(key, msg) {
+export function submissionKey(kind, id, data) {
+  return crypto.createHmac("sha256", process.env.FORM_SECRET || process.env.RESEND_API_KEY || "local-test").update(JSON.stringify([kind, typeof id === "string" ? id.slice(0, 80) : "", data])).digest("hex");
+}
+
+export async function send(key, msg, idempotencyKey) {
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}) },
     body: JSON.stringify(msg),
+    signal: AbortSignal.timeout(10000),
   });
   if (!r.ok) throw new Error(`Resend ${r.status}: ${(await r.text()).slice(0, 300)}`);
   return r.json();

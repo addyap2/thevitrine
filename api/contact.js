@@ -2,9 +2,9 @@
 // Same system as api/devis.js: no database, the message lives only in the two emails.
 // Environment variables: RESEND_API_KEY (required), DEVIS_FROM and DEVIS_TO (optional).
 
-import { checkToken, limited, clientIp, isJson, greetingName, countLinks } from "./_guard.js";
+import { checkToken, countConversion, limited, clientIp, isJson, greetingName, countLinks } from "./_guard.js";
 import {
-  C, SERIF, SANS, SITE, esc, clip, oneLine, isEmail, originOk, readJson, recipients, sender, send, phoneDigits,
+  C, SERIF, SANS, SITE, esc, clip, oneLine, isEmail, originOk, readJson, recipients, sender, send, submissionKey, phoneDigits,
   documentHtml, header, button, buttons, eyebrow, footer, signature,
 } from "./_email.js";
 
@@ -114,11 +114,13 @@ export default async function handler(req, res) {
 
   let body;
   try { body = await readJson(req, MAX_BODY); } catch (e) { return res.status(400).json({ ok: false }); }
-  if (!body || typeof body !== "object") return res.status(400).json({ ok: false });
+  if (!body || typeof body !== "object" || Array.isArray(body)) return res.status(400).json({ ok: false });
 
   // Bots: honeypot filled or impossibly fast. Pretend it worked.
   if (body.website) return res.status(200).json({ ok: true });
-  const token = checkToken(body.token, MIN_FILL_MS);
+  let token;
+  try { token = await checkToken(body.token, MIN_FILL_MS); }
+  catch { return res.status(503).json({ ok: false, error: "unavailable" }); }
   if (token === "invalid") return res.status(403).json({ ok: false, error: "token" });
   if (token === "young") return res.status(200).json({ ok: true });
 
@@ -128,27 +130,34 @@ export default async function handler(req, res) {
   if (countLinks(d.message) > MAX_LINKS) return res.status(200).json({ ok: true });
 
   const ip = clientIp(req);
-  if (limited("contact-ip", ip, 5, 10 * 60 * 1000) || limited("contact-ip-day", ip, 20, 24 * 60 * 60 * 1000) ||
-      limited("contact-to", d.email.toLowerCase(), 3, 60 * 60 * 1000)) {
-    return res.status(429).json({ ok: false, error: "rate" });
-  }
+  try {
+    if (await limited("contact-ip", ip, 5, 10 * 60 * 1000) || await limited("contact-ip-day", ip, 20, 24 * 60 * 60 * 1000) ||
+        await limited("contact-to", d.email.toLowerCase(), 3, 60 * 60 * 1000)) {
+      return res.status(429).json({ ok: false, error: "rate" });
+    }
+  } catch { return res.status(503).json({ ok: false, error: "unavailable" }); }
 
   const key = process.env.RESEND_API_KEY;
   if (!key) { console.error("contact: RESEND_API_KEY is not set"); return res.status(500).json({ ok: false }); }
   const from = sender(), to = recipients();
+  const requestKey = submissionKey("contact", body.submissionId, d);
+  let confirmationSent = true;
 
   try {
     const mine = ownerEmail(d);
-    await send(key, { from, to, reply_to: d.email, subject: mine.subject, html: mine.html, text: mine.text });
+    await send(key, { from, to, reply_to: d.email, subject: mine.subject, html: mine.html, text: mine.text }, `${requestKey}-team`);
   } catch (e) {
     console.error("contact: team email failed", e.message);
     return res.status(502).json({ ok: false });
   }
   try {
     const theirs = clientEmail(d);
-    await send(key, { from, to: [d.email], reply_to: to, subject: theirs.subject, html: theirs.html, text: theirs.text });
+    await send(key, { from, to: [d.email], reply_to: to, subject: theirs.subject, html: theirs.html, text: theirs.text }, `${requestKey}-confirmation`);
   } catch (e) {
-    console.error("contact: confirmation email failed", e.message);
+    confirmationSent = false;
+    console.error(JSON.stringify({ event: "confirmation_failed", form: "contact", requestKey, reason: e.name }));
   }
-  return res.status(200).json({ ok: true });
+  await countConversion("contact", d.lang, requestKey);
+  console.info(JSON.stringify({ event: "form_received", form: "contact", confirmationSent, requestKey }));
+  return res.status(200).json({ ok: true, confirmationSent });
 }

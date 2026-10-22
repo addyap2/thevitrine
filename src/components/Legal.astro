@@ -2,8 +2,7 @@
 // Mentions légales / legal notice. Details come from src/data/legal.ts. Any
 // required field still empty shows as a visible placeholder and is listed as a
 // warning in the build log, until it is filled in.
-// The privacy section says there is no audience measurement: update it if
-// analytics is ever added (and say which tool, and whether it sets cookies).
+// Privacy disclosures match forms, draft storage, aggregate counters and Vercel Analytics.
 // It also describes the project questionnaire (api/devis.js): keep it in step.
 import { Font } from "astro:assets";
 import SiteHeader from "./SiteHeader.astro";
@@ -48,7 +47,7 @@ const fr = lang === "fr";
   <body>
     <SiteHeader lang={lang} altHref={legalPath[other]} />
 
-    <main class="wrap">
+    <main id="main-content" tabindex="-1" class="wrap">
       <p class="back"><a href={homePath[lang]}><span aria-hidden="true">←</span> {t.legalBack}</a></p>
       <h1>{t.legalTitle}</h1>
       <p class="updated">{t.legalUpdated} {date}</p>
@@ -111,18 +110,18 @@ const fr = lang === "fr";
         <h2 id="privacy">{fr ? "Données personnelles et cookies" : "Personal data and cookies"}</h2>
         <p>
           {fr
-            ? "Ce site ne propose ni compte, ni mesure d'audience, et ne contient aucun traceur publicitaire. Les polices de caractères sont servies depuis ce site : aucune donnée n'est transmise à un tiers pendant votre simple visite."
-            : "This site has no accounts, no audience measurement and no advertising trackers. Fonts are served from this site, so no data is passed to a third party while you simply browse."}
+            ? "Ce site ne propose aucun compte et ne contient aucun traceur publicitaire. Les polices de caractères sont servies depuis ce site."
+            : "This site has no accounts or advertising trackers. Fonts are served from this site."}
         </p>
         <p>
           {fr
-            ? "Questionnaire projet et formulaire de contact : les informations que vous y saisissez (nom, e-mail, téléphone, entreprise, message ou description de votre projet) sont envoyées par e-mail à Antony Addy et Julien Bourgois, uniquement pour préparer votre devis et vous recontacter, sur la base de votre consentement. Elles ne sont pas enregistrées sur ce site. L'envoi passe par le service Resend (Resend, Inc., États-Unis), et une copie de confirmation vous est adressée. Vos réponses restent dans nos boîtes e-mail le temps nécessaire au suivi de votre demande, puis sont supprimées au plus tard trois ans après notre dernier échange. Jusqu'à l'envoi, un brouillon reste uniquement dans votre navigateur."
-            : "Project questionnaire and contact form: what you enter (name, email, phone, business, message or project details) is emailed to Antony Addy and Julien Bourgois, only to prepare your quote and get back to you, based on your consent. They aren't stored on this site. Sending goes through the Resend service (Resend, Inc., United States), and a confirmation copy is sent to you. Your answers stay in our inboxes for as long as your request needs following up, and are deleted at the latest three years after our last exchange. Until you send it, a draft stays only in your browser."}
+            ? "Questionnaire projet et formulaire de contact : les informations que vous y saisissez (nom, e-mail, téléphone, entreprise, message ou description de votre projet) sont envoyées par e-mail à Antony Addy et Julien Bourgois, uniquement pour préparer votre devis et vous recontacter, sur la base de votre consentement. Elles ne sont pas enregistrées sur ce site. L'envoi passe par le service Resend (Resend, Inc., États-Unis), et une copie de confirmation vous est adressée lorsque l’envoi aboutit. Vos réponses restent dans nos boîtes e-mail le temps nécessaire au suivi de votre demande, puis sont supprimées au plus tard trois ans après notre dernier échange. Un brouillon reste uniquement dans votre navigateur pendant 7 jours maximum, ou jusqu’à l’envoi ou sa suppression."
+            : "Project questionnaire and contact form: what you enter (name, email, phone, business, message or project details) is emailed to Antony Addy and Julien Bourgois, only to prepare your quote and get back to you, based on your consent. They aren't stored on this site. Sending goes through the Resend service (Resend, Inc., United States), and a confirmation copy is sent to you when sending succeeds. Your answers stay in our inboxes for as long as your request needs following up, and are deleted at the latest three years after our last exchange. A draft stays only in your browser for up to 7 days, or until you send or delete it."}
         </p>
         <p>
           {fr
-            ? "Un seul cookie est utilisé : « lang », qui retient la langue que vous avez choisie, pendant un an. Il est strictement nécessaire à ce choix et ne demande donc pas de consentement."
-            : "One cookie is used: “lang”, which remembers the language you chose, for one year. It is strictly necessary for that choice, so it does not require consent."}
+            ? "La langue se choisit avec les liens Français / English, sans cookie de préférence. Aucun cookie publicitaire n’est utilisé."
+            : "Choose your language using the Français / English links, without a preference cookie. No advertising cookies are used."}
         </p>
         <p>
           {fr
@@ -138,6 +137,9 @@ const fr = lang === "fr";
             ? " Vous pouvez aussi adresser une réclamation à la CNIL (cnil.fr)."
             : " You can also complain to the French data protection authority, the CNIL (cnil.fr)."}
         </p>
+        <p>{fr
+          ? "Vercel Web Analytics mesure les pages consultées sans cookies publicitaires. Les paramètres d’URL sont retirés avant l’envoi. Nous comptons également les clics vers le contact, le questionnaire et WhatsApp, ainsi que le début et l’envoi des formulaires, sans nom, e-mail ou contenu saisi. Les compteurs agrégés expirent après 90 jours. Les identifiants techniques utilisés pour limiter les abus sont hachés et expirent sous 24 heures via Upstash Redis, hébergé dans l’Union européenne."
+          : "Vercel Web Analytics measures page views without advertising cookies. URL parameters are removed before sending. We also count contact, questionnaire and WhatsApp clicks, and form starts and submissions, without names, emails or entered text. Aggregate counters expire after 90 days. Technical identifiers used to limit abuse are hashed and expire within 24 hours using Upstash Redis, hosted in the European Union."}</p>
       </section>
 
       <section aria-labelledby="links">
@@ -185,14 +187,6 @@ const fr = lang === "fr";
   @media (min-width: 640px) { .wrap { padding: 0 2rem; } }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  .top { background: linear-gradient(180deg, var(--night-2), var(--night)); color-scheme: dark; }
-  .top :focus-visible { outline-color: var(--lamp); }
-  .bar { display: flex; justify-content: space-between; align-items: center; padding-top: 1.25rem; padding-bottom: 1.25rem; max-width: 46rem; }
-  .lang {
-    font-size: 0.875rem; font-weight: 500; color: #f6f2ea; text-decoration: none;
-    padding: 0.4rem 0.9rem; border: 1px solid rgb(255 255 255 / 0.2); border-radius: 99px;
-  }
-  .lang:hover { border-color: rgb(255 255 255 / 0.45); }
 
   main.wrap { padding-top: 2.5rem; padding-bottom: 3rem; }
   .back { margin: 0 0 2rem; font-size: 0.9rem; }
@@ -220,7 +214,7 @@ const fr = lang === "fr";
     cursor: pointer;
   }
   .show-phone:hover { border-color: var(--brand); }
-  .todo { font-style: italic; opacity: 0.75; }
+  .todo { font-style: italic; color: var(--ink-soft); }
   .foot { padding-top: 1.5rem; padding-bottom: 2.5rem; border-top: 1px solid var(--line); font-size: 0.85rem; color: var(--ink-soft); }
   .foot p { margin: 0; }
 </style>

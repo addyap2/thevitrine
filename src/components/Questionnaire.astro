@@ -12,7 +12,7 @@ const u = UI[lang];
 ---
 
 <SubPage lang={lang} title={u.title} description={u.description} paths={questionnairePath} current="project">
-  <main class="dv" id="devis-main" data-lang={lang}>
+  <main class="dv" id="devis-main" tabindex="-1" data-lang={lang}>
     <div class="dv-wrap">
       <div class="dv-intro">
         <p class="eyebrow">{u.eyebrow}</p>
@@ -27,7 +27,8 @@ const u = UI[lang];
       <ol class="dv-progress" id="dv-progress" aria-label={u.steps}></ol>
       <p class="dv-restart-row"><button type="button" class="dv-restart" id="dv-restart" hidden>{u.restart}</button></p>
 
-      <form id="dv-form" class="dv-form" novalidate>
+      <p id="dv-fallback">{lang === "fr" ? "Si le formulaire ne s’affiche pas, écrivez-nous :" : "If the form does not appear, email us:"} <a href="mailto:antony@antonyaddy.com">antony@antonyaddy.com</a></p>
+      <form hidden id="dv-form" class="dv-form" novalidate>
         <div id="dv-steps"></div>
 
         <!-- Honeypot: hidden from people, tempting for bots. -->
@@ -53,7 +54,8 @@ const u = UI[lang];
         <p class="eyebrow">{u.doneEyebrow}</p>
         <h2 id="dv-done-title">{u.doneH}</h2>
         <p class="done-lead">{u.doneP}</p>
-        <p class="done-sent">{u.doneSentTo} <strong id="dv-sent-to"></strong>.</p>
+        <p id="dv-confirmation-warning" hidden>{lang === "fr" ? "Votre demande a bien été transmise. L’e-mail de confirmation n’a pas pu être envoyé ; inutile de renvoyer le formulaire." : "Your request has reached us. The confirmation email could not be sent; there is no need to submit again."}</p>
+          <p class="done-sent">{u.doneSentTo} <strong id="dv-sent-to"></strong>.</p>
         <div class="done-steps">
           <p class="done-steps-title">{u.doneStepsTitle}</p>
           <ol>{u.doneSteps.map((s) => <li>{s}</li>)}</ol>
@@ -65,6 +67,7 @@ const u = UI[lang];
       </section>
 
       <p class="dv-alt">{u.alt} <a href={`${homePath[lang]}#contact`}>{u.altLink}</a>.</p>
+      <p class="dv-privacy">{lang === "fr" ? "Votre brouillon reste dans ce navigateur pendant 7 jours. Le bouton « Recommencer » permet de l’effacer." : "Your draft stays in this browser for 7 days. Use “Start again” to delete it."}</p>
       <p class="dv-privacy">{u.privacy}</p>
     </div>
   </main>
@@ -98,6 +101,7 @@ const u = UI[lang];
     });
   }
 
+  let submissionId = crypto.randomUUID();
   const form = document.getElementById("dv-form") as HTMLFormElement;
   const stepsEl = document.getElementById("dv-steps")!;
   const progressEl = document.getElementById("dv-progress")!;
@@ -214,14 +218,17 @@ const u = UI[lang];
   function saveDraft() {
     const data: Record<string, string[]> = {};
     SCHEMA.forEach((s) => s.fields.forEach((f) => { const v = valuesOf(f.id); if (v.length) data[f.id] = v; }));
-    try { localStorage.setItem(LS_DRAFT, JSON.stringify({ data, step: current })); } catch {}
+    try { localStorage.setItem(LS_DRAFT, JSON.stringify({ data, step: current, expiresAt: Date.now() + 7 * 24 * 3600 * 1000 })); } catch {}
   }
   function loadDraft() {
-    let raw: { data?: Record<string, string[]>; step?: number } | null = null;
+    let raw: { data?: Record<string, string[]>; step?: number; expiresAt?: number } | null = null;
     try { raw = JSON.parse(localStorage.getItem(LS_DRAFT) || "null"); } catch {}
     if (!raw || !raw.data) return;
+    if (!raw.expiresAt || raw.expiresAt < Date.now()) { try { localStorage.removeItem(LS_DRAFT); } catch {} return; }
     for (const id of Object.keys(raw.data)) {
+      if (!/^[a-zA-Z]{1,30}$/.test(id) || id === "consent") continue;
       const vals = raw.data[id];
+      if (!Array.isArray(vals) || !vals.every((v) => typeof v === "string")) continue;
       form.querySelectorAll<HTMLInputElement>(`[name="${id}"]`).forEach((n) => {
         if (n.type === "checkbox" || n.type === "radio") n.checked = vals.includes(n.value);
         else n.value = vals[0] || "";
@@ -316,12 +323,15 @@ const u = UI[lang];
     submitBtn.textContent = u("sending");
     tokenReady(4500)
       .then(() => {
-        const payload = { ...collect(), token };
+        const payload = { ...collect(), token, submissionId };
         token = null; // single use
-        return fetch("/api/devis/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+        return fetch("/api/devis/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), signal: AbortSignal.timeout(30000) });
       })
       .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-      .then(() => {
+      .then((result) => {
+        if (!result.ok) throw new Error("Submission rejected");
+        document.getElementById("dv-confirmation-warning")!.hidden = result.confirmationSent !== false;
+        doneEl.querySelector<HTMLElement>(".done-sent")!.hidden = result.confirmationSent === false;
         try { localStorage.removeItem(LS_DRAFT); } catch {}
         document.getElementById("dv-sent-to")!.textContent = valuesOf("email")[0] || "";
         form.hidden = true; progressEl.hidden = true; restartBtn.hidden = true;
@@ -363,6 +373,8 @@ const u = UI[lang];
     applyConditions();
     go(0, true);
   });
+  form.hidden = false;
+  document.getElementById("dv-fallback")!.hidden = true;
   form.addEventListener("submit", submit);
   // Enter in a single-line field moves on instead of submitting early.
   form.addEventListener("keydown", (ev) => {

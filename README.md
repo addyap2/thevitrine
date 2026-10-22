@@ -20,12 +20,9 @@ together with the name to show as its maker.
 
 ## Languages
 
-French is the main language, at `/`. English is at `/en/`, and each page links
-to the other. On `/`, [`vercel.json`](vercel.json) sends visitors whose
-browser's first language isn't French to `/en/`. Visitors whose browser sends
-no language, such as search engines, stay on the French page. Picking a
-language with the switch sets a `lang` cookie for a year, which overrides the
-browser check. The old `/fr/` address redirects to `/`.
+French lives at `/` and English at `/en/`. Visitors choose through the visible
+language switch. Pages never redirect based on browser language or a language
+cookie. The old `/fr/` address redirects permanently to `/`.
 
 All interface text lives in [`src/i18n.ts`](src/i18n.ts). Category
 labels and project descriptions in `overrides.json` are written as
@@ -91,3 +88,38 @@ Before launch, and after big changes, go through [LAUNCH.md](LAUNCH.md).
 
 To include private repos from another account, add a `VITRINE_TOKEN` secret.
 It must be a fine-grained token that can read those repos.
+
+## Forms and measurement
+
+Run `npm test` for form regression tests and `npm run build` before publishing.
+The two form endpoints require `RESEND_API_KEY`. `FORM_SECRET` is optional;
+without it, token signing derives its secret from the email key.
+
+Shared replay protection and rate limits use the connected Upstash Redis
+resource through `KV_REST_API_URL` and `KV_REST_API_TOKEN` (the equivalent
+`UPSTASH_REDIS_REST_*` names also work). Without these variables, protection
+falls back to bounded process memory and is best effort. With Redis configured,
+a storage outage rejects the request with a retryable 503 instead of bypassing
+protection. Never commit environment files.
+
+Email calls have a 10-second deadline and provider idempotency keys. A request
+only succeeds after the team email is accepted. The response includes
+`confirmationSent`; the interface explains a failed confirmation without asking
+the visitor to resend a request that already reached the team. Acceptance by
+the provider does not prove delivery to an inbox; check Resend delivery logs.
+
+Vercel Web Analytics measures page views. `Telemetry.astro` removes URL query
+parameters and respects Do Not Track. Conversion events accept only fixed event
+names and `fr`/`en`, with no entered text. Daily aggregate counts live in Redis
+under `vitrine:events:YYYY-MM-DD` and expire after 90 days. Successful form sends
+also emit structured Vercel logs; `confirmation_failed` identifies a failed
+acknowledgement. Configure an external alert destination if active notification
+is required; logs alone do not notify you.
+
+Published case-study URLs are explicit in `src/data/cases.ts`. Keep an existing
+slug when changing a display title. Add an explicit slug for a new case study.
+Page modification dates live in `src/data/contentDates.ts`; article `updated`
+dates belong in Markdown frontmatter. Update these when content changes, not
+when screenshots are refreshed.
+
+See [LAUNCH.md](LAUNCH.md) for checks and remaining owner inputs.

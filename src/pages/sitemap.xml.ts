@@ -5,25 +5,25 @@ import type { APIRoute } from "astro";
 import { homePath, legalPath, casePath, blogPath, postPath, questionnairePath, contactPath, aboutPath, langs, type Lang } from "../i18n";
 import { postsFor, isPublished } from "../blog";
 import { cases, caseSlug } from "../data/cases";
+import { contentDates } from "../data/contentDates";
 import projects from "../data/projects.json";
 import { updated as legalUpdated } from "../data/legal";
 
 export const GET: APIRoute = async ({ site }) => {
   const abs = (path: string) => new URL(path, site).href;
   const day = (d: string) => d.slice(0, 10);
-  const latest = projects.map((p) => p.updated ?? "").sort().at(-1) || legalUpdated;
   const pages: { paths: Record<Lang, string>; lastmod: string; xDefault: Lang }[] = [
-    { paths: homePath, lastmod: day(latest), xDefault: "fr" },
+    { paths: homePath, lastmod: contentDates.home, xDefault: "fr" },
     { paths: legalPath, lastmod: legalUpdated, xDefault: "fr" },
-    { paths: questionnairePath, lastmod: legalUpdated, xDefault: "fr" },
-    { paths: contactPath, lastmod: legalUpdated, xDefault: "fr" },
-    { paths: aboutPath, lastmod: legalUpdated, xDefault: "fr" },
+    { paths: questionnairePath, lastmod: contentDates.questionnaire, xDefault: "fr" },
+    { paths: contactPath, lastmod: contentDates.contact, xDefault: "fr" },
+    { paths: aboutPath, lastmod: contentDates.about, xDefault: "fr" },
     // Case studies count only once published (drafts are noindex).
     ...projects
       .filter((p) => cases[p.slug]?.status === "published")
       .map((p) => ({
-        paths: { fr: casePath("fr", caseSlug(p.title)), en: casePath("en", caseSlug(p.title)) },
-        lastmod: day(p.updated ?? legalUpdated),
+        paths: { fr: casePath("fr", caseSlug(p.slug)), en: casePath("en", caseSlug(p.slug)) },
+        lastmod: contentDates.cases,
         xDefault: "fr" as Lang,
       })),
   ];
@@ -36,10 +36,10 @@ export const GET: APIRoute = async ({ site }) => {
     return e ? [{ f, e }] : [];
   });
   if (pairs.length) {
-    const newest = pairs.map(({ f }) => f.data.date.toISOString().slice(0, 10)).sort().at(-1)!;
+    const newest = pairs.map(({ f }) => (f.data.updated ?? f.data.date).toISOString().slice(0, 10)).sort().at(-1)!;
     pages.push({ paths: blogPath, lastmod: newest, xDefault: "fr" });
     for (const { f, e } of pairs) {
-      pages.push({ paths: { fr: postPath("fr", f.data.slug), en: postPath("en", e.data.slug) }, lastmod: f.data.date.toISOString().slice(0, 10), xDefault: "fr" });
+      pages.push({ paths: { fr: postPath("fr", f.data.slug), en: postPath("en", e.data.slug) }, lastmod: (f.data.updated ?? f.data.date).toISOString().slice(0, 10), xDefault: "fr" });
     }
   }
   const urls = pages.flatMap(({ paths, lastmod, xDefault }) => {

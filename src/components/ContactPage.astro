@@ -18,7 +18,7 @@ const people = [
 ---
 
 <SubPage lang={lang} title={t.cfTitle} description={t.cfDescription} paths={contactPath} current="contact">
-  <main class="wrap cp" id="contact-main" data-lang={lang}>
+  <main class="wrap cp" id="contact-main" tabindex="-1" data-lang={lang}>
     <div class="intro">
       <p class="eyebrow">{t.cfEyebrow}</p>
       <h1>{t.cfH1}</h1>
@@ -27,7 +27,8 @@ const people = [
 
     <div class="grid">
       <div class="card form-card">
-        <form id="cf-form" novalidate>
+        <p id="cf-fallback">{lang === "fr" ? "Si le formulaire ne s’affiche pas, écrivez-nous :" : "If the form does not appear, email us:"} <a href="mailto:antony@antonyaddy.com">antony@antonyaddy.com</a></p>
+      <form hidden id="cf-form" novalidate>
           <div class="row2">
             <div class="field">
               <label for="cf-name">{t.cfName}<span class="req" aria-hidden="true">*</span></label>
@@ -62,6 +63,7 @@ const people = [
           <div class="done-badge" aria-hidden="true"><svg viewBox="0 0 52 52"><path d="M15 27.5 22.5 35 37.5 18.5" /></svg></div>
           <h2 id="cf-done-title">{t.cfDoneH}</h2>
           <p>{t.cfDoneP}</p>
+          <p id="cf-confirmation-warning" hidden>{lang === "fr" ? "Votre demande a bien été transmise. L’e-mail de confirmation n’a pas pu être envoyé ; inutile de renvoyer le formulaire." : "Your request has reached us. The confirmation email could not be sent; there is no need to submit again."}</p>
           <p class="sent">{t.cfSentTo} <strong id="cf-sent-to"></strong>.</p>
           <div class="actions">
             <a class="btn primary" href={`${homePath[lang]}#work`}>{lang === "fr" ? "Voir nos réalisations" : "See our work"}</a>
@@ -99,6 +101,7 @@ const people = [
 
   const lang = (document.getElementById("contact-main")!.dataset.lang === "en" ? "en" : "fr") as Lang;
   const t = strings[lang];
+  let submissionId = crypto.randomUUID();
   const form = document.getElementById("cf-form") as HTMLFormElement;
   const errorEl = document.getElementById("cf-error")!;
   const submitBtn = document.getElementById("cf-submit") as HTMLButtonElement;
@@ -119,6 +122,8 @@ const people = [
     if (el.getAttribute("aria-invalid") === "true") el.setAttribute("aria-invalid", "false");
   });
 
+  form.hidden = false;
+  document.getElementById("cf-fallback")!.hidden = true;
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const bad: HTMLElement[] = [];
@@ -139,13 +144,17 @@ const people = [
     const label = submitBtn.innerHTML;
     submitBtn.textContent = t.cfSending;
     try {
-      if (!token) await getToken();
+      if (!token || Date.now() - tokenAt > 20 * 3600 * 1000) await getToken();
       const wait = 3500 - (Date.now() - tokenAt);
       if (wait > 0) await new Promise((r) => setTimeout(r, wait));
-      const payload = { lang, name: val("name"), email: val("email"), phone: val("phone"), message: val("message"), consent: true, website: val("website"), token };
+      const payload = { submissionId, lang, name: val("name"), email: val("email"), phone: val("phone"), message: val("message"), consent: true, website: val("website"), token };
       token = null; // single use
-      const r = await fetch("/api/contact/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const r = await fetch("/api/contact/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), signal: AbortSignal.timeout(30000) });
       if (!r.ok) throw new Error("HTTP " + r.status);
+      const result = await r.json();
+      if (!result.ok) throw new Error("Submission rejected");
+      document.getElementById("cf-confirmation-warning")!.hidden = result.confirmationSent !== false;
+      doneEl.querySelector<HTMLElement>(".sent")!.hidden = result.confirmationSent === false;
       document.getElementById("cf-sent-to")!.textContent = payload.email;
       form.hidden = true;
       doneEl.hidden = false;
@@ -161,6 +170,7 @@ const people = [
 
   document.getElementById("cf-again")!.addEventListener("click", () => {
     form.reset();
+    submissionId = crypto.randomUUID();
     doneEl.hidden = true;
     form.hidden = false;
     (form.elements.namedItem("message") as HTMLElement).focus();

@@ -44,7 +44,7 @@ export const publishers: Publisher[] = [
 export const director: string | null = "Antony Addy";
 
 /** Contact address for privacy requests and takedown requests. Required. */
-export const contactEmail: string | null = "antony@antonyaddy.com";
+export const contactEmail: string | null = "formations@antonyaddy.com";
 
 /** Date the legal notice was last reviewed (YYYY-MM-DD). */
 export const updated = "2026-10-22";

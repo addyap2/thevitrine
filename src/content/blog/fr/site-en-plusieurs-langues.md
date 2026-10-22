@@ -1,5 +1,7 @@
 ---
 title: "Un site en plusieurs langues : à qui ça sert, et comment bien le faire"
+seoTitle: "Réussir son site multilingue"
+updated: 2026-10-22
 description: "Touristes, propriétaires étrangers, apprenants : pour qui un site multilingue fait la différence, et les règles simples pour qu'il fonctionne vraiment."
 lang: fr
 slug: site-en-plusieurs-langues
