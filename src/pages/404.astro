@@ -2,7 +2,7 @@
 // Shown by Vercel for any unknown address. It can't know the visitor's
 // language, so it speaks both, French first.
 import { Font } from "astro:assets";
-import { strings, homePath } from "../i18n";
+import { strings, homePath, legalPath } from "../i18n";
 const { fr, en } = strings;
 ---
 
@@ -29,6 +29,7 @@ const { fr, en } = strings;
         <p>{en.notFoundText}</p>
         <a href={homePath.en}>{en.notFoundCta} <span aria-hidden="true">→</span></a>
       </div>
+      <p class="legal"><a href={legalPath.fr}>{fr.legalLink}</a> · <a href={legalPath.en} lang="en">{en.legalLink}</a></p>
     </main>
   </body>
 </html>
@@ -66,6 +67,8 @@ const { fr, en } = strings;
     background: linear-gradient(180deg, #ffe2b8, #ffc27d);
   }
   .cta:hover { text-decoration: none; }
+  .legal { margin-top: 2.5rem; font-size: 0.85rem; }
+  .legal a { color: #b4c0dc; font-weight: 500; }
   .en { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid rgb(255 255 255 / 0.12); }
   :focus-visible { outline: 2px solid #ffc27d; outline-offset: 3px; }
 </style>

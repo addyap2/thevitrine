@@ -3,6 +3,7 @@ export type Lang = (typeof langs)[number];
 
 // French is the main language and lives at the root; English is at /en/.
 export const homePath: Record<Lang, string> = { fr: "/", en: "/en/" };
+export const legalPath: Record<Lang, string> = { fr: "/mentions-legales/", en: "/en/legal-notice/" };
 
 export const strings = {
   en: {
@@ -48,6 +49,11 @@ export const strings = {
     contactJulien: "Made-to-measure websites for tradespeople, shops and independents",
     contactCta: "Get in touch",
     barCta: "Contact",
+    legalLink: "Legal notice",
+    legalTitle: "Legal notice",
+    legalDescription: "Who publishes The Vitrine, where it is hosted, and how it handles your data.",
+    legalBack: "Back to the sites",
+    legalUpdated: "Last updated:",
   },
   fr: {
     title: "The Vitrine — sites et applis créés avec l'IA",
@@ -92,5 +98,10 @@ export const strings = {
     contactJulien: "Sites vitrines sur mesure pour artisans, commerces et indépendants",
     contactCta: "Prendre contact",
     barCta: "Contact",
+    legalLink: "Mentions légales",
+    legalTitle: "Mentions légales",
+    legalDescription: "Qui édite The Vitrine, où le site est hébergé et comment il traite vos données.",
+    legalBack: "Retour aux sites",
+    legalUpdated: "Dernière mise à jour :",
   },
 } satisfies Record<Lang, Record<string, string>>;

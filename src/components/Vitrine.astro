@@ -3,7 +3,7 @@ import ProjectCard from "./ProjectCard.astro";
 import Hero from "./Hero.astro";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
-import { strings, homePath, langs, type Lang } from "../i18n";
+import { strings, homePath, legalPath, langs, type Lang } from "../i18n";
 import { spans } from "../wide";
 import "../styles/motion.css";
 import { Font } from "astro:assets";
@@ -155,7 +155,10 @@ const ld = {
           <em>{t.contactCta} <span aria-hidden="true">↗</span></em>
         </a>
       </div>
-      <p class="small" data-reveal>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</p>
+      <p class="small" data-reveal>
+        <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
+        <a href={legalPath[lang]}>{t.legalLink}</a>
+      </p>
       </div>
     </footer>
 
@@ -606,7 +609,13 @@ const ld = {
     border-top: 1px solid rgb(255 255 255 / 0.1);
     font-size: 0.85rem;
     color: var(--text-lo);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
   }
+  .small a { color: var(--text-lo); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .small a:hover { color: var(--lamp); }
   @media (prefers-reduced-motion: reduce) {
     .person:hover { transform: none; }
   }

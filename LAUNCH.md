@@ -52,7 +52,7 @@ the page scroll sideways by 57 px on phones in both WebKit and Chromium.
 
 | # | Severity | Area | Issue | Recommendation |
 |---|---|---|---|---|
-| A | High | Legal | French law (LCEN, art. 6) requires *mentions légales* on a professional site: publisher name and status (SIRET if any), publication director, host (Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, USA) and a contact. | Send me the details for each of you and I'll add a bilingual legal page linked from the footer. No cookie banner is needed while the site sets no tracking cookies. |
+| A | High | Legal | French law (LCEN, art. 6) requires *mentions légales* on a professional site: publisher name and status (SIRET if any), publication director, host (Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, USA) and a contact. | The page is built (`/mentions-legales/` and `/en/legal-notice/`, linked from the footer and the 404 page), with publishers, host, intellectual property, privacy and cookies, and external links. Antony's details, the publication director and the contact are filled in. Julien's fields show as "to be completed" placeholders until they're added to `src/data/legal.ts`; the build log warns about them. No cookie banner is needed while the site sets no tracking cookies. |
 | B | High | Analytics | There is no analytics, so you can't tell how many visitors reach a contact link. | Turn on **Vercel Web Analytics** (no cookies, so no banner). Then I'll add its script and track clicks on the CTAs and contact cards. Custom events need a Vercel Pro plan; otherwise Plausible does the same. |
 | C | Medium | Deployment | The site URL is still `thevitrine-eta.vercel.app`. | When the domain is connected, change `site` in `astro.config.mjs`. Canonicals, hreflang, the sitemap, robots and share-image URLs all follow. Submit HSTS preload only once the domain is final. |
 | D | Medium | Conversion | Both contact cards leave the site. There's no direct email, phone or WhatsApp. | Add a direct link to each card (Julien already publishes his email and phone on his site). Your call, for spam and privacy reasons. |
@@ -134,7 +134,9 @@ Ticked items were verified in this audit. Unticked ones are still to do.
 - [x] Security headers and a hash-based CSP; no violations
 - [x] No cookies except the language choice (first-party, functional)
 - [x] External links use `rel="noopener"`
-- [ ] Mentions légales page (A)
+- [x] Mentions légales page published, with Antony's details
+- [ ] Add Julien's details to `src/data/legal.ts` (status, SIRET, address, email, phone)
+- [ ] If analytics is added, update the privacy section of the legal page
 - [ ] Once live, confirm the headers on securityheaders.com
 
 ### Deployment
