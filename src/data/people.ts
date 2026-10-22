@@ -54,7 +54,7 @@ export const people: Person[] = [
     maker: "Julien",
     name: "Julien Bourgois",
     initials: "JB",
-    photo: null,
+    photo: "/people/julien.jpg",
     role: { fr: "Studio web indépendant : conception et développement", en: "Independent web studio: design and development" },
     place: { fr: "Du premier échange à la mise en ligne", en: "From the first call to launch" },
     bio: {
