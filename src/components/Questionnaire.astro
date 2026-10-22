@@ -72,7 +72,7 @@ const u = UI[lang];
   let token: string | null = null, tokenAt = 0, tokenReq: Promise<void> | null = null;
   function getToken(): Promise<void> {
     if (token && Date.now() - tokenAt < 20 * 3600 * 1000) return Promise.resolve();
-    if (!tokenReq) tokenReq = fetch("/api/form-token", { cache: "no-store" })
+    if (!tokenReq) tokenReq = fetch("/api/form-token/", { cache: "no-store" })
       .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then((j) => { token = j.token; tokenAt = Date.now(); tokenReq = null; },
             (err) => { tokenReq = null; throw err; });
@@ -305,7 +305,7 @@ const u = UI[lang];
       .then(() => {
         const payload = { ...collect(), token };
         token = null; // single use
-        return fetch("/api/devis", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+        return fetch("/api/devis/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       })
       .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(() => {
