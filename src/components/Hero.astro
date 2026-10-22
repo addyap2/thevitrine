@@ -5,6 +5,7 @@
 import { strings, homePath, type Lang } from "../i18n";
 import { srcset, src800, sizes } from "../img";
 import Brand from "./Brand.astro";
+import Nav from "./Nav.astro";
 
 interface Project {
   slug: string;
@@ -38,7 +39,7 @@ const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
 
   <div class="bar wrap">
     <Brand href={homePath[lang]} />
-    <a class="lang" href={homePath[other]} hreflang={other} lang={other} aria-label={t.switchLabel}>{t.switchTo}</a>
+    <Nav lang={lang} altHref={homePath[other]} />
   </div>
 
   <div class="layout wrap">

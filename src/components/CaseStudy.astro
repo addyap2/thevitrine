@@ -4,6 +4,7 @@
 // Drafts are noindex, carry a notice, and are left out of the sitemap.
 import { Font } from "astro:assets";
 import Brand from "./Brand.astro";
+import Nav from "./Nav.astro";
 import "../styles/motion.css";
 import "../styles/tokens.css";
 import projects from "../data/projects.json";
@@ -100,7 +101,7 @@ const ld = {
     <header class="hero">
       <div class="wrap bar">
         <Brand href={homePath[lang]} />
-        <a class="lang" href={casePath(other, urlSlug)} hreflang={other} lang={other}>{t.switchTo}</a>
+        <Nav lang={lang} altHref={casePath(other, urlSlug)} />
       </div>
 
       <div class="wrap hero-grid">

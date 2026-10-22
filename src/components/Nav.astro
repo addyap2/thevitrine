@@ -1,0 +1,229 @@
+---
+// The top-right of every header: page links, a "Contact" pill and the
+// FR | EN language toggle. On narrow screens the links fold into a "Menu"
+// button; the language toggle always stays visible.
+import { strings, homePath, blogPath, type Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+  /** The same page in the other language. */
+  altHref: string;
+  /** Marks the matching link as the current page. */
+  current?: "blog";
+}
+const { lang, altHref, current } = Astro.props;
+const t = strings[lang];
+const other: Lang = lang === "fr" ? "en" : "fr";
+const home = homePath[lang];
+const links = [
+  { href: `${home}#work`, label: t.navWork },
+  { href: `${home}#services`, label: t.navServices },
+  { href: `${home}#faq`, label: t.navFaq },
+  { href: blogPath[lang], label: t.navBlog, current: current === "blog" },
+];
+const toggle = {
+  fr: { code: "FR", name: "Français" },
+  en: { code: "EN", name: "English" },
+};
+---
+
+<div class="navbox">
+  <nav class="links-wide" aria-label={t.navLabel}>
+    <ul>
+      {links.map((l) => <li><a href={l.href} aria-current={l.current ? "page" : undefined}>{l.label}</a></li>)}
+      <li><a class="contact-pill" href={`${home}#contact`}>{t.navContact}</a></li>
+    </ul>
+  </nav>
+
+  <details class="menu" data-menu>
+    <summary aria-label={t.navLabel}>
+      <span class="bars" aria-hidden="true"><i></i><i></i></span>
+      <span class="menu-word">{t.navMenu}</span>
+    </summary>
+    <nav class="links-panel" aria-label={t.navLabel}>
+      <ul>
+        {links.map((l) => <li><a href={l.href} aria-current={l.current ? "page" : undefined}>{l.label}</a></li>)}
+        <li><a class="contact-pill" href={`${home}#contact`}>{t.navContact}</a></li>
+      </ul>
+    </nav>
+  </details>
+
+  <!-- Always FR | EN in that order: the current language glows, the other is a link. -->
+  <div class="langs" role="group" aria-label={t.langLabel}>
+    <svg class="globe" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.25" />
+      <ellipse cx="8" cy="8" rx="2.6" ry="6.25" />
+      <path d="M1.9 6h12.2M1.9 10h12.2" />
+    </svg>
+    {(["fr", "en"] as const).map((l) =>
+      l === lang ? (
+        <span class="seg on" lang={l} aria-current="true" title={toggle[l].name}>{toggle[l].code}</span>
+      ) : (
+        <a class="seg lang" href={altHref} hreflang={l} lang={l} aria-label={t.switchLabel} title={toggle[l].name}>{toggle[l].code}</a>
+      ),
+    )}
+  </div>
+</div>
+
+<script>
+  // Remember a hand-picked language (it overrides the browser-language redirect on /).
+  document.querySelectorAll<HTMLAnchorElement>(".langs a[hreflang]").forEach((a) =>
+    a.addEventListener("click", () => {
+      document.cookie = `lang=${a.hreflang}; path=/; max-age=31536000; SameSite=Lax`;
+    }),
+  );
+  // The phone menu closes on a link tap, an outside tap or Escape.
+  document.querySelectorAll<HTMLDetailsElement>("[data-menu]").forEach((menu) => {
+    const close = () => menu.removeAttribute("open");
+    menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", close));
+    document.addEventListener("click", (e) => { if (menu.open && !menu.contains(e.target as Node)) close(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menu.open) { close(); menu.querySelector("summary")?.focus(); }
+    });
+  });
+</script>
+
+<style>
+  .navbox { display: flex; align-items: center; gap: 1.25rem; --focus: var(--lamp); }
+
+  /* Desktop links: quiet text on the night bar, a lamp underline that grows on hover. */
+  .links-wide ul { display: flex; align-items: center; gap: 1.6rem; margin: 0; padding: 0; list-style: none; }
+  .links-wide a, .links-panel a { color: var(--text-lo); text-decoration: none; font-size: 0.92rem; font-weight: 500; }
+  .links-wide a:not(.contact-pill) {
+    position: relative;
+    padding: 0.4rem 0;
+    transition: color var(--dur-micro) var(--ease-hover);
+  }
+  .links-wide a:not(.contact-pill)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.5px;
+    border-radius: 1px;
+    background: var(--lamp);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-short) var(--ease-arrive);
+  }
+  .links-wide a:hover, .links-wide a[aria-current="page"] { color: var(--text-hi); }
+  .links-wide a:hover::after, .links-wide a[aria-current="page"]::after { transform: scaleX(1); }
+  .contact-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 1rem;
+    border-radius: 99px;
+    color: var(--text-hi) !important;
+    border: 1px solid rgb(255 226 184 / 0.45);
+    background: rgb(255 194 125 / 0.08);
+    transition: background var(--dur-micro) var(--ease-hover), border-color var(--dur-micro) var(--ease-hover);
+  }
+  .contact-pill:hover { background: rgb(255 194 125 / 0.18); border-color: var(--lamp); }
+
+  /* Language toggle: a glass track, the current language lit like the hero's lamp. */
+  .langs {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px 3px 3px 10px;
+    border-radius: 99px;
+    border: 1px solid rgb(255 255 255 / 0.16);
+    background: rgb(255 255 255 / 0.05);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    view-transition-name: lang-switch;
+  }
+  .globe { flex: none; margin-right: 4px; fill: none; stroke: var(--text-lo); stroke-width: 1.2; }
+  .seg {
+    display: inline-grid;
+    place-items: center;
+    min-width: 40px;
+    height: 30px;
+    padding: 0 0.6rem;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .seg.on {
+    color: #1a0f04;
+    background: linear-gradient(180deg, var(--lamp-hot), var(--lamp));
+    box-shadow: 0 4px 14px -6px rgb(255 178 102 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.6);
+  }
+  a.seg {
+    color: var(--text-lo);
+    transition: color var(--dur-micro) var(--ease-hover), background var(--dur-micro) var(--ease-hover);
+  }
+  a.seg:hover { color: var(--text-hi); background: rgb(255 255 255 / 0.08); }
+  a.seg:active { transform: scale(0.96); }
+
+  /* Phone menu: hidden on wide screens. */
+  .menu { position: relative; display: none; }
+  .menu summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 38px;
+    padding: 0 0.85rem;
+    border-radius: 99px;
+    border: 1px solid rgb(255 255 255 / 0.16);
+    background: rgb(255 255 255 / 0.05);
+    color: var(--text-hi);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+  }
+  .menu summary::-webkit-details-marker { display: none; }
+  .bars { position: relative; width: 14px; height: 10px; }
+  .bars i { position: absolute; left: 0; right: 0; height: 1.5px; border-radius: 1px; background: currentColor; transition: transform var(--dur-short) var(--ease-move), top var(--dur-short) var(--ease-move); }
+  .bars i:first-child { top: 2px; }
+  .bars i:last-child { top: 7px; }
+  .menu[open] .bars i:first-child { top: 4.5px; transform: rotate(45deg); }
+  .menu[open] .bars i:last-child { top: 4.5px; transform: rotate(-45deg); }
+  .links-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.6rem);
+    z-index: 30;
+    width: min(16rem, calc(100vw - 2rem));
+    padding: 0.5rem;
+    border-radius: 16px;
+    border: 1px solid rgb(255 255 255 / 0.12);
+    background: rgb(10 19 41 / 0.96);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 24px 50px -20px rgb(0 0 0 / 0.8), 0 0 60px -20px rgb(255 178 102 / 0.3);
+    animation: panel-in var(--dur-short) var(--ease-arrive);
+  }
+  @keyframes panel-in { from { opacity: 0; transform: translateY(-6px); } }
+  .links-panel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+  .links-panel a { display: block; padding: 0.75rem 0.9rem; border-radius: 10px; font-size: 1rem; }
+  .links-panel a:hover, .links-panel a[aria-current="page"] { color: var(--text-hi); background: rgb(255 255 255 / 0.06); }
+  .links-panel .contact-pill { display: flex; justify-content: center; margin-top: 0.35rem; min-height: 44px; }
+
+  @media (max-width: 879px) {
+    .links-wide { display: none; }
+    .menu { display: block; }
+    .navbox { gap: 0.6rem; }
+  }
+  /* Phones: drop the globe and tighten the controls so the bar fits. */
+  @media (max-width: 480px) {
+    .globe { display: none; }
+    .langs { padding-left: 3px; }
+    .seg { min-width: 36px; padding: 0 0.5rem; }
+    .menu summary { padding: 0 0.7rem; }
+  }
+  @media (max-width: 380px) {
+    .menu-word { display: none; }
+    .navbox { gap: 0.4rem; }
+    .seg { width: 34px; min-width: 0; padding: 0; letter-spacing: 0.04em; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .links-panel { animation: none; }
+    .bars i, .links-wide a::after { transition: none; }
+  }
+</style>

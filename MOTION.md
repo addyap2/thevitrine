@@ -131,7 +131,9 @@ The active chip scrolls into view inside its row on mobile.
 | Primary CTA | Rises 2 px, glow intensifies | `scale(.97)`, 90 ms |
 | Hero front pane | Edge lights up warm | Opens the live site |
 | Contact card (glass, at night) | Lifts 2 px, edge and glow turn warm, arrow nudges | — |
-| Language switch | Border brightens | `scale(.97)` |
+| Menu link | Text brightens; a lamp underline grows from the left over `--dur-short` (it stays on the current page's link) | — |
+| Language toggle (FR \| EN) | The current language is lit in lamp light; the other brightens on hover | `scale(.96)` |
+| Phone menu | The two bars turn into a cross; the panel drops in 6 px over `--dur-short` | — |
 | Count | Number ticks in from 45 % above | — |
 | FAQ question | Text turns accent; the + turns into a − over `--dur-short`, and the answer opens with a height transition over `--dur-base` where the browser supports it | — |
 | "Live" dot | Slow 2.4 s halo pulse (decorative) | — |

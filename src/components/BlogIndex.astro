@@ -25,7 +25,7 @@ const ld = {
 };
 ---
 
-<SubPage lang={lang} title={t.blogTitle} description={t.blogDescription} paths={blogPath} noindex={published.length === 0} ld={ld}>
+<SubPage lang={lang} title={t.blogTitle} description={t.blogDescription} paths={blogPath} current="blog" noindex={published.length === 0} ld={ld}>
   <main class="wrap index">
     <nav class="crumbs" aria-label={lang === "fr" ? "Fil d'Ariane" : "Breadcrumb"}>
       <a href={homePath[lang]}>The Vitrine</a> <span aria-hidden="true">/</span> <span aria-current="page">{t.blogName}</span>

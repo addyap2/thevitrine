@@ -6,6 +6,9 @@
 // analytics is ever added (and say which tool, and whether it sets cookies).
 import { Font } from "astro:assets";
 import Brand from "./Brand.astro";
+import Nav from "./Nav.astro";
+import "../styles/motion.css";
+import "../styles/tokens.css";
 import { strings, homePath, legalPath, type Lang } from "../i18n";
 import { publishers, director, contactEmail, updated, host, missingFields } from "../data/legal";
 
@@ -46,7 +49,7 @@ const fr = lang === "fr";
     <header class="top">
       <div class="wrap bar">
         <Brand href={homePath[lang]} />
-        <a class="lang" href={legalPath[other]} hreflang={other} lang={other}>{t.switchTo}</a>
+        <Nav lang={lang} altHref={legalPath[other]} />
       </div>
     </header>
 

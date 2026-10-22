@@ -14,7 +14,7 @@ for (const [lang, path] of [["en", "/en/"], ["fr", "/"]]) {
   await page.context().addCookies([{ name: "lang", value: lang, url: base }]);
   await page.goto(base + path, { waitUntil: "networkidle" });
   // A share card has no buttons to press: hide the controls and centre the scene.
-  await page.addStyleTag({ content: ".bar .lang, .ctas, .cue, .pause, .proof, astro-dev-toolbar { display: none !important } .hero { min-height: 630px !important }" });
+  await page.addStyleTag({ content: ".bar .navbox, .ctas, .cue, .pause, .proof, astro-dev-toolbar { display: none !important } .hero { min-height: 630px !important }" });
   await page.waitForTimeout(600);
   await page.screenshot({ path: new URL(`${lang}.jpg`, out).pathname, type: "jpeg", quality: 82 });
   console.log(`og/${lang}.jpg`);
