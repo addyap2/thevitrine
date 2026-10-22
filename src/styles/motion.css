@@ -58,6 +58,14 @@ html.js [data-reveal].in {
   clip-path: inset(0 0 -20% 0);
 }
 
+/* Safety net (see the inline script in Vitrine.astro): if the main script never
+   ran, show everything. */
+html.reveal-all [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+  clip-path: none !important;
+}
+
 /* A warm horizon that draws itself between scenes. */
 .horizon {
   height: 1px;

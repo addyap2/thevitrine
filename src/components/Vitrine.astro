@@ -6,6 +6,7 @@ import { categories } from "../data/overrides.json";
 import { strings, homePath, langs, type Lang } from "../i18n";
 import { spans } from "../wide";
 import "../styles/motion.css";
+import { Font } from "astro:assets";
 
 interface Props {
   lang: Lang;
@@ -29,6 +30,21 @@ const sections = [...categories, { id: "more", label: { en: strings.en.more, fr:
 const pad = (n: number) => String(n).padStart(2, "0");
 const plural = (n: number) => (n === 1 ? t.projectOne : t.projectMany);
 const canonical = new URL(homePath[lang], Astro.site);
+const ogImage = new URL(`/og/${lang}.jpg`, Astro.site);
+// Who we are, for search engines: the studio and its two makers.
+const ld = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "The Vitrine",
+  url: canonical.href,
+  description: t.description,
+  image: ogImage.href,
+  knowsLanguage: ["fr", "en"],
+  founder: [
+    { "@type": "Person", name: "Antony Addy", url: "https://www.antonyaddy.com" },
+    { "@type": "Person", name: "Julien Bourgois", url: "https://julienb.vercel.app" },
+  ],
+};
 ---
 
 <!doctype html>
@@ -40,6 +56,9 @@ const canonical = new URL(homePath[lang], Astro.site);
       // Reveals only hide content once we know scripts run. Arriving through a
       // page transition (the language switch) skips the hero's intro.
       document.documentElement.classList.add("js");
+      // Safety net: if the main script never runs (blocked or failed to load),
+      // show everything rather than leave content hidden.
+      setTimeout(function () { if (!window.__vitrine) document.documentElement.classList.add("reveal-all"); }, 3000);
       addEventListener("pagereveal", (e) => e.viewTransition && document.documentElement.classList.add("no-intro"));
       // Choosing a language by hand is remembered for a year; it overrides the
       // browser-language redirect on / (see vercel.json).
@@ -53,18 +72,24 @@ const canonical = new URL(homePath[lang], Astro.site);
     <link rel="canonical" href={canonical} />
     {langs.map((l) => <link rel="alternate" hreflang={l} href={new URL(homePath[l], Astro.site)} />)}
     <link rel="alternate" hreflang="x-default" href={new URL(homePath.fr, Astro.site)} />
+    <meta name="theme-color" content="#081227" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Vitrine" />
     <meta property="og:title" content={t.title} />
     <meta property="og:description" content={t.description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={lang === "fr" ? "fr_FR" : "en_GB"} />
-    {projects[0]?.image && <meta property="og:image" content={new URL(projects[0].image, Astro.site)} />}
+    <meta property="og:locale:alternate" content={lang === "fr" ? "en_GB" : "fr_FR"} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t.ogAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
-    />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    <Font cssVariable="--font-fraunces" preload={[{ style: "normal", subset: "latin" }]} />
+    <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />
   </head>
   <body>
     <Hero lang={lang} projects={projects} total={projects.length} />
@@ -84,9 +109,12 @@ const canonical = new URL(homePath[lang], Astro.site);
                   {makers.map((m) => <button type="button" aria-pressed="false" data-value={m}>{m}</button>)}
                 </div>
               )}
-              <p class="count" aria-live="polite" data-one={t.projectOne} data-many={t.projectMany}>
-                <span id="count">{projects.length}</span> <span id="count-word">{plural(projects.length)}</span>
-              </p>
+              <div class="bar-end">
+                <p class="count" aria-live="polite" data-one={t.projectOne} data-many={t.projectMany}>
+                  <span id="count">{projects.length}</span> <span id="count-word">{plural(projects.length)}</span>
+                </p>
+                <a class="bar-cta" href="#contact"><span class="long">{t.heroCta2}</span><span class="short">{t.barCta}</span> <span aria-hidden="true">↓</span></a>
+              </div>
             </div>
             {sections.length > 1 && (
               <div class="group tabs" data-filter="category">
@@ -121,7 +149,7 @@ const canonical = new URL(homePath[lang], Astro.site);
           <span>{t.contactAntony}</span>
           <em>{t.contactCta} <span aria-hidden="true">↗</span></em>
         </a>
-        <a class="person" data-reveal href="https://julienb.vercel.app" target="_blank" rel="noopener">
+        <a class="person" data-reveal href="https://julienb.vercel.app/#contact" target="_blank" rel="noopener">
           <strong>Julien Bourgois</strong>
           <span>{t.contactJulien}</span>
           <em>{t.contactCta} <span aria-hidden="true">↗</span></em>
@@ -133,6 +161,7 @@ const canonical = new URL(homePath[lang], Astro.site);
 
     <script>
       import { spans } from "../wide";
+      (window as any).__vitrine = true;
       const reduced = matchMedia("(prefers-reduced-motion: reduce)");
       const root = document.documentElement;
 
@@ -167,6 +196,8 @@ const canonical = new URL(homePath[lang], Astro.site);
       document.querySelectorAll<HTMLImageElement>(".shot img").forEach((img) => {
         if (img.complete && img.naturalWidth) img.classList.add("loaded");
         else img.addEventListener("load", () => img.classList.add("loaded"), { once: true });
+        // A screenshot that fails to load leaves the empty frame, not a broken-image icon.
+        img.addEventListener("error", () => img.remove(), { once: true });
       });
 
       // ---- The filter bar pins under the top edge; it gains a shadow once it does.
@@ -293,8 +324,8 @@ const canonical = new URL(homePath[lang], Astro.site);
     /* Lamp light: the warm edge and glow a window gets when you look at it. */
     --lit-edge: #e2b48c;
     --lit-glow: rgb(168 67 31 / 0.45);
-    --display: "Fraunces", Georgia, serif;
-    --text: "Inter", system-ui, -apple-system, sans-serif;
+    --display: var(--font-fraunces);
+    --text: var(--font-inter);
     /* Night: the hero and the contact section, the two ends of the visit. */
     --night: #081227;
     --night-2: #10234d;
@@ -326,6 +357,7 @@ const canonical = new URL(homePath[lang], Astro.site);
   * { box-sizing: border-box; }
   body {
     margin: 0;
+    overflow-x: hidden;
     overflow-x: clip;
     background: var(--bg);
     color: var(--ink);
@@ -335,7 +367,11 @@ const canonical = new URL(homePath[lang], Astro.site);
   .wrap { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
   @media (min-width: 640px) { .wrap { padding: 0 2rem; } }
   @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* Focus rings take the lamp colour on night surfaces, where the paper accent is too dark to see. */
+  :focus-visible { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; }
+  .hero, .contact { --focus: var(--lamp); }
+  /* Keyboard focus never lands hidden under the pinned filter bar. */
+  main :is(a, button) { scroll-margin-top: 9rem; }
 </style>
 
 <style>
@@ -430,6 +466,26 @@ const canonical = new URL(homePath[lang], Astro.site);
   .tabs:not(.has-ind) button[aria-pressed="true"] { box-shadow: inset 0 -2px 0 var(--accent); }
 
   .count { margin: 0; font-size: 0.875rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .bar-end { display: flex; align-items: center; gap: 1rem; }
+  /* Once the bar pins, a way out to the contact section rides along with it. */
+  .bar-cta {
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 36px;
+    padding: 0 1rem;
+    border-radius: 99px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #1a0f04;
+    background: linear-gradient(180deg, var(--lamp-hot), var(--lamp));
+    box-shadow: 0 6px 18px -8px rgb(255 178 102 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.6);
+    display: none;
+  }
+  /* It arrives with a short drop-in once the bar pins and leaves at once when it unpins. */
+  .filters.stuck .bar-cta { display: inline-flex; animation: cta-in var(--dur-short) var(--ease-arrive); }
+  @keyframes cta-in { from { opacity: 0; transform: translateY(-4px); } }
+  .bar-cta .short { display: none; }
 
   /* On small screens the tabs scroll sideways instead of stacking into a wall. */
   @media (max-width: 720px) {
@@ -443,10 +499,15 @@ const canonical = new URL(homePath[lang], Astro.site);
       mask-image: linear-gradient(90deg, transparent, #000 1rem, #000 calc(100% - 1.5rem), transparent);
     }
     .tabs::-webkit-scrollbar { display: none; }
-    .filters.stuck .count { opacity: 0; }
+    /* Phones: no room for both, so the count gives way to a short "Contact" once pinned. */
+    .filters.stuck .count { display: none; }
+    .bar-cta { min-height: 32px; padding: 0 0.85rem; font-size: 0.8rem; }
+    .bar-cta .long { display: none; }
+    .bar-cta .short { display: inline; }
   }
   @media (prefers-reduced-motion: reduce) {
     .ind { transition: none; }
+    .filters.stuck .bar-cta { animation: none; }
   }
   /* Fixed column counts, so src/wide.ts can close every row (breakpoints match ProjectCard). */
   .grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
@@ -520,6 +581,7 @@ const canonical = new URL(homePath[lang], Astro.site);
     border: 1px solid rgb(255 255 255 / 0.14);
     border-radius: 16px;
     background: rgb(255 255 255 / 0.04);
+    -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
     color: var(--text-hi);
     text-decoration: none;
@@ -531,8 +593,8 @@ const canonical = new URL(homePath[lang], Astro.site);
   .person:hover {
     border-color: rgb(255 226 184 / 0.5);
     box-shadow: 0 0 60px -14px rgb(255 178 102 / 0.4);
-    transform: translateY(-2px);
   }
+  @media (hover: hover) { .person:hover { transform: translateY(-2px); } }
   .person strong { font-family: var(--display); font-weight: 500; font-size: 1.45rem; letter-spacing: -0.01em; }
   .person span { color: var(--text-lo); line-height: 1.5; }
   .person em { font-style: normal; font-weight: 600; color: var(--lamp); margin-top: 0.6rem; }

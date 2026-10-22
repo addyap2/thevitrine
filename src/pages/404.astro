@@ -1,0 +1,71 @@
+---
+// Shown by Vercel for any unknown address. It can't know the visitor's
+// language, so it speaks both, French first.
+import { Font } from "astro:assets";
+import { strings, homePath } from "../i18n";
+const { fr, en } = strings;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#081227" />
+    <title>{fr.notFoundTitle} · The Vitrine</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <Font cssVariable="--font-fraunces" />
+    <Font cssVariable="--font-inter" />
+  </head>
+  <body>
+    <main>
+      <p class="mark">The Vitrine</p>
+      <h1>{fr.notFoundTitle}</h1>
+      <p>{fr.notFoundText}</p>
+      <a class="cta" href={homePath.fr}>{fr.notFoundCta} <span aria-hidden="true">→</span></a>
+      <div lang="en" class="en">
+        <h2>{en.notFoundTitle}</h2>
+        <p>{en.notFoundText}</p>
+        <a href={homePath.en}>{en.notFoundCta} <span aria-hidden="true">→</span></a>
+      </div>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
+    color: #f6f2ea;
+    font-family: var(--font-inter);
+    background:
+      radial-gradient(60% 55% at 50% 30%, rgb(255 178 102 / 0.18), transparent 70%),
+      linear-gradient(180deg, #10234d, #081227 70%);
+  }
+  main { max-width: 34rem; }
+  .mark { font-family: var(--font-fraunces); font-weight: 600; color: #79adff; margin: 0 0 3rem; }
+  h1 { font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(2.4rem, 7vw, 3.6rem); line-height: 1.02; letter-spacing: -0.03em; margin: 0; }
+  h2 { font-family: var(--font-fraunces); font-weight: 500; font-size: 1.3rem; margin: 0; }
+  p { color: #b4c0dc; line-height: 1.6; }
+  a { color: #ffc27d; font-weight: 600; text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    padding: 0 1.4rem;
+    border-radius: 99px;
+    color: #1a0f04;
+    background: linear-gradient(180deg, #ffe2b8, #ffc27d);
+  }
+  .cta:hover { text-decoration: none; }
+  .en { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid rgb(255 255 255 / 0.12); }
+  :focus-visible { outline: 2px solid #ffc27d; outline-offset: 3px; }
+</style>

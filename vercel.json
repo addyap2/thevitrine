@@ -1,23 +1,112 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
   "redirects": [
-    { "source": "/fr", "destination": "/", "permanent": true },
-    { "source": "/fr/", "destination": "/", "permanent": true },
+    {
+      "source": "/fr",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/fr/",
+      "destination": "/",
+      "permanent": true
+    },
     {
       "source": "/",
-      "has": [{ "type": "cookie", "key": "lang", "value": "en" }],
+      "has": [
+        {
+          "type": "cookie",
+          "key": "lang",
+          "value": "en"
+        }
+      ],
       "destination": "/en/",
       "permanent": false
     },
     {
       "source": "/",
-      "has": [{ "type": "header", "key": "accept-language" }],
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language"
+        }
+      ],
       "missing": [
-        { "type": "cookie", "key": "lang" },
-        { "type": "header", "key": "accept-language", "value": "^\\s*[Ff][Rr].*" }
+        {
+          "type": "cookie",
+          "key": "lang"
+        },
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^\\s*[Ff][Rr].*"
+        }
       ],
       "destination": "/en/",
       "permanent": false
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'none'"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        }
+      ]
+    },
+    {
+      "source": "/_astro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/shots/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/og/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
     }
   ]
 }
