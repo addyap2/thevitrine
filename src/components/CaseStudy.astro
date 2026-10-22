@@ -3,8 +3,7 @@
 // project facts (title, maker, link, screenshot) come from projects.json.
 // Drafts are noindex, carry a notice, and are left out of the sitemap.
 import { Font } from "astro:assets";
-import Brand from "./Brand.astro";
-import Nav from "./Nav.astro";
+import SiteHeader from "./SiteHeader.astro";
 import "../styles/motion.css";
 import "../styles/tokens.css";
 import projects from "../data/projects.json";
@@ -98,11 +97,9 @@ const ld = {
   <body>
     {draft && <p class="draft" role="note">{t.caseDraft}</p>}
 
+    <SiteHeader lang={lang} altHref={casePath(other, urlSlug)} />
     <header class="hero">
-      <div class="wrap bar">
-        <Brand href={homePath[lang]} />
-        <Nav lang={lang} altHref={casePath(other, urlSlug)} />
-      </div>
+    
 
       <div class="wrap hero-grid">
         <div class="copy">

@@ -6,8 +6,7 @@
 // analytics is ever added (and say which tool, and whether it sets cookies).
 // It also describes the project questionnaire (api/devis.js): keep it in step.
 import { Font } from "astro:assets";
-import Brand from "./Brand.astro";
-import Nav from "./Nav.astro";
+import SiteHeader from "./SiteHeader.astro";
 import "../styles/motion.css";
 import "../styles/tokens.css";
 import { strings, homePath, legalPath, type Lang } from "../i18n";
@@ -47,12 +46,7 @@ const fr = lang === "fr";
     <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />
   </head>
   <body>
-    <header class="top">
-      <div class="wrap bar">
-        <Brand href={homePath[lang]} />
-        <Nav lang={lang} altHref={legalPath[other]} />
-      </div>
-    </header>
+    <SiteHeader lang={lang} altHref={legalPath[other]} />
 
     <main class="wrap">
       <p class="back"><a href={homePath[lang]}><span aria-hidden="true">←</span> {t.legalBack}</a></p>

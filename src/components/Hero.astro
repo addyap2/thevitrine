@@ -4,8 +4,7 @@
 // light spills onto a reflective floor. Transforms and opacity only, no WebGL.
 import { strings, homePath, questionnairePath, contactPath, type Lang } from "../i18n";
 import { srcset, src800, sizes } from "../img";
-import Brand from "./Brand.astro";
-import Nav from "./Nav.astro";
+import SiteHeader from "./SiteHeader.astro";
 
 interface Project {
   slug: string;
@@ -32,15 +31,13 @@ const host = (url: string) => new URL(url).host.replace(/^www\./, "");
 const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
 ---
 
+<SiteHeader lang={lang} altHref={homePath[other]} />
 <header class="hero">
   <div class="sky" aria-hidden="true"></div>
   <div class="beam" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
-  <div class="bar wrap">
-    <Brand href={homePath[lang]} />
-    <Nav lang={lang} altHref={homePath[other]} />
-  </div>
+
 
   <div class="layout wrap">
     <div class="copy">

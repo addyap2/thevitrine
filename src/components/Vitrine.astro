@@ -430,7 +430,7 @@ const ld = {
         apply();
         out.forEach((a) => a.cancel());
         // Bring the top of the results back under the pinned bar if we had scrolled past it.
-        const bar = filters?.offsetHeight ?? 0;
+        const bar = (filters?.offsetHeight ?? 0) + (document.querySelector("[data-site-header]")?.getBoundingClientRect().height ?? 0);
         const first = sections.find((s) => !s.hidden);
         if (first && first.getBoundingClientRect().top < bar) {
           scrollTo({ top: scrollY + first.getBoundingClientRect().top - bar - 16, behavior: "instant" as ScrollBehavior });
@@ -579,7 +579,7 @@ const ld = {
      sitting on a hairline. Full-bleed paper and a shadow appear once it pins. */
   .filters {
     position: sticky;
-    top: 0;
+    top: var(--site-header-height, 80px);
     z-index: 10;
     display: flex;
     flex-direction: column;
@@ -673,7 +673,7 @@ const ld = {
     display: none;
   }
   /* It arrives with a short drop-in once the bar pins and leaves at once when it unpins. */
-  .filters.stuck .bar-cta { display: inline-flex; animation: cta-in var(--dur-short) var(--ease-arrive); }
+  .filters.stuck .bar-cta { display: none; }
   @keyframes cta-in { from { opacity: 0; transform: translateY(-4px); } }
   .bar-cta .short { display: none; }
 
