@@ -1,0 +1,259 @@
+---
+// The contact form page, in one language. Messages go to /api/contact/, which
+// emails them to Antony and Julien (api/contact.js), with the same spam
+// protection as the questionnaire. Beside the form: the questionnaire, and
+// both makers' WhatsApp buttons (numbers decoded only on tap, src/protect.ts).
+import SubPage from "./SubPage.astro";
+import { strings, contactPath, questionnairePath, homePath, type Lang } from "../i18n";
+import { whatsapp } from "../data/business";
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = strings[lang];
+const WA_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.9-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>';
+const people = [
+  { name: "Antony Addy", role: t.contactAntony, wa: whatsapp.antony, first: "Antony", fallback: "https://www.antonyaddy.com/contact?sujet=sites" },
+  { name: "Julien Bourgois", role: t.contactJulien, wa: whatsapp.julien, first: "Julien", fallback: "https://julienb.vercel.app/#contact" },
+];
+---
+
+<SubPage lang={lang} title={t.cfTitle} description={t.cfDescription} paths={contactPath}>
+  <main class="wrap cp" id="contact-main" data-lang={lang}>
+    <div class="intro">
+      <p class="eyebrow">{t.cfEyebrow}</p>
+      <h1>{t.cfH1}</h1>
+      <p class="lead">{t.cfLead}</p>
+    </div>
+
+    <div class="grid">
+      <div class="card form-card">
+        <form id="cf-form" novalidate>
+          <div class="row2">
+            <div class="field">
+              <label for="cf-name">{t.cfName}<span class="req" aria-hidden="true">*</span></label>
+              <input id="cf-name" name="name" type="text" autocomplete="name" maxlength="120" required aria-required="true" />
+            </div>
+            <div class="field">
+              <label for="cf-email">{t.cfEmail}<span class="req" aria-hidden="true">*</span></label>
+              <input id="cf-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" required aria-required="true" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="cf-phone">{t.cfPhone}</label>
+            <input id="cf-phone" name="phone" type="tel" autocomplete="tel" maxlength="60" />
+          </div>
+          <div class="field">
+            <label for="cf-message">{t.cfMessage}<span class="req" aria-hidden="true">*</span></label>
+            <textarea id="cf-message" name="message" rows="6" maxlength="5000" required aria-required="true"></textarea>
+          </div>
+          <label class="consent">
+            <input type="checkbox" name="consent" value="yes" required />
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2.5 6.2 5 8.6l4.5-5" /></svg></span>
+            <span>{t.cfConsent}</span>
+          </label>
+          <!-- Honeypot: hidden from people, tempting for bots. -->
+          <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+          <p class="error" id="cf-error" role="alert" hidden></p>
+          <button type="submit" class="btn primary" id="cf-submit">{t.cfSend} <span aria-hidden="true">→</span></button>
+          <p class="privacy">{t.cfPrivacy}</p>
+        </form>
+
+        <section class="done" id="cf-done" hidden tabindex="-1" aria-labelledby="cf-done-title">
+          <div class="done-badge" aria-hidden="true"><svg viewBox="0 0 52 52"><path d="M15 27.5 22.5 35 37.5 18.5" /></svg></div>
+          <h2 id="cf-done-title">{t.cfDoneH}</h2>
+          <p>{t.cfDoneP}</p>
+          <p class="sent">{t.cfSentTo} <strong id="cf-sent-to"></strong>.</p>
+          <div class="actions">
+            <a class="btn primary" href={`${homePath[lang]}#work`}>{lang === "fr" ? "Voir nos réalisations" : "See our work"}</a>
+            <button type="button" class="btn ghost" id="cf-again">{t.cfAgain}</button>
+          </div>
+        </section>
+      </div>
+
+      <aside class="side">
+        <div class="card project">
+          <p class="side-title">{t.cfProjectTitle}</p>
+          <p>{t.cfProjectText}</p>
+          <a class="btn primary small" href={questionnairePath[lang]}>{t.quoteCta} <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="card direct">
+          <p class="side-title">{t.cfDirect}</p>
+          {people.map((p) => (
+            <div class="person">
+              <strong>{p.name}</strong>
+              <span>{p.role}</span>
+              <a class="wa" href={p.fallback} data-wa={p.wa} data-text={t.waText.replace("{name}", p.first)} target="_blank" rel="nofollow noopener" aria-label={t.waAria.replace("{name}", p.first)}>
+                <Fragment set:html={WA_ICON} /> {t.waLabel}
+              </a>
+            </div>
+          ))}
+        </div>
+      </aside>
+    </div>
+  </main>
+</SubPage>
+
+<script>
+  import { strings, type Lang } from "../i18n";
+  import { decodeNumber } from "../protect";
+
+  const lang = (document.getElementById("contact-main")!.dataset.lang === "en" ? "en" : "fr") as Lang;
+  const t = strings[lang];
+  const form = document.getElementById("cf-form") as HTMLFormElement;
+  const errorEl = document.getElementById("cf-error")!;
+  const submitBtn = document.getElementById("cf-submit") as HTMLButtonElement;
+  const doneEl = document.getElementById("cf-done")!;
+
+  // Signed timestamp from the server (api/_guard.js), as in the questionnaire.
+  let token: string | null = null, tokenAt = 0;
+  const getToken = () => fetch("/api/form-token/", { cache: "no-store" })
+    .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then((j) => { token = j.token; tokenAt = Date.now(); });
+  getToken().catch(() => {});
+
+  const val = (name: string) => ((form.elements.namedItem(name) as HTMLInputElement | null)?.value || "").trim();
+  const showError = (msg: string) => { errorEl.textContent = msg; errorEl.hidden = !msg; };
+
+  form.addEventListener("input", (e) => {
+    const el = e.target as HTMLElement;
+    if (el.getAttribute("aria-invalid") === "true") el.setAttribute("aria-invalid", "false");
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const bad: HTMLElement[] = [];
+    let msg = "";
+    for (const name of ["name", "email", "message"]) {
+      const el = form.elements.namedItem(name) as HTMLInputElement;
+      const wrong = !val(name) || (name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val(name)));
+      el.setAttribute("aria-invalid", wrong ? "true" : "false");
+      if (wrong) { bad.push(el); msg = msg || (val(name) && name === "email" ? t.cfErrEmail : t.cfErrRequired); }
+    }
+    const consent = (form.elements.namedItem("consent") as HTMLInputElement).checked;
+    if (!bad.length && !consent) msg = t.cfErrConsent;
+    showError(msg);
+    if (bad.length) { bad[0].focus(); return; }
+    if (!consent) return;
+
+    submitBtn.disabled = true;
+    const label = submitBtn.innerHTML;
+    submitBtn.textContent = t.cfSending;
+    try {
+      if (!token) await getToken();
+      const wait = 3500 - (Date.now() - tokenAt);
+      if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+      const payload = { lang, name: val("name"), email: val("email"), phone: val("phone"), message: val("message"), consent: true, website: val("website"), token };
+      token = null; // single use
+      const r = await fetch("/api/contact/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      document.getElementById("cf-sent-to")!.textContent = payload.email;
+      form.hidden = true;
+      doneEl.hidden = false;
+      doneEl.focus();
+      getToken().catch(() => {});
+    } catch {
+      showError(t.cfErrSend);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = label;
+    }
+  });
+
+  document.getElementById("cf-again")!.addEventListener("click", () => {
+    form.reset();
+    doneEl.hidden = true;
+    form.hidden = false;
+    (form.elements.namedItem("message") as HTMLElement).focus();
+  });
+
+  // WhatsApp: build the wa.me link only when a visitor taps (the number is not in the page).
+  document.querySelectorAll<HTMLAnchorElement>("a[data-wa]").forEach((a) =>
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const text = a.dataset.text ? `?text=${encodeURIComponent(a.dataset.text)}` : "";
+      window.open(`https://wa.me/${decodeNumber(a.dataset.wa!)}${text}`, "_blank", "noopener");
+    }),
+  );
+</script>
+
+<style>
+  .cp { padding-top: 3rem; padding-bottom: 5rem; }
+  .eyebrow { margin: 0 0 0.8rem; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  h1 { margin: 0; font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(2.4rem, 6vw, 3.8rem); line-height: 1.02; letter-spacing: -0.03em; }
+  .lead { margin: 1rem 0 0; max-width: 38rem; font-size: 1.12rem; line-height: 1.65; color: var(--ink-soft); }
+  .grid { display: grid; gap: 1.5rem; margin-top: 2.5rem; align-items: start; }
+  @media (min-width: 900px) { .grid { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 2rem; } }
+  .card { border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: 0 24px 50px -38px var(--shadow); }
+  .form-card { padding: clamp(1.4rem, 4vw, 2.2rem); }
+
+  .row2 { display: grid; gap: 0 1rem; }
+  @media (min-width: 600px) { .row2 { grid-template-columns: 1fr 1fr; } }
+  .field { margin-bottom: 1.2rem; }
+  label { display: block; margin-bottom: 0.45rem; font-weight: 600; font-size: 0.95rem; }
+  .req { margin-left: 0.2rem; color: var(--accent); }
+  input[type="text"], input[type="email"], input[type="tel"], textarea {
+    width: 100%; min-height: 48px; padding: 0.75rem 0.9rem; border: 1px solid var(--line); border-radius: 12px;
+    background: var(--bg); color: var(--ink); font: inherit; font-size: 1rem;
+    transition: border-color var(--dur-micro) var(--ease-hover), box-shadow var(--dur-micro) var(--ease-hover);
+  }
+  textarea { resize: vertical; line-height: 1.55; }
+  input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgb(255 178 102 / 0.28); }
+  [aria-invalid="true"] { border-color: #b3261e !important; }
+  .consent { position: relative; display: flex; gap: 0.75rem; align-items: flex-start; margin: 0.4rem 0 1.4rem; font-weight: 400; font-size: 0.9rem; line-height: 1.5; color: var(--ink-soft); cursor: pointer; }
+  .consent input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .mark { flex: none; display: grid; place-items: center; width: 20px; height: 20px; margin-top: 1px; border: 1.5px solid var(--ink-soft); border-radius: 5px; color: transparent; transition: background var(--dur-micro) var(--ease-hover), border-color var(--dur-micro) var(--ease-hover); }
+  .mark svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .consent input:checked + .mark { border-color: var(--accent); background: var(--accent); color: #fff; }
+  .consent:has(input:focus-visible) .mark { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .error { margin: 0 0 1rem; padding: 0.75rem 1rem; border-radius: 10px; background: #fdecea; color: #8c1d18; font-size: 0.95rem; }
+  .privacy { margin: 1rem 0 0; font-size: 0.82rem; color: var(--ink-soft); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 48px; padding: 0 1.5rem; border-radius: 99px;
+    font: inherit; font-weight: 600; font-size: 0.98rem; text-decoration: none; cursor: pointer;
+    transition: transform var(--dur-short) var(--ease-hover), border-color var(--dur-micro) var(--ease-hover);
+  }
+  .btn.primary { border: 0; color: #1a0f04; background: linear-gradient(180deg, var(--lamp-hot), var(--lamp)); box-shadow: 0 10px 26px -12px rgb(255 178 102 / 0.9), inset 0 1px 0 rgb(255 255 255 / 0.6); }
+  .btn.ghost { border: 1px solid var(--line); background: transparent; color: var(--ink); }
+  .btn.ghost:hover { border-color: var(--ink-soft); }
+  .btn.small { min-height: 42px; padding: 0 1.1rem; font-size: 0.92rem; }
+  .btn:disabled { opacity: 0.6; cursor: progress; }
+  @media (hover: hover) { .btn.primary:hover:not(:disabled) { transform: translateY(-2px); } }
+
+  /* Thank-you state: the same lit tick as the questionnaire. */
+  .done:focus { outline: none; }
+  .done-badge { width: 60px; height: 60px; margin-bottom: 1.2rem; border-radius: 50%; background: linear-gradient(180deg, var(--lamp-hot), var(--lamp)); box-shadow: 0 14px 34px -12px rgb(255 178 102 / 0.9); animation: badge-in var(--dur-reveal) var(--ease-arrive) both; }
+  .done-badge svg { width: 100%; height: 100%; fill: none; stroke: #1a0f04; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+  .done-badge path { stroke-dasharray: 34; stroke-dashoffset: 34; animation: tick-draw 520ms 260ms var(--ease-arrive) forwards; }
+  @keyframes badge-in { from { opacity: 0; transform: scale(0.7); } }
+  @keyframes tick-draw { to { stroke-dashoffset: 0; } }
+  .done h2 { margin: 0 0 0.6rem; font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(1.7rem, 4vw, 2.2rem); line-height: 1.15; }
+  .done p { margin: 0 0 0.5rem; color: var(--ink-soft); line-height: 1.6; }
+  .done .sent { margin-bottom: 1.6rem; font-size: 0.95rem; }
+  .done strong { color: var(--ink); overflow-wrap: anywhere; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+  /* Side column. */
+  .side { display: grid; gap: 1.25rem; }
+  .project { padding: 1.5rem; background: linear-gradient(160deg, rgb(255 194 125 / 0.14), var(--surface) 60%); }
+  .project p { margin: 0 0 1.1rem; color: var(--ink-soft); line-height: 1.55; }
+  .side-title { margin: 0 0 0.5rem !important; font-family: var(--font-fraunces); font-size: 1.35rem; color: var(--ink) !important; }
+  .direct { padding: 1.5rem; }
+  .person { display: grid; gap: 0.3rem; padding: 1rem 0; border-top: 1px solid var(--line); }
+  .person:first-of-type { border-top: 0; padding-top: 0.4rem; }
+  .person strong { font-family: var(--font-fraunces); font-weight: 500; font-size: 1.15rem; }
+  .person span { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.5; }
+  .wa {
+    justify-self: start; display: inline-flex; align-items: center; gap: 0.45rem; min-height: 38px; margin-top: 0.4rem; padding: 0 0.95rem; border-radius: 99px;
+    border: 1px solid rgb(37 211 102 / 0.5); background: rgb(37 211 102 / 0.08); color: var(--ink); font-size: 0.875rem; font-weight: 600; text-decoration: none;
+    transition: background var(--dur-micro) var(--ease-hover), border-color var(--dur-micro) var(--ease-hover);
+  }
+  .wa :global(svg) { color: #1da851; }
+  .wa:hover { background: rgb(37 211 102 / 0.16); border-color: #25d366; }
+  @media (prefers-reduced-motion: reduce) {
+    .done-badge { animation: none; }
+    .done-badge path { animation: none; stroke-dashoffset: 0; }
+    .btn.primary:hover { transform: none; }
+  }
+</style>

@@ -144,6 +144,12 @@ Ticked items were verified in this audit. Unticked ones are still to do.
 - [x] All five articles published in both languages (indexed, in the sitemap, "Blog" link in the homepage footer)
 - [x] The articles' links to case studies now point to published, indexable pages
 
+### Forms
+- [x] Project questionnaire (`/devis/`, `/en/quote/`) and contact form (`/contact/`, `/en/contact/`), emailing Antony and Julien through Resend (`api/devis.js`, `api/contact.js`), with a confirmation to the sender
+- [x] Spam protection: signed one-time token, honeypot, minimum fill time, origin check, rate limits, link limit on messages
+- [x] Privacy notice describes both forms
+- [ ] `RESEND_API_KEY` is set for Production only: add it to Preview too if you want forms to work on preview deployments
+
 ### Analytics
 - [ ] Turn on Vercel Web Analytics or Plausible (B)
 - [ ] Track clicks on the hero CTAs, the pinned button and both contact cards

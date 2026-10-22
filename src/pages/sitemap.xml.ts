@@ -2,7 +2,7 @@
 // its content last changed: home pages follow the most recently updated
 // project, legal pages follow src/data/legal.ts, case studies their project.
 import type { APIRoute } from "astro";
-import { homePath, legalPath, casePath, blogPath, postPath, questionnairePath, langs, type Lang } from "../i18n";
+import { homePath, legalPath, casePath, blogPath, postPath, questionnairePath, contactPath, langs, type Lang } from "../i18n";
 import { postsFor, isPublished } from "../blog";
 import { cases, caseSlug } from "../data/cases";
 import projects from "../data/projects.json";
@@ -16,6 +16,7 @@ export const GET: APIRoute = async ({ site }) => {
     { paths: homePath, lastmod: day(latest), xDefault: "fr" },
     { paths: legalPath, lastmod: legalUpdated, xDefault: "fr" },
     { paths: questionnairePath, lastmod: legalUpdated, xDefault: "fr" },
+    { paths: contactPath, lastmod: legalUpdated, xDefault: "fr" },
     // Case studies count only once published (drafts are noindex).
     ...projects
       .filter((p) => cases[p.slug]?.status === "published")

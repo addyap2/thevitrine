@@ -3,7 +3,7 @@ import ProjectCard from "./ProjectCard.astro";
 import Hero from "./Hero.astro";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
-import { strings, homePath, legalPath, blogPath, questionnairePath, langs, type Lang } from "../i18n";
+import { strings, homePath, legalPath, blogPath, questionnairePath, contactPath, langs, type Lang } from "../i18n";
 import { postsFor, isPublished } from "../blog";
 import { spans } from "../wide";
 import { priceFrom, timescale, profiles, whatsapp, missingBusinessFields } from "../data/business";
@@ -254,6 +254,7 @@ const ld = {
       <p class="contact-lede" data-reveal>{t.contactLede}</p>
       <div class="quote-cta" data-reveal>
         <a class="quote-btn" href={questionnairePath[lang]}>{t.quoteCta} <span aria-hidden="true">→</span></a>
+        <a class="msg-btn" href={contactPath[lang]}>{t.msgCta}</a>
         <p>{t.quoteNote}</p>
       </div>
       <div class="people">
@@ -843,6 +844,13 @@ const ld = {
     transition: transform var(--dur-short) var(--ease-hover), box-shadow var(--dur-short) var(--ease-hover);
   }
   @media (hover: hover) { .quote-btn:hover { transform: translateY(-2px); } }
+  .msg-btn {
+    display: inline-flex; align-items: center; min-height: 52px; padding: 0 1.4rem; border-radius: 99px;
+    font-weight: 600; text-decoration: none; color: var(--text-hi);
+    border: 1px solid rgb(255 255 255 / 0.22); background: rgb(255 255 255 / 0.04);
+    transition: border-color var(--dur-micro) var(--ease-hover), background var(--dur-micro) var(--ease-hover);
+  }
+  .msg-btn:hover { border-color: rgb(255 255 255 / 0.5); background: rgb(255 255 255 / 0.08); }
   .people { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
   /* Each contact is a pane of glass that lights up warm, like the hero's front window. */
   .person {

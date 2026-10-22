@@ -2,7 +2,7 @@
 // The top-right of every header: page links, a "Contact" pill and the
 // FR | EN language toggle. On narrow screens the links fold into a "Menu"
 // button; the language toggle always stays visible.
-import { strings, homePath, blogPath, type Lang } from "../i18n";
+import { strings, homePath, blogPath, contactPath, type Lang } from "../i18n";
 
 interface Props {
   lang: Lang;
@@ -31,7 +31,7 @@ const toggle = {
   <nav class="links-wide" aria-label={t.navLabel}>
     <ul>
       {links.map((l) => <li><a href={l.href} aria-current={l.current ? "page" : undefined}>{l.label}</a></li>)}
-      <li><a class="contact-pill" href={`${home}#contact`}>{t.navContact}</a></li>
+      <li><a class="contact-pill" href={contactPath[lang]}>{t.navContact}</a></li>
     </ul>
   </nav>
 
@@ -43,7 +43,7 @@ const toggle = {
     <nav class="links-panel" aria-label={t.navLabel}>
       <ul>
         {links.map((l) => <li><a href={l.href} aria-current={l.current ? "page" : undefined}>{l.label}</a></li>)}
-        <li><a class="contact-pill" href={`${home}#contact`}>{t.navContact}</a></li>
+        <li><a class="contact-pill" href={contactPath[lang]}>{t.navContact}</a></li>
       </ul>
     </nav>
   </details>

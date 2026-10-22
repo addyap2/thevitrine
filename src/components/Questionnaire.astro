@@ -4,7 +4,7 @@
 // emails them to Antony and Julien (api/devis.js). Ported from antonyaddy.com.
 import SubPage from "./SubPage.astro";
 import { UI } from "../devis";
-import { homePath, questionnairePath, type Lang } from "../i18n";
+import { homePath, questionnairePath, blogPath, type Lang } from "../i18n";
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -45,11 +45,23 @@ const u = UI[lang];
         </div>
       </form>
 
-      <section class="dv-done" id="dv-done" hidden tabindex="-1">
+      <section class="dv-done" id="dv-done" hidden tabindex="-1" aria-labelledby="dv-done-title">
+        <!-- A lamp-lit tick that draws itself in. -->
+        <div class="done-badge" aria-hidden="true">
+          <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" /><path d="M15 27.5 22.5 35 37.5 18.5" /></svg>
+        </div>
         <p class="eyebrow">{u.doneEyebrow}</p>
-        <h2>{u.doneH}</h2>
-        <p>{u.doneP}</p>
-        <a class="btn ghost" href={homePath[lang]}>{u.doneBack}</a>
+        <h2 id="dv-done-title">{u.doneH}</h2>
+        <p class="done-lead">{u.doneP}</p>
+        <p class="done-sent">{u.doneSentTo} <strong id="dv-sent-to"></strong>.</p>
+        <div class="done-steps">
+          <p class="done-steps-title">{u.doneStepsTitle}</p>
+          <ol>{u.doneSteps.map((s) => <li>{s}</li>)}</ol>
+        </div>
+        <div class="done-actions">
+          <a class="btn primary" href={`${homePath[lang]}#work`}>{u.doneWork}</a>
+          <a class="btn ghost" href={blogPath[lang]}>{u.doneBlog}</a>
+        </div>
       </section>
 
       <p class="dv-alt">{u.alt} <a href={`${homePath[lang]}#contact`}>{u.altLink}</a>.</p>
@@ -275,11 +287,12 @@ const u = UI[lang];
     const sections = SCHEMA.map((s) => ({
       title: s.fr,
       items: s.fields.filter((f) => f.type !== "consent").map((f) => {
-        if (!isShown(f)) return { label: f.fr, value: "", status: "na" };
+        if (!isShown(f)) return { id: f.id, label: f.fr, value: "", status: "na" };
         const vals = valuesOf(f.id);
-        if (!vals.length) return { label: f.fr, value: "", status: "empty" };
-        const shown = f.options ? vals.map((v) => f.options!.find((x) => x.v === v)?.fr ?? v).join(", ") : vals.join(", ");
-        return { label: f.fr, value: shown, status: "answered" };
+        if (!vals.length) return { id: f.id, label: f.fr, value: "", status: "empty" };
+        const say = (l: Lang) => (f.options ? vals.map((v) => f.options!.find((x) => x.v === v)?.[l] ?? v).join(", ") : vals.join(", "));
+        // French for Antony and Julien; the visitor's language for their own confirmation.
+        return { id: f.id, label: f.fr, value: say("fr"), local: say(lang), status: "answered" };
       }),
     }));
     return {
@@ -310,6 +323,7 @@ const u = UI[lang];
       .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(() => {
         try { localStorage.removeItem(LS_DRAFT); } catch {}
+        document.getElementById("dv-sent-to")!.textContent = valuesOf("email")[0] || "";
         form.hidden = true; progressEl.hidden = true; restartBtn.hidden = true;
         doneEl.hidden = false; doneEl.focus();
         doneEl.scrollIntoView({ block: "start" });
@@ -458,9 +472,42 @@ const u = UI[lang];
   @media (hover: hover) { .btn.primary:hover:not(:disabled) { transform: translateY(-2px); } }
   .btn[hidden] { display: none; }
 
-  .dv-done h2 { margin: 0 0 0.75rem; font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(1.7rem, 4vw, 2.3rem); line-height: 1.15; }
-  .dv-done p:not(.eyebrow) { margin: 0 0 1.5rem; color: var(--ink-soft); line-height: 1.65; }
+  /* The thank-you card: a lit tick, what happens next, and where to go from here. */
+  .dv-done { position: relative; overflow: hidden; text-align: left; }
+  .dv-done::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 160px; pointer-events: none;
+    background: radial-gradient(60% 100% at 15% 0%, rgb(255 178 102 / 0.22), transparent 70%);
+  }
+  .dv-done > * { position: relative; }
   .dv-done:focus { outline: none; }
+  .done-badge {
+    width: 64px; height: 64px; margin-bottom: 1.4rem; border-radius: 50%;
+    background: linear-gradient(180deg, var(--lamp-hot), var(--lamp));
+    box-shadow: 0 14px 34px -12px rgb(255 178 102 / 0.9), inset 0 1px 0 rgb(255 255 255 / 0.6);
+    animation: badge-in var(--dur-reveal) var(--ease-arrive) both;
+  }
+  .done-badge svg { width: 100%; height: 100%; fill: none; stroke: #1a0f04; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+  .done-badge circle { stroke: none; }
+  .done-badge path { stroke-dasharray: 34; stroke-dashoffset: 34; animation: tick-draw 520ms 260ms var(--ease-arrive) forwards; }
+  @keyframes badge-in { from { opacity: 0; transform: scale(0.7); } }
+  @keyframes tick-draw { to { stroke-dashoffset: 0; } }
+  .dv-done h2 { margin: 0 0 0.75rem; font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(1.8rem, 4.5vw, 2.5rem); line-height: 1.12; letter-spacing: -0.02em; }
+  .done-lead { margin: 0 0 0.6rem; color: var(--ink-soft); font-size: 1.08rem; line-height: 1.65; }
+  .done-sent { margin: 0 0 1.75rem; color: var(--ink-soft); font-size: 0.95rem; }
+  .done-sent strong { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+  .done-steps { margin: 0 0 1.9rem; padding: 1.2rem 1.3rem 0.4rem; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); }
+  .done-steps-title { margin: 0 0 0.9rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
+  .done-steps ol { margin: 0; padding: 0; list-style: none; counter-reset: step; }
+  .done-steps li { counter-increment: step; display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.85rem; line-height: 1.45; }
+  .done-steps li::before {
+    content: counter(step); flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--lamp); color: #1a0f04; font-size: 0.8rem; font-weight: 700;
+  }
+  .done-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  @media (prefers-reduced-motion: reduce) {
+    .done-badge { animation: none; }
+    .done-badge path { animation: none; stroke-dashoffset: 0; }
+  }
   .dv-alt { margin: 2rem 0 0; color: var(--ink-soft); }
   .dv-alt a { color: var(--brand); text-underline-offset: 3px; }
   .dv-privacy { margin: 0.75rem 0 0; font-size: 0.85rem; line-height: 1.6; color: var(--ink-soft); }
