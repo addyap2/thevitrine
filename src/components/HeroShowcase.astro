@@ -53,9 +53,15 @@ const words = fr ? ["Votre plus belle", "vitrine."] : ["Be seen.", "Be chosen."]
     const scenes = [...root.querySelectorAll<HTMLElement>("[data-scene]")];
     const pause = root.querySelector<HTMLButtonElement>("[data-pause]")!;
     const portal = root.querySelector<HTMLElement>("[data-portal]")!;
-    let index = 0, mobile = false, paused = motion.matches, visible = true, focused = false, hovered = false;
+    let index = 0, desiredIndex = 0, mobile = false, paused = motion.matches, visible = true, focused = false, hovered = false;
+    let explicitlyPlaying = false, selectionVersion = 0, loading = false;
+    type Connection = { saveData?: boolean; effectiveType?: string; downlink?: number };
+    const connection = (navigator as Navigator & { connection?: Connection }).connection;
+    const canPreload = () => !motion.matches && visible && !document.hidden && !connection?.saveData &&
+      !["slow-2g", "2g", "3g"].includes(connection?.effectiveType ?? "") &&
+      (connection?.downlink === undefined || connection.downlink >= 1.5);
     const setPaused = (value: boolean) => {
-      paused = value; root.dataset.paused = String(value); pause.hidden = motion.matches;
+      paused = value; if(value) explicitlyPlaying = false; root.dataset.paused = String(value); pause.hidden = motion.matches;
       pause.setAttribute("aria-pressed", String(value));
       pause.setAttribute("aria-label", value ? pause.dataset.playLabel! : pause.dataset.pauseLabel!);
       root.querySelector("[data-pause-icon]")!.textContent = value ? "▷" : "Ⅱ";
@@ -65,14 +71,32 @@ const words = fr ? ["Votre plus belle", "vitrine."] : ["Be seen.", "Be chosen."]
       root.querySelectorAll<HTMLButtonElement>("[data-view-button]").forEach(b => b.setAttribute("aria-pressed", String((b.dataset.viewButton === "mobile") === value)));
     };
     const picker = root.querySelector<HTMLSelectElement>("[data-project-picker]")!;
-    const load = (scene: HTMLElement) => scene.querySelectorAll<HTMLImageElement>("img[data-src]").forEach(img => {
-      if(img.getAttribute("src"))return;
-      if(img.dataset.srcset)img.srcset=img.dataset.srcset;
-      img.src=img.dataset.src!;
-    });
-    const select = (next: number, announce = false) => {
-      index = (next + scenes.length) % scenes.length;
-      load(scenes[index]);
+    // Explicit selections load eagerly, then decode both views before swapping.
+    // A deadline or failed image keeps the current, complete project on screen.
+    const load = async (scene: HTMLElement): Promise<boolean> => {
+      const images = [...scene.querySelectorAll<HTMLImageElement>("img[data-src]")];
+      const ready = Promise.all(images.map(async img => {
+        if(!img.getAttribute("src") || (img.complete && !img.naturalWidth)) {
+          img.loading = "eager";
+          if(img.dataset.srcset) img.srcset = img.dataset.srcset;
+          img.src = img.dataset.src!;
+        }
+        try { await img.decode(); return img.naturalWidth > 0; }
+        catch { return false; }
+      })).then(results => results.every(Boolean));
+      let deadline: ReturnType<typeof setTimeout> | undefined;
+      try {
+        return await Promise.race([ready, new Promise<boolean>(resolve => {
+          deadline = setTimeout(() => resolve(false), 15000);
+        })]);
+      } finally { clearTimeout(deadline); }
+    };
+    const setLoading = (value: boolean) => {
+      loading = value; root.dataset.loading = String(value);
+      portal.setAttribute("aria-busy", String(value));
+    };
+    const activate = (next: number, announce = false) => {
+      index = next; desiredIndex = next;
       picker.value = String(index);
       scenes.forEach((scene,i) => { scene.inert = i !== index; scene.setAttribute("aria-hidden",String(i !== index)); scene.dataset.active = String(i === index); });
       root.querySelector("[data-title]")!.textContent = data[index].title;
@@ -80,22 +104,49 @@ const words = fr ? ["Votre plus belle", "vitrine."] : ["Be seen.", "Be chosen."]
       root.querySelector("[data-project-count]")!.textContent = String(index+1).padStart(2,"0");
       if(announce) root.querySelector("[data-announcement]")!.textContent = data[index].title;
     };
-    picker.addEventListener("change",()=>{setPaused(true);setView(false);select(Number(picker.value),true);});
-    root.querySelector("[data-next]")!.addEventListener("click",() => {setPaused(true);setView(false);select(index+1,true);});
-    root.querySelector("[data-previous]")!.addEventListener("click",() => {setPaused(true);setView(false);select(index-1,true);});
-    pause.addEventListener("click",()=>setPaused(!paused));
+    const select = async (next: number, announce = false) => {
+      const target = (next + scenes.length) % scenes.length;
+      desiredIndex = target;
+      const version = ++selectionVersion;
+      setLoading(true);
+      const ready = await load(scenes[target]);
+      if(version !== selectionVersion) return;
+      setLoading(false);
+      if(!ready) {
+        desiredIndex = index; picker.value = String(index); setPaused(true);
+        root.querySelector("[data-announcement]")!.textContent = document.documentElement.lang === "fr"
+          ? "L’aperçu n’a pas pu être chargé. Le projet précédent reste affiché. Réessayez ou choisissez un autre projet."
+          : "The preview could not load. The previous project is still displayed. Try again or choose another project.";
+        return;
+      }
+      // Hover, focus or Pause during a pending automatic change cancels that change.
+      if(!announce && (paused || motion.matches || !visible || document.hidden || ((focused || hovered) && !explicitlyPlaying))) {
+        desiredIndex = index; picker.value = String(index); return;
+      }
+      setView(false); activate(target, announce);
+    };
+    picker.addEventListener("change",()=>{setPaused(true);void select(Number(picker.value),true);});
+    root.querySelector("[data-next]")!.addEventListener("click",()=>{setPaused(true);void select(desiredIndex+1,true);});
+    root.querySelector("[data-previous]")!.addEventListener("click",()=>{setPaused(true);void select(desiredIndex-1,true);});
+    pause.addEventListener("click",()=>{
+      const resume = paused;
+      setPaused(!paused);
+      // An explicit Play overrides the focus/hover that the Play button itself creates.
+      explicitlyPlaying = resume;
+    });
     root.querySelectorAll<HTMLButtonElement>("[data-view-button]").forEach(b=>b.addEventListener("click",()=>{setPaused(true);setView(b.dataset.viewButton === "mobile");}));
-    root.querySelector("[data-exhibition]")!.addEventListener("pointerenter",()=>hovered=true);
+    root.querySelector("[data-exhibition]")!.addEventListener("pointerenter",()=>{hovered=true;explicitlyPlaying=false;});
     root.querySelector("[data-exhibition]")!.addEventListener("pointerleave",()=>hovered=false);
-    root.addEventListener("focusin",()=>focused=true);
+    root.addEventListener("focusin",e=>{focused=true;if(e.target!==pause)explicitlyPlaying=false;});
     root.addEventListener("focusout",e=>focused=!!e.relatedTarget && root.contains(e.relatedTarget as Node));
-    const observer = new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;root.dataset.visible=String(visible);if(!visible)resetDepth();},{threshold:.05});observer.observe(root);
-    setPaused(paused);select(0);root.dataset.ready="true";
+    const observer = new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;root.dataset.visible=String(visible && !document.hidden);if(!visible)resetDepth();},{threshold:.05});observer.observe(root);
+    document.addEventListener("visibilitychange",()=>{root.dataset.visible=String(visible && !document.hidden);if(document.hidden)resetDepth();});
+    setPaused(paused);activate(0);root.dataset.ready="true";
     // Warm only the next pair; the other projects have no image request until needed.
-    const warmNext = () => load(scenes[(index+1)%scenes.length]);
+    const warmNext = () => {if(canPreload()) void load(scenes[(index+1)%scenes.length]);};
     setTimeout(warmNext,2500);
     // One responsive transformation, then the next real project. Never steal focus.
-    setInterval(()=>{if(paused || motion.matches || !visible || focused || hovered || document.hidden)return;if(!mobile)setView(true);else{setView(false);select(index+1);setTimeout(warmNext,1200);}},6500);
+    setInterval(()=>{if(paused || motion.matches || !visible || loading || ((focused || hovered) && !explicitlyPlaying) || document.hidden)return;if(!mobile)setView(true);else{void select(index+1).then(()=>setTimeout(warmNext,1200));}},6500);
     let frame = 0, x = 0, y = 0, cx = 0, cy = 0;
     const tick = () => {
       cx+=(x-cx)*.09;cy+=(y-cy)*.09;
