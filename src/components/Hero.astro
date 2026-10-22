@@ -2,7 +2,7 @@
 // "L'heure bleue": a lit shop window at dusk. Live sites hang in the window as
 // glass panes in depth, the front one cycling through our work, while warm
 // light spills onto a reflective floor. Transforms and opacity only, no WebGL.
-import { strings, homePath, type Lang } from "../i18n";
+import { strings, homePath, questionnairePath, type Lang } from "../i18n";
 import { srcset, src800, sizes } from "../img";
 import Brand from "./Brand.astro";
 import Nav from "./Nav.astro";
@@ -52,7 +52,7 @@ const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
       <p class="sub reveal d360">{t.heroSub}</p>
       <div class="ctas reveal d480">
         <a class="cta primary" href="#work">{t.heroCta.replace("{n}", String(total))} <span aria-hidden="true">↓</span></a>
-        <a class="cta ghost" href="#contact">{t.heroCta2}</a>
+        <a class="cta ghost" href={questionnairePath[lang]}>{t.heroCta2}</a>
       </div>
       <p class="proof reveal d600">{t.heroProof.replace("{n}", String(total))}</p>
     </div>

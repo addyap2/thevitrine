@@ -4,6 +4,8 @@ export type Lang = (typeof langs)[number];
 // French is the main language and lives at the root; English is at /en/.
 export const homePath: Record<Lang, string> = { fr: "/", en: "/en/" };
 export const legalPath: Record<Lang, string> = { fr: "/mentions-legales/", en: "/en/legal-notice/" };
+/** The project questionnaire. */
+export const questionnairePath: Record<Lang, string> = { fr: "/devis/", en: "/en/quote/" };
 /** Blog: /blog/ in French, /en/blog/ in English. */
 export const blogPath: Record<Lang, string> = { fr: "/blog/", en: "/en/blog/" };
 export const postPath = (lang: Lang, slug: string) => `${blogPath[lang]}${slug}/`;
@@ -53,7 +55,7 @@ export const strings = {
     contactAntony: "English training, AI workshops and websites, Var & Alpes-Maritimes",
     contactJulien: "Made-to-measure websites for tradespeople, shops and independents",
     contactCta: "Get in touch",
-    barCta: "Contact",
+    barCta: "Quote",
     caseTitle: "{title}: case study | The Vitrine",
     caseGlance: "At a glance",
     caseSector: "Sector",
@@ -98,6 +100,8 @@ export const strings = {
     waText: "Hi {name}, I found you on The Vitrine and I'd like to talk about a website.",
     showPhone: "Show phone number",
     phoneNoJs: "Turn on JavaScript to see the number, or write to",
+    quoteCta: "Describe your project",
+    quoteNote: "Six short steps, a few minutes: we come back to you with a clear quote.",
     legalLink: "Legal notice",
     shotAlt: "Home page of the {title} website ({host})",
     portfolioName: "Websites built by The Vitrine",
@@ -161,7 +165,7 @@ export const strings = {
     contactAntony: "Formations d'anglais, ateliers IA et sites web, Var & Alpes-Maritimes",
     contactJulien: "Sites vitrines sur mesure pour artisans, commerces et indépendants",
     contactCta: "Prendre contact",
-    barCta: "Contact",
+    barCta: "Devis",
     caseTitle: "{title} : étude de cas | The Vitrine",
     caseGlance: "En bref",
     caseSector: "Secteur",
@@ -206,6 +210,8 @@ export const strings = {
     waText: "Bonjour {name}, je vous contacte depuis The Vitrine au sujet d'un site internet.",
     showPhone: "Afficher le numéro",
     phoneNoJs: "Activez JavaScript pour afficher le numéro, ou écrivez à",
+    quoteCta: "Décrire votre projet",
+    quoteNote: "Six étapes, quelques minutes : nous revenons vers vous avec un devis clair.",
     legalLink: "Mentions légales",
     shotAlt: "Page d'accueil du site {title} ({host})",
     portfolioName: "Sites réalisés par The Vitrine",

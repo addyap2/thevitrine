@@ -10,7 +10,7 @@ import "../styles/tokens.css";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
 import { cases, caseSlug } from "../data/cases";
-import { strings, homePath, legalPath, casePath, type Lang } from "../i18n";
+import { strings, homePath, legalPath, casePath, questionnairePath, type Lang } from "../i18n";
 import { srcset, src800 } from "../img";
 
 interface Props { lang: Lang; project: string }
@@ -191,7 +191,7 @@ const ld = {
       <div class="wrap">
         <h2 data-reveal>{t.contactLead} <em>{t.contactAccent}</em>{t.contactTail}</h2>
         <p class="contact-lede" data-reveal>{t.contactLede}</p>
-        <a class="cta" href={`${homePath[lang]}#contact`} data-reveal>{t.heroCta2} <span aria-hidden="true">→</span></a>
+        <a class="cta" href={questionnairePath[lang]} data-reveal>{t.heroCta2} <span aria-hidden="true">→</span></a>
         <p class="small">
           <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
           <a href={legalPath[lang]}>{t.legalLink}</a>

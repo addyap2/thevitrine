@@ -4,6 +4,7 @@
 // warning in the build log, until it is filled in.
 // The privacy section says there is no audience measurement: update it if
 // analytics is ever added (and say which tool, and whether it sets cookies).
+// It also describes the project questionnaire (api/devis.js): keep it in step.
 import { Font } from "astro:assets";
 import Brand from "./Brand.astro";
 import Nav from "./Nav.astro";
@@ -116,8 +117,13 @@ const fr = lang === "fr";
         <h2 id="privacy">{fr ? "Données personnelles et cookies" : "Personal data and cookies"}</h2>
         <p>
           {fr
-            ? "Ce site ne propose ni compte, ni formulaire, ni mesure d'audience, et ne contient aucun traceur publicitaire. Les polices de caractères sont servies depuis ce site : aucune donnée n'est transmise à un tiers pendant votre visite."
-            : "This site has no accounts, no forms, no audience measurement and no advertising trackers. Fonts are served from this site, so no data is passed to a third party during your visit."}
+            ? "Ce site ne propose ni compte, ni mesure d'audience, et ne contient aucun traceur publicitaire. Les polices de caractères sont servies depuis ce site : aucune donnée n'est transmise à un tiers pendant votre simple visite."
+            : "This site has no accounts, no audience measurement and no advertising trackers. Fonts are served from this site, so no data is passed to a third party while you simply browse."}
+        </p>
+        <p>
+          {fr
+            ? "Questionnaire projet : les réponses que vous y saisissez (nom, e-mail, téléphone, entreprise et description de votre projet) sont envoyées par e-mail à Antony Addy et Julien Bourgois, uniquement pour préparer votre devis et vous recontacter, sur la base de votre consentement. Elles ne sont pas enregistrées sur ce site. L'envoi passe par le service Resend (Resend, Inc., États-Unis), et une copie de confirmation vous est adressée. Vos réponses restent dans nos boîtes e-mail le temps nécessaire au suivi de votre demande, puis sont supprimées au plus tard trois ans après notre dernier échange. Jusqu'à l'envoi, un brouillon reste uniquement dans votre navigateur."
+            : "Project questionnaire: the answers you enter (name, email, phone, business and project details) are emailed to Antony Addy and Julien Bourgois, only to prepare your quote and get back to you, based on your consent. They aren't stored on this site. Sending goes through the Resend service (Resend, Inc., United States), and a confirmation copy is sent to you. Your answers stay in our inboxes for as long as your request needs following up, and are deleted at the latest three years after our last exchange. Until you send it, a draft stays only in your browser."}
         </p>
         <p>
           {fr

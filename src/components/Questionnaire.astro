@@ -1,0 +1,470 @@
+---
+// The project questionnaire page, in one language. The steps are built by the
+// script below from SCHEMA (src/devis.ts); answers go to /api/devis, which
+// emails them to Antony and Julien (api/devis.js). Ported from antonyaddy.com.
+import SubPage from "./SubPage.astro";
+import { UI } from "../devis";
+import { homePath, questionnairePath, type Lang } from "../i18n";
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const u = UI[lang];
+---
+
+<SubPage lang={lang} title={u.title} description={u.description} paths={questionnairePath}>
+  <main class="dv" id="devis-main" data-lang={lang}>
+    <div class="dv-wrap">
+      <div class="dv-intro">
+        <p class="eyebrow">{u.eyebrow}</p>
+        <h1>{u.h1}</h1>
+        <p class="lead">{u.lead}</p>
+      </div>
+
+      <noscript>
+        <p class="dv-noscript">{u.noscript} <a href={`${homePath[lang]}#contact`}>{u.noscriptLink}</a>.</p>
+      </noscript>
+
+      <ol class="dv-progress" id="dv-progress" aria-label={u.steps}></ol>
+      <p class="dv-restart-row"><button type="button" class="dv-restart" id="dv-restart" hidden>{u.restart}</button></p>
+
+      <form id="dv-form" class="dv-form" novalidate>
+        <div id="dv-steps"></div>
+
+        <!-- Honeypot: hidden from people, tempting for bots. -->
+        <div class="dv-hp" aria-hidden="true">
+          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
+
+        <p class="dv-error" id="dv-error" role="alert" hidden></p>
+
+        <div class="dv-nav">
+          <button type="button" class="btn ghost" id="dv-prev">{u.prev}</button>
+          <span class="dv-count" id="dv-count" aria-live="polite"></span>
+          <button type="button" class="btn primary" id="dv-next">{u.next}</button>
+          <button type="submit" class="btn primary" id="dv-submit" hidden>{u.submit}</button>
+        </div>
+      </form>
+
+      <section class="dv-done" id="dv-done" hidden tabindex="-1">
+        <p class="eyebrow">{u.doneEyebrow}</p>
+        <h2>{u.doneH}</h2>
+        <p>{u.doneP}</p>
+        <a class="btn ghost" href={homePath[lang]}>{u.doneBack}</a>
+      </section>
+
+      <p class="dv-alt">{u.alt} <a href={`${homePath[lang]}#contact`}>{u.altLink}</a>.</p>
+      <p class="dv-privacy">{u.privacy}</p>
+    </div>
+  </main>
+</SubPage>
+
+<script>
+  import { SCHEMA, UI, type Field, type Lang } from "../devis";
+
+  const root = document.getElementById("devis-main")!;
+  const lang = (root.dataset.lang === "en" ? "en" : "fr") as Lang;
+  const u = (key: keyof (typeof UI)["fr"]) => UI[lang][key];
+  const LS_DRAFT = "vitrine-devis-draft";
+  let current = 0;
+
+  // Signed timestamp from the server (api/_guard.js): proves the page was loaded
+  // and lets the server, not the browser, measure how long the form took.
+  let token: string | null = null, tokenAt = 0, tokenReq: Promise<void> | null = null;
+  function getToken(): Promise<void> {
+    if (token && Date.now() - tokenAt < 20 * 3600 * 1000) return Promise.resolve();
+    if (!tokenReq) tokenReq = fetch("/api/form-token", { cache: "no-store" })
+      .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then((j) => { token = j.token; tokenAt = Date.now(); tokenReq = null; },
+            (err) => { tokenReq = null; throw err; });
+    return tokenReq;
+  }
+  // Resolves once a token is held and is at least minMs old.
+  function tokenReady(minMs: number) {
+    return getToken().then(() => {
+      const wait = minMs - (Date.now() - tokenAt);
+      if (wait > 0) return new Promise((r) => setTimeout(r, wait));
+    });
+  }
+
+  const form = document.getElementById("dv-form") as HTMLFormElement;
+  const stepsEl = document.getElementById("dv-steps")!;
+  const progressEl = document.getElementById("dv-progress")!;
+  const prevBtn = document.getElementById("dv-prev") as HTMLButtonElement;
+  const nextBtn = document.getElementById("dv-next") as HTMLButtonElement;
+  const submitBtn = document.getElementById("dv-submit") as HTMLButtonElement;
+  const countEl = document.getElementById("dv-count")!;
+  const errorEl = document.getElementById("dv-error")!;
+  const restartBtn = document.getElementById("dv-restart") as HTMLButtonElement;
+  const doneEl = document.getElementById("dv-done")!;
+
+  const TICK = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.2 5 8.6l4.5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  // ---------- build ----------
+  function el(tag: string, attrs: Record<string, string | undefined>, html?: string) {
+    const n = document.createElement(tag);
+    for (const k in attrs) if (attrs[k] !== undefined) n.setAttribute(k, attrs[k]!);
+    if (html !== undefined) n.innerHTML = html;
+    return n;
+  }
+  function text(tag: string, attrs: Record<string, string | undefined>, s: string) {
+    const n = el(tag, attrs); n.textContent = s; return n;
+  }
+
+  function buildField(f: Field) {
+    const wrap = el("div", { class: "dv-field", "data-field": f.id });
+    const fid = "f-" + f.id;
+
+    if (f.type === "consent") {
+      wrap.className += " dv-consent";
+      const lab = el("label", { class: "dv-choice" });
+      lab.appendChild(el("input", { type: "checkbox", name: f.id, id: fid, value: "yes", required: "" }));
+      lab.appendChild(el("span", { class: "dv-mark" }, TICK));
+      lab.appendChild(text("span", {}, f[lang]));
+      wrap.appendChild(lab);
+      return wrap;
+    }
+
+    if (f.type === "radio" || f.type === "checkbox") {
+      const fs = el("fieldset", { class: "dv-choices" + (f.scale ? " is-scale" : "") });
+      fs.appendChild(text("legend", { class: "dv-label" }, f[lang]));
+      if (f.hint) fs.appendChild(text("p", { class: "dv-hint" }, f.hint[lang]));
+      for (const opt of f.options!) {
+        const lab = el("label", { class: "dv-choice" });
+        lab.appendChild(el("input", { type: f.type, name: f.id, value: opt.v }));
+        lab.appendChild(el("span", { class: "dv-mark" }, f.type === "checkbox" ? TICK : ""));
+        lab.appendChild(text("span", {}, opt[lang]));
+        fs.appendChild(lab);
+      }
+      wrap.appendChild(fs);
+      return wrap;
+    }
+
+    const label = el("label", { class: "dv-label", for: fid });
+    label.appendChild(text("span", {}, f[lang]));
+    if (f.req) label.appendChild(el("span", { class: "dv-req", "aria-hidden": "true" }, "*"));
+    wrap.appendChild(label);
+    if (f.hint) wrap.appendChild(text("p", { class: "dv-hint", id: fid + "-hint" }, f.hint[lang]));
+    const attrs: Record<string, string | undefined> = { class: "dv-input", id: fid, name: f.id, autocomplete: f.auto || "off" };
+    if (f.hint) attrs["aria-describedby"] = fid + "-hint";
+    if (f.req) { attrs.required = ""; attrs["aria-required"] = "true"; }
+    let input: HTMLElement;
+    if (f.type === "textarea") { attrs.rows = "3"; attrs.maxlength = "2000"; input = el("textarea", attrs); }
+    else {
+      attrs.type = f.type; attrs.maxlength = "300";
+      if (f.type === "number") { attrs.min = "0"; attrs.inputmode = "numeric"; delete attrs.maxlength; }
+      if (f.type === "email") attrs.inputmode = "email";
+      input = el("input", attrs);
+    }
+    wrap.appendChild(input);
+    return wrap;
+  }
+
+  function build() {
+    SCHEMA.forEach((s, i) => {
+      const num = String(i + 1).padStart(2, "0");
+      const step = el("fieldset", { class: "dv-step", "data-step": String(i) });
+      const head = el("legend", { class: "dv-step-head" });
+      head.appendChild(text("span", { class: "dv-step-num", "aria-hidden": "true" }, num));
+      head.appendChild(text("span", { class: "dv-step-title" }, s[lang]));
+      step.appendChild(head);
+      s.fields.forEach((f) => step.appendChild(buildField(f)));
+      stepsEl.appendChild(step);
+
+      // Each step label is a button: earlier steps are one tap away, so a visitor
+      // resumed on a later step (the draft remembers it) is never stuck.
+      const li = el("li", { "data-p": String(i) });
+      const jump = el("button", { type: "button", class: "dv-jump", "data-jump": String(i) });
+      jump.appendChild(text("span", {}, s.short[lang]));
+      li.appendChild(jump);
+      progressEl.appendChild(li);
+    });
+  }
+
+  // ---------- values ----------
+  function valuesOf(id: string) {
+    const out: string[] = [];
+    form.querySelectorAll<HTMLInputElement>(`[name="${id}"]`).forEach((n) => {
+      if (n.type === "checkbox" || n.type === "radio") { if (n.checked) out.push(n.value); }
+      else if (n.value.trim()) out.push(n.value.trim());
+    });
+    return out;
+  }
+  const isShown = (f: Field) => !f.showIf || valuesOf(f.showIf[0]).includes(f.showIf[1]);
+  function applyConditions() {
+    SCHEMA.forEach((s) => s.fields.forEach((f) => {
+      const w = form.querySelector<HTMLElement>(`[data-field="${f.id}"]`);
+      if (w) w.hidden = !isShown(f);
+    }));
+  }
+  const hasAnswers = () => SCHEMA.some((s) => s.fields.some((f) => f.type !== "consent" && valuesOf(f.id).length > 0));
+
+  // ---------- draft (kept in this browser until sent) ----------
+  function saveDraft() {
+    const data: Record<string, string[]> = {};
+    SCHEMA.forEach((s) => s.fields.forEach((f) => { const v = valuesOf(f.id); if (v.length) data[f.id] = v; }));
+    try { localStorage.setItem(LS_DRAFT, JSON.stringify({ data, step: current })); } catch {}
+  }
+  function loadDraft() {
+    let raw: { data?: Record<string, string[]>; step?: number } | null = null;
+    try { raw = JSON.parse(localStorage.getItem(LS_DRAFT) || "null"); } catch {}
+    if (!raw || !raw.data) return;
+    for (const id of Object.keys(raw.data)) {
+      const vals = raw.data[id];
+      form.querySelectorAll<HTMLInputElement>(`[name="${id}"]`).forEach((n) => {
+        if (n.type === "checkbox" || n.type === "radio") n.checked = vals.includes(n.value);
+        else n.value = vals[0] || "";
+      });
+    }
+    if (typeof raw.step === "number" && raw.step >= 0 && raw.step < SCHEMA.length) current = raw.step;
+  }
+
+  // ---------- navigation ----------
+  function showError(msg: string) { errorEl.textContent = msg; errorEl.hidden = !msg; }
+
+  function validateStep(i: number) {
+    let firstBad: HTMLElement | null = null, msg = "";
+    for (const f of SCHEMA[i].fields) {
+      if (!isShown(f)) continue;
+      const n = form.querySelector<HTMLElement>(`[name="${f.id}"]`);
+      if (!n) continue;
+      let bad = false;
+      if (f.req && !valuesOf(f.id).length) { bad = true; msg = msg || (f.type === "consent" ? u("errConsent") : u("errRequired")); }
+      else if (f.type === "email" && valuesOf(f.id).length && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valuesOf(f.id)[0])) { bad = true; msg = msg || u("errEmail"); }
+      if (n.classList.contains("dv-input")) n.setAttribute("aria-invalid", bad ? "true" : "false");
+      if (bad && !firstBad) firstBad = n;
+    }
+    showError(msg);
+    if (firstBad) firstBad.focus();
+    return !firstBad;
+  }
+
+  function updateNav() {
+    const last = current === SCHEMA.length - 1;
+    prevBtn.hidden = current === 0;
+    nextBtn.hidden = last;
+    submitBtn.hidden = !last;
+    countEl.textContent = u("step").replace("{n}", String(current + 1)).replace("{t}", String(SCHEMA.length));
+    progressEl.querySelectorAll("li").forEach((li, i) => {
+      li.className = i < current ? "is-done" : i === current ? "is-current" : "";
+      if (i === current) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
+      const jump = li.querySelector<HTMLButtonElement>(".dv-jump")!;
+      // Only earlier steps: moving forward still goes through "Next" and its checks.
+      jump.disabled = i >= current;
+      jump.setAttribute("aria-label", `${u("goStep").replace("{n}", String(i + 1))} — ${SCHEMA[i].short[lang]}`);
+    });
+    restartBtn.hidden = current === 0 && !hasAnswers();
+  }
+
+  function go(i: number, focus: boolean) {
+    current = Math.max(0, Math.min(SCHEMA.length - 1, i));
+    stepsEl.querySelectorAll<HTMLElement>(".dv-step").forEach((st, k) => { st.hidden = k !== current; });
+    showError("");
+    updateNav();
+    saveDraft();
+    if (focus) {
+      const head = stepsEl.querySelector<HTMLElement>(`[data-step="${current}"] .dv-step-title`);
+      progressEl.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+      if (head) { head.setAttribute("tabindex", "-1"); head.focus({ preventScroll: true }); }
+    }
+  }
+
+  // ---------- submit ----------
+  // Every question goes in the email (in French, for Antony and Julien), so skipped
+  // ones are easy to spot: "answered", "empty" (left blank) or "na" (didn't apply).
+  function collect() {
+    const sections = SCHEMA.map((s) => ({
+      title: s.fr,
+      items: s.fields.filter((f) => f.type !== "consent").map((f) => {
+        if (!isShown(f)) return { label: f.fr, value: "", status: "na" };
+        const vals = valuesOf(f.id);
+        if (!vals.length) return { label: f.fr, value: "", status: "empty" };
+        const shown = f.options ? vals.map((v) => f.options!.find((x) => x.v === v)?.fr ?? v).join(", ") : vals.join(", ");
+        return { label: f.fr, value: shown, status: "answered" };
+      }),
+    }));
+    return {
+      lang,
+      name: valuesOf("name")[0] || "",
+      email: valuesOf("email")[0] || "",
+      phone: valuesOf("phone")[0] || "",
+      company: valuesOf("company")[0] || "",
+      consent: valuesOf("consent").length > 0,
+      website: (form.querySelector<HTMLInputElement>('[name="website"]') || { value: "" }).value || "",
+      sections,
+    };
+  }
+
+  function submit(e: Event) {
+    e.preventDefault();
+    for (let i = 0; i < SCHEMA.length; i++) {
+      if (!validateStep(i)) { if (i !== current) { go(i, true); validateStep(i); } return; }
+    }
+    submitBtn.disabled = true; prevBtn.disabled = true;
+    submitBtn.textContent = u("sending");
+    tokenReady(4500)
+      .then(() => {
+        const payload = { ...collect(), token };
+        token = null; // single use
+        return fetch("/api/devis", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      })
+      .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(() => {
+        try { localStorage.removeItem(LS_DRAFT); } catch {}
+        form.hidden = true; progressEl.hidden = true; restartBtn.hidden = true;
+        doneEl.hidden = false; doneEl.focus();
+        doneEl.scrollIntoView({ block: "start" });
+      })
+      .catch(() => {
+        showError(u("errSend"));
+        submitBtn.disabled = false; prevBtn.disabled = false;
+        submitBtn.textContent = u("submit");
+      });
+  }
+
+  // ---------- wire up ----------
+  build();
+  loadDraft();
+  applyConditions();
+  go(current, false);
+  getToken().catch(() => {});
+
+  form.addEventListener("change", () => { applyConditions(); saveDraft(); });
+  form.addEventListener("input", (ev) => {
+    const t = ev.target as HTMLElement;
+    if (t.getAttribute("aria-invalid") === "true") t.setAttribute("aria-invalid", "false");
+    saveDraft();
+    restartBtn.hidden = current === 0 && !hasAnswers();
+  });
+  nextBtn.addEventListener("click", () => { if (validateStep(current)) go(current + 1, true); });
+  prevBtn.addEventListener("click", () => go(current - 1, true));
+  progressEl.addEventListener("click", (ev) => {
+    const jump = (ev.target as HTMLElement).closest<HTMLButtonElement>(".dv-jump");
+    if (jump && !jump.disabled) go(Number(jump.dataset.jump), true);
+  });
+  restartBtn.addEventListener("click", () => {
+    if (hasAnswers() && !window.confirm(u("restartConfirm"))) return;
+    try { localStorage.removeItem(LS_DRAFT); } catch {}
+    form.reset();
+    form.querySelectorAll('[aria-invalid="true"]').forEach((n) => n.setAttribute("aria-invalid", "false"));
+    applyConditions();
+    go(0, true);
+  });
+  form.addEventListener("submit", submit);
+  // Enter in a single-line field moves on instead of submitting early.
+  form.addEventListener("keydown", (ev) => {
+    const t = ev.target as HTMLInputElement;
+    if (ev.key === "Enter" && t.tagName === "INPUT" && t.type !== "checkbox" && t.type !== "radio" && current < SCHEMA.length - 1) {
+      ev.preventDefault(); nextBtn.click();
+    }
+  });
+</script>
+
+<style>
+  .dv { padding: 3rem 0 5rem; }
+  .dv-wrap { max-width: 48rem; margin: 0 auto; padding: 0 1rem; }
+  @media (min-width: 640px) { .dv-wrap { padding: 0 2rem; } }
+  .eyebrow { margin: 0 0 0.8rem; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  h1 { margin: 0; font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(2.3rem, 6vw, 3.6rem); line-height: 1.04; letter-spacing: -0.03em; }
+  .lead { margin: 1rem 0 0; font-size: 1.1rem; line-height: 1.65; color: var(--ink-soft); max-width: 40rem; }
+  .dv-noscript { margin-top: 2rem; padding: 1rem 1.25rem; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+
+  /* Progress: one bar per step, lit in lamp light up to where you are. */
+  .dv-progress { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.5rem; margin: 2.5rem 0 0; padding: 0; list-style: none; }
+  .dv-progress :global(li) { min-width: 0; }
+  .dv-progress :global(.dv-jump) {
+    display: block; width: 100%; padding: 0.7rem 0 0; border: 0; background: none; text-align: left; cursor: pointer;
+    font: inherit; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft);
+    border-top: 3px solid var(--line); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: border-color var(--dur-short) var(--ease-move), color var(--dur-micro) var(--ease-hover);
+  }
+  .dv-progress :global(.dv-jump:disabled) { cursor: default; }
+  .dv-progress :global(li.is-done .dv-jump) { border-top-color: var(--lit-edge, #e2b48c); color: var(--ink); }
+  .dv-progress :global(li.is-done .dv-jump:hover) { color: var(--accent); }
+  .dv-progress :global(li.is-current .dv-jump) { border-top-color: var(--accent); color: var(--ink); }
+  @media (max-width: 560px) { .dv-progress :global(.dv-jump) { font-size: 0; } }
+  .dv-restart-row { margin: 0.75rem 0 0; text-align: right; min-height: 1.4rem; }
+  .dv-restart { border: 0; background: none; padding: 0; font: inherit; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .dv-restart:hover { color: var(--accent); }
+
+  /* The step card. */
+  .dv-form, .dv-done {
+    margin-top: 1rem; padding: clamp(1.4rem, 4vw, 2.5rem);
+    border: 1px solid var(--line); border-radius: 22px; background: var(--surface);
+    box-shadow: 0 24px 50px -36px var(--shadow);
+  }
+  .dv-form :global(.dv-step) { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .dv-form :global(.dv-step-head) { display: flex; align-items: baseline; gap: 0.8rem; width: 100%; padding: 0 0 1.1rem; margin-bottom: 1.6rem; border-bottom: 1px solid var(--line); }
+  .dv-form :global(.dv-step-num) { font-family: var(--font-fraunces); font-style: italic; font-size: 2.2rem; line-height: 1; color: var(--accent); }
+  .dv-form :global(.dv-step-title) { font-family: var(--font-fraunces); font-size: clamp(1.5rem, 3.5vw, 1.9rem); line-height: 1.15; letter-spacing: -0.015em; outline: none; }
+  .dv-form :global(.dv-field) { margin-bottom: 1.6rem; }
+  .dv-form :global(.dv-field[hidden]) { display: none; }
+  .dv-form :global(.dv-label) { display: block; margin-bottom: 0.5rem; padding: 0; font-weight: 600; font-size: 0.95rem; color: var(--ink); }
+  .dv-form :global(.dv-req) { margin-left: 0.2rem; color: var(--accent); }
+  .dv-form :global(.dv-hint) { margin: -0.25rem 0 0.6rem; font-size: 0.85rem; color: var(--ink-soft); }
+  .dv-form :global(.dv-input) {
+    width: 100%; min-height: 48px; padding: 0.75rem 0.9rem; border: 1px solid var(--line); border-radius: 12px;
+    background: var(--bg); color: var(--ink); font: inherit; font-size: 1rem;
+    transition: border-color var(--dur-micro) var(--ease-hover), box-shadow var(--dur-micro) var(--ease-hover);
+  }
+  .dv-form :global(textarea.dv-input) { resize: vertical; line-height: 1.55; }
+  .dv-form :global(.dv-input:focus) { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgb(255 178 102 / 0.28); }
+  .dv-form :global(.dv-input[aria-invalid="true"]) { border-color: #b3261e; }
+
+  /* Choices: tappable cards with a custom mark, two per row on wide screens. */
+  .dv-form :global(.dv-choices) { display: grid; grid-template-columns: 1fr; gap: 0.6rem; border: 0; margin: 0; padding: 0; min-width: 0; }
+  @media (min-width: 640px) { .dv-form :global(.dv-choices) { grid-template-columns: 1fr 1fr; } }
+  .dv-form :global(.dv-choices > legend), .dv-form :global(.dv-choices > .dv-hint) { grid-column: 1 / -1; }
+  .dv-form :global(.dv-choices.is-scale) { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .dv-form :global(.dv-choice) {
+    position: relative; display: flex; align-items: center; gap: 0.75rem; min-height: 52px; padding: 0.7rem 1rem;
+    border: 1px solid var(--line); border-radius: 12px; background: var(--surface); cursor: pointer; font-size: 0.95rem; line-height: 1.35;
+    transition: border-color var(--dur-micro) var(--ease-hover), background var(--dur-micro) var(--ease-hover);
+  }
+  .dv-form :global(.dv-choice:hover) { border-color: var(--ink-soft); }
+  .dv-form :global(.dv-choice input) { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .dv-form :global(.dv-mark) {
+    flex: none; display: grid; place-items: center; width: 20px; height: 20px; border: 1.5px solid var(--ink-soft); border-radius: 5px;
+    color: transparent; transition: background var(--dur-micro) var(--ease-hover), border-color var(--dur-micro) var(--ease-hover), color var(--dur-micro) var(--ease-hover);
+  }
+  .dv-form :global(.dv-mark svg) { width: 12px; height: 12px; }
+  .dv-form :global(input[type="radio"] + .dv-mark) { border-radius: 50%; }
+  .dv-form :global(.dv-choice:has(input:checked)) { border-color: var(--accent); background: rgb(255 194 125 / 0.12); }
+  .dv-form :global(input:checked + .dv-mark) { border-color: var(--accent); background: var(--accent); color: #fff; }
+  .dv-form :global(input[type="radio"]:checked + .dv-mark) { background: radial-gradient(circle, #fff 0 3px, var(--accent) 4px); }
+  .dv-form :global(.dv-choice:has(input:focus-visible)) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .dv-form :global(.is-scale .dv-choice) { justify-content: center; padding: 0.7rem 0.4rem; }
+  .dv-form :global(.is-scale .dv-mark) { display: none; }
+  .dv-form :global(.dv-consent .dv-choice) { align-items: flex-start; }
+  .dv-form :global(.dv-consent .dv-mark) { margin-top: 2px; }
+
+  .dv-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .dv-error { margin: 0 0 1rem; padding: 0.75rem 1rem; border-radius: 10px; background: #fdecea; color: #8c1d18; font-size: 0.95rem; }
+  .dv-nav { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+  .dv-count { text-align: center; font-size: 0.85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  #dv-prev[hidden] + .dv-count { grid-column: 1 / 3; text-align: left; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 1.5rem; border-radius: 99px;
+    font: inherit; font-weight: 600; font-size: 0.98rem; text-decoration: none; cursor: pointer;
+    transition: transform var(--dur-short) var(--ease-hover), box-shadow var(--dur-short) var(--ease-hover), border-color var(--dur-micro) var(--ease-hover);
+  }
+  .btn.primary {
+    border: 0; color: #1a0f04;
+    background: linear-gradient(180deg, var(--lamp-hot), var(--lamp));
+    box-shadow: 0 10px 26px -12px rgb(255 178 102 / 0.9), inset 0 1px 0 rgb(255 255 255 / 0.6);
+  }
+  .btn.ghost { border: 1px solid var(--line); background: transparent; color: var(--ink); }
+  .btn.ghost:hover { border-color: var(--ink-soft); }
+  .btn:disabled { opacity: 0.6; cursor: progress; }
+  @media (hover: hover) { .btn.primary:hover:not(:disabled) { transform: translateY(-2px); } }
+  .btn[hidden] { display: none; }
+
+  .dv-done h2 { margin: 0 0 0.75rem; font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(1.7rem, 4vw, 2.3rem); line-height: 1.15; }
+  .dv-done p:not(.eyebrow) { margin: 0 0 1.5rem; color: var(--ink-soft); line-height: 1.65; }
+  .dv-done:focus { outline: none; }
+  .dv-alt { margin: 2rem 0 0; color: var(--ink-soft); }
+  .dv-alt a { color: var(--brand); text-underline-offset: 3px; }
+  .dv-privacy { margin: 0.75rem 0 0; font-size: 0.85rem; line-height: 1.6; color: var(--ink-soft); }
+  @media (prefers-reduced-motion: reduce) {
+    .btn.primary:hover { transform: none; }
+  }
+</style>

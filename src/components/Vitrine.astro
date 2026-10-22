@@ -3,7 +3,7 @@ import ProjectCard from "./ProjectCard.astro";
 import Hero from "./Hero.astro";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
-import { strings, homePath, legalPath, blogPath, langs, type Lang } from "../i18n";
+import { strings, homePath, legalPath, blogPath, questionnairePath, langs, type Lang } from "../i18n";
 import { postsFor, isPublished } from "../blog";
 import { spans } from "../wide";
 import { priceFrom, timescale, profiles, whatsapp, missingBusinessFields } from "../data/business";
@@ -193,7 +193,7 @@ const ld = {
                 <p class="count" aria-live="polite" data-one={t.projectOne} data-many={t.projectMany}>
                   <span id="count">{projects.length}</span> <span id="count-word">{plural(projects.length)}</span>
                 </p>
-                <a class="bar-cta" href="#contact"><span class="long">{t.heroCta2}</span><span class="short">{t.barCta}</span> <span aria-hidden="true">↓</span></a>
+                <a class="bar-cta" href={questionnairePath[lang]}><span class="long">{t.heroCta2}</span><span class="short">{t.barCta}</span> <span aria-hidden="true">↓</span></a>
               </div>
             </div>
             {sections.length > 1 && (
@@ -252,6 +252,10 @@ const ld = {
       <div class="wrap">
       <h2 data-reveal="heading">{t.contactLead} <em>{t.contactAccent}</em>{t.contactTail}</h2>
       <p class="contact-lede" data-reveal>{t.contactLede}</p>
+      <div class="quote-cta" data-reveal>
+        <a class="quote-btn" href={questionnairePath[lang]}>{t.quoteCta} <span aria-hidden="true">→</span></a>
+        <p>{t.quoteNote}</p>
+      </div>
       <div class="people">
         <div class="person" data-reveal>
           <strong>Antony Addy</strong>
@@ -828,6 +832,17 @@ const ld = {
     padding-right: 0.06em;
   }
   .contact-lede { color: var(--text-lo); font-size: 1.1rem; line-height: 1.6; max-width: 36rem; margin: 1.2rem 0 2.75rem; }
+  /* The questionnaire: the main way in, above the two contact cards. */
+  .quote-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin: -0.75rem 0 2.25rem; }
+  .quote-cta p { margin: 0; color: var(--text-lo); font-size: 0.95rem; max-width: 26rem; }
+  .quote-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem; min-height: 52px; padding: 0 1.6rem; border-radius: 99px;
+    font-weight: 600; text-decoration: none; color: #1a0f04;
+    background: linear-gradient(180deg, var(--lamp-hot), var(--lamp));
+    box-shadow: 0 12px 32px -12px rgb(255 178 102 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.6);
+    transition: transform var(--dur-short) var(--ease-hover), box-shadow var(--dur-short) var(--ease-hover);
+  }
+  @media (hover: hover) { .quote-btn:hover { transform: translateY(-2px); } }
   .people { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
   /* Each contact is a pane of glass that lights up warm, like the hero's front window. */
   .person {
