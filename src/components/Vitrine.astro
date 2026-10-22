@@ -6,7 +6,7 @@ import { categories } from "../data/overrides.json";
 import { strings, homePath, legalPath, blogPath, langs, type Lang } from "../i18n";
 import { postsFor, isPublished } from "../blog";
 import { spans } from "../wide";
-import { priceFrom, timescale, profiles, missingBusinessFields } from "../data/business";
+import { priceFrom, timescale, profiles, whatsapp, missingBusinessFields } from "../data/business";
 import { faq, missingFaqAnswers } from "../data/faq";
 import "../styles/motion.css";
 import { Font } from "astro:assets";
@@ -253,16 +253,30 @@ const ld = {
       <h2 data-reveal="heading">{t.contactLead} <em>{t.contactAccent}</em>{t.contactTail}</h2>
       <p class="contact-lede" data-reveal>{t.contactLede}</p>
       <div class="people">
-        <a class="person" data-reveal href="https://www.antonyaddy.com/contact?sujet=sites" target="_blank" rel="noopener">
+        <div class="person" data-reveal>
           <strong>Antony Addy</strong>
-          <span>{t.contactAntony}</span>
-          <em>{t.contactCta} <span aria-hidden="true">↗</span></em>
-        </a>
-        <a class="person" data-reveal href="https://julienb.vercel.app/#contact" target="_blank" rel="noopener">
+          <span class="role">{t.contactAntony}</span>
+          <div class="person-actions">
+            <a class="person-link" href="https://www.antonyaddy.com/contact?sujet=sites" target="_blank" rel="noopener">{t.contactCta} <span aria-hidden="true">↗</span></a>
+            {/* The number is not in the page: the link is built on tap from the encoded
+                value (src/protect.ts). Without JavaScript it opens the contact page. */}
+            <a class="wa" href="https://www.antonyaddy.com/contact?sujet=sites" data-wa={whatsapp.antony} data-text={t.waText.replace("{name}", "Antony")} target="_blank" rel="nofollow noopener" aria-label={t.waAria.replace("{name}", "Antony")}>
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.9-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>
+              {t.waLabel}
+            </a>
+          </div>
+        </div>
+        <div class="person" data-reveal>
           <strong>Julien Bourgois</strong>
-          <span>{t.contactJulien}</span>
-          <em>{t.contactCta} <span aria-hidden="true">↗</span></em>
-        </a>
+          <span class="role">{t.contactJulien}</span>
+          <div class="person-actions">
+            <a class="person-link" href="https://julienb.vercel.app/#contact" target="_blank" rel="noopener">{t.contactCta} <span aria-hidden="true">↗</span></a>
+            <a class="wa" href="https://julienb.vercel.app/#contact" data-wa={whatsapp.julien} data-text={t.waText.replace("{name}", "Julien")} target="_blank" rel="nofollow noopener" aria-label={t.waAria.replace("{name}", "Julien")}>
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.9-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>
+              {t.waLabel}
+            </a>
+          </div>
+        </div>
       </div>
       <p class="small" data-reveal>
         <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
@@ -276,7 +290,16 @@ const ld = {
 
     <script>
       import { spans } from "../wide";
+      import { decodeNumber } from "../protect";
       (window as any).__vitrine = true;
+      // WhatsApp: build the wa.me link only when a visitor taps (the number is not in the page).
+      document.querySelectorAll<HTMLAnchorElement>("a[data-wa]").forEach((a) =>
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          const text = a.dataset.text ? `?text=${encodeURIComponent(a.dataset.text)}` : "";
+          window.open(`https://wa.me/${decodeNumber(a.dataset.wa!)}${text}`, "_blank", "noopener");
+        }),
+      );
       const reduced = matchMedia("(prefers-reduced-motion: reduce)");
       const root = document.documentElement;
 
@@ -808,6 +831,7 @@ const ld = {
   .people { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
   /* Each contact is a pane of glass that lights up warm, like the hero's front window. */
   .person {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
@@ -830,10 +854,33 @@ const ld = {
   }
   @media (hover: hover) { .person:hover { transform: translateY(-2px); } }
   .person strong { font-family: var(--display); font-weight: 500; font-size: 1.45rem; letter-spacing: -0.01em; }
-  .person span { color: var(--text-lo); line-height: 1.5; }
-  .person em { font-style: normal; font-weight: 600; color: var(--lamp); margin-top: 0.6rem; }
-  .person em span { display: inline-block; color: inherit; transition: transform var(--dur-short) var(--ease-hover); }
-  .person:hover em span { transform: translate(3px, -3px); }
+  .person .role { color: var(--text-lo); line-height: 1.5; }
+  .person-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-top: 0.7rem; }
+  /* The main link stretches over the whole card, so the card stays one big target;
+     the WhatsApp button sits above it as its own target. */
+  .person-link { font-weight: 600; color: var(--lamp); text-decoration: none; }
+  .person-link::after { content: ""; position: absolute; inset: 0; border-radius: 16px; }
+  .person-link span { display: inline-block; transition: transform var(--dur-short) var(--ease-hover); }
+  .person:hover .person-link span { transform: translate(3px, -3px); }
+  .wa {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 38px;
+    padding: 0 0.95rem;
+    border-radius: 99px;
+    border: 1px solid rgb(37 211 102 / 0.45);
+    background: rgb(37 211 102 / 0.1);
+    color: var(--text-hi);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--dur-micro) var(--ease-hover), border-color var(--dur-micro) var(--ease-hover);
+  }
+  .wa svg { color: #25d366; }
+  .wa:hover { background: rgb(37 211 102 / 0.2); border-color: #25d366; }
   .small {
     margin: 5rem 0 0;
     padding-top: 1.5rem;

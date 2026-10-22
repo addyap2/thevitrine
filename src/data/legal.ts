@@ -12,8 +12,9 @@ export interface Publisher {
   address: string | null;
   /** Required. */
   email: string | null;
-  /** Required by law for professionals. */
-  phone: string | null;
+  /** Required by law for professionals. Either plain text, or encoded
+   *  ({ protected: "…" }, see src/protect.ts) to show behind a reveal button. */
+  phone: string | { protected: string } | null;
   /** Optional, e.g. VAT number or RCS/RNE registration. */
   extra?: { fr: string; en: string } | null;
 }
@@ -26,7 +27,7 @@ export const publishers: Publisher[] = [
     siret: "483 178 893 00028",
     address: "135 rue Henri Vadon, Résidence des Arènes, 83600 Fréjus, France",
     email: "formations@antonyaddy.com",
-    phone: "+33 6 49 82 98 26",
+    phone: { protected: "NjI4OTI4OTQ2MzM=" },
     extra: { fr: "TVA non applicable, art. 293 B du CGI", en: "VAT not applicable (art. 293 B of the French tax code)" },
   },
   {

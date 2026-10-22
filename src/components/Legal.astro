@@ -74,7 +74,12 @@ const fr = lang === "fr";
               {p.extra && <dd>{p.extra[lang]}</dd>}
               <dd>{p.address ?? <span class="todo">{fr ? "Adresse" : "Address"}{sep}{todo}</span>}</dd>
               <dd>{p.email ? <a href={`mailto:${p.email}`}>{p.email}</a> : <span class="todo">{fr ? "E-mail" : "Email"}{sep}{todo}</span>}</dd>
-              <dd>{p.phone ? <a href={`tel:${p.phone.replace(/\s/g, "")}`}>{p.phone}</a> : <span class="todo">{fr ? "Téléphone" : "Phone"}{sep}{todo}</span>}</dd>
+              <dd>{p.phone ? (typeof p.phone === "string" ? <a href={`tel:${p.phone.replace(/\s/g, "")}`}>{p.phone}</a> : (
+                <span class="phone-protected">
+                  <button type="button" class="show-phone" data-phone={p.phone.protected}>{t.showPhone}</button>
+                  <noscript>{t.phoneNoJs} {p.email}</noscript>
+                </span>
+              )) : <span class="todo">{fr ? "Téléphone" : "Phone"}{sep}{todo}</span>}</dd>
             </dl>
           ))}
         </div>
@@ -148,6 +153,20 @@ const fr = lang === "fr";
     <footer class="wrap foot">
       <p>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</p>
     </footer>
+    <script>
+      import { decodeNumber, formatPhone } from "../protect";
+      // The number is decoded only when a visitor asks for it (kept away from scraping bots).
+      document.querySelectorAll<HTMLButtonElement>("button[data-phone]").forEach((b) =>
+        b.addEventListener("click", () => {
+          const digits = decodeNumber(b.dataset.phone!);
+          const link = document.createElement("a");
+          link.href = `tel:+${digits}`;
+          link.textContent = formatPhone(digits);
+          b.replaceWith(link);
+          link.focus();
+        }),
+      );
+    </script>
   </body>
 </html>
 
@@ -190,6 +209,17 @@ const fr = lang === "fr";
   .person { margin: 0; padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
   .person dt { font-family: var(--font-fraunces); font-weight: 500; font-size: 1.2rem; color: var(--ink); margin-bottom: 0.3rem; }
   .person dd { margin: 0; color: var(--ink-soft); font-size: 0.925rem; overflow-wrap: anywhere; }
+  .show-phone {
+    font: inherit;
+    font-size: 0.9rem;
+    padding: 0.2rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    background: transparent;
+    color: var(--brand);
+    cursor: pointer;
+  }
+  .show-phone:hover { border-color: var(--brand); }
   .todo { font-style: italic; opacity: 0.75; }
   .foot { padding-top: 1.5rem; padding-bottom: 2.5rem; border-top: 1px solid var(--line); font-size: 0.85rem; color: var(--ink-soft); }
   .foot p { margin: 0; }
