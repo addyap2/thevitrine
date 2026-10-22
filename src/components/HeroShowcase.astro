@@ -7,12 +7,12 @@ interface Props { lang: Lang; projects: Project[]; total: number }
 const { lang, projects, total } = Astro.props;
 const fr = lang === "fr", t = strings[lang];
 const opening = ["ristorante-lola", "filton-athletic-fc", "autoecole", "E-Mconcept"];
-const selected = [...opening.map(id => projects.find(p => p.slug === id)), ...projects.filter(p => !opening.includes(p.slug))].filter((p): p is Project => !!p?.image && !!p.url);
+const selected = [...opening.map(id => projects.find(p => p.slug === id)), ...projects.filter(p => !opening.includes(p.slug))].filter((p): p is Project => !!p?.image && !!p.url && p.slug !== "addy-sap-connect");
 const words = fr ? ["Votre plus belle", "vitrine."] : ["Be seen.", "Be chosen."];
 ---
 <SiteHeader lang={lang} altHref={homePath[fr ? "en" : "fr"]} />
 <header class="showcase" data-showcase data-language={lang} data-view="desktop" data-paused="false" aria-labelledby="showcase-title">
-  <div class="ambience" aria-hidden="true"><span class="halo"></span><span class="coordinate a">01 / {total}</span><span class="coordinate b">THE VITRINE — DIGITAL ATELIER</span></div>
+  <div class="ambience" aria-hidden="true"><span class="halo"></span><span class="coordinate a">01 / {selected.length}</span><span class="coordinate b">THE VITRINE — DIGITAL ATELIER</span></div>
   <div class="intro">
     <p class="eyebrow arrival"><span class="signal" aria-hidden="true"></span>{fr ? "Deux créateurs. Un autre regard sur le web." : "Two makers. A different view of the web."}</p>
     <h1 id="showcase-title"><span class="word-line"><span>{words[0]}</span></span> <span class="word-line accent"><em>{words[1]}</em></span></h1>
