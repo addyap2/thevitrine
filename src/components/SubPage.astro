@@ -1,0 +1,179 @@
+---
+// Shell for standalone pages (the blog): metadata, the night header bar, a
+// paper body for the slot, and the night contact band that closes every page.
+import { Font } from "astro:assets";
+import Brand from "./Brand.astro";
+import "../styles/motion.css";
+import "../styles/tokens.css";
+import { strings, homePath, legalPath, type Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** This page's path, and its counterpart in each language. */
+  paths: Record<Lang, string>;
+  noindex?: boolean;
+  ogType?: "website" | "article";
+  ld?: object;
+  /** Shown above the header, e.g. a draft notice. */
+  notice?: string | null;
+}
+const { lang, title, description, paths, noindex = false, ogType = "website", ld, notice } = Astro.props;
+const t = strings[lang];
+const other: Lang = lang === "fr" ? "en" : "fr";
+const canonical = new URL(paths[lang], Astro.site);
+const ogImage = new URL(`/og/${lang}.jpg`, Astro.site);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      document.documentElement.classList.add("js");
+      setTimeout(function () { if (!window.__vitrine) document.documentElement.classList.add("reveal-all"); }, 3000);
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="fr" href={new URL(paths.fr, Astro.site)} />
+    <link rel="alternate" hreflang="en" href={new URL(paths.en, Astro.site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL(paths.fr, Astro.site)} />
+    <meta name="theme-color" content="#081227" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="The Vitrine" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === "fr" ? "fr_FR" : "en_GB"} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t.ogAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
+    <Font cssVariable="--font-fraunces" preload={[{ style: "normal", subset: "latin" }]} />
+    <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />
+  </head>
+  <body>
+    {notice && <p class="notice" role="note">{notice}</p>}
+    <header class="top">
+      <div class="wrap bar">
+        <Brand href={homePath[lang]} />
+        <a class="lang" href={paths[other]} hreflang={other} lang={other}>{t.switchTo}</a>
+      </div>
+      <div class="sill horizon" aria-hidden="true"></div>
+    </header>
+
+    <slot />
+
+    <footer class="contact">
+      <div class="sill horizon" aria-hidden="true"></div>
+      <div class="wrap">
+        <h2 data-reveal>{t.contactLead} <em>{t.contactAccent}</em>{t.contactTail}</h2>
+        <p class="contact-lede" data-reveal>{t.contactLede}</p>
+        <a class="cta" href={`${homePath[lang]}#contact`} data-reveal>{t.heroCta2} <span aria-hidden="true">→</span></a>
+        <p class="small">
+          <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
+          <a href={legalPath[lang]}>{t.legalLink}</a>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      (window as any).__vitrine = true;
+      const io = new IntersectionObserver(
+        (entries) => {
+          let i = 0;
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            const el = e.target as HTMLElement;
+            el.style.setProperty("--i", String(Math.min(i++, 5)));
+            el.classList.add("in");
+            io.unobserve(el);
+          }
+        },
+        { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
+      );
+      const reveal = document.querySelectorAll<HTMLElement>("[data-reveal]");
+      reveal.forEach((el) => io.observe(el));
+      // The last lines can sit inside the bottom margin even when fully scrolled.
+      const atEnd = () => {
+        if (innerHeight + scrollY < document.documentElement.scrollHeight - 4) return;
+        reveal.forEach((el) => el.classList.add("in"));
+        removeEventListener("scroll", atEnd);
+      };
+      addEventListener("scroll", atEnd, { passive: true });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-inter); -webkit-font-smoothing: antialiased; overflow-x: hidden; overflow-x: clip; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+  @media (min-width: 640px) { .wrap { padding: 0 2rem; } }
+  :focus-visible { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; }
+</style>
+
+<style>
+  .notice { margin: 0; padding: 0.6rem 1rem; text-align: center; font-size: 0.85rem; font-weight: 500; color: #1a0f04; background: var(--lamp); }
+
+  .top {
+    position: relative;
+    --focus: var(--lamp);
+    color-scheme: dark;
+    background:
+      radial-gradient(60% 120% at 80% 0%, rgb(255 178 102 / 0.18), transparent 70%),
+      linear-gradient(180deg, var(--night-2), var(--night));
+  }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 0.9rem; padding-bottom: 0.9rem; }
+  .lang {
+    font-size: 0.875rem; font-weight: 500; color: var(--text-hi); text-decoration: none;
+    padding: 0.45rem 0.9rem; border: 1px solid rgb(255 255 255 / 0.18); border-radius: 99px;
+    background: rgb(255 255 255 / 0.04); view-transition-name: lang-switch;
+  }
+  .lang:hover { border-color: rgb(255 255 255 / 0.4); }
+  .sill { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, var(--lamp) 35%, var(--blue) 75%, transparent); opacity: 0.8; }
+
+  .contact {
+    position: relative;
+    overflow: hidden;
+    --focus: var(--lamp);
+    padding: 5rem 0 2.5rem;
+    color: var(--text-hi);
+    color-scheme: dark;
+    background:
+      radial-gradient(55% 60% at 50% 0%, rgb(255 178 102 / 0.2), transparent 70%),
+      linear-gradient(180deg, var(--night) 0%, var(--night-2) 100%);
+  }
+  .contact .sill { top: 0; bottom: auto; background: linear-gradient(90deg, transparent, var(--blue) 25%, var(--lamp) 65%, transparent); }
+  .contact h2 { font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.04; letter-spacing: -0.03em; margin: 0; max-width: 16ch; text-wrap: balance; }
+  .contact h2 em {
+    font-style: italic;
+    background: linear-gradient(100deg, var(--lamp-hot), var(--lamp) 45%, #ff9a5a);
+    -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.06em;
+  }
+  .contact-lede { color: var(--text-lo); font-size: 1.1rem; line-height: 1.6; max-width: 36rem; margin: 1rem 0 0; }
+  .cta {
+    display: inline-flex; align-items: center; gap: 0.5rem; min-height: 48px; margin-top: 1.75rem; padding: 0 1.4rem;
+    border-radius: 99px; font-weight: 600; text-decoration: none; color: #1a0f04;
+    background: linear-gradient(180deg, var(--lamp-hot), var(--lamp));
+    box-shadow: 0 10px 30px -10px rgb(255 178 102 / 0.7), inset 0 1px 0 rgb(255 255 255 / 0.6);
+    transition: transform var(--dur-short) var(--ease-hover);
+  }
+  @media (hover: hover) { .cta:hover { transform: translateY(-2px); } }
+  .small {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 1.5rem;
+    margin: 4rem 0 0; padding-top: 1.5rem; border-top: 1px solid rgb(255 255 255 / 0.1);
+    font-size: 0.85rem; color: var(--text-lo);
+  }
+  .small a { color: var(--text-lo); text-underline-offset: 3px; }
+  .small a:hover { color: var(--lamp); }
+  @media (prefers-reduced-motion: reduce) { .cta:hover { transform: none; } }
+</style>

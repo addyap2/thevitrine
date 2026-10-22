@@ -4,6 +4,9 @@ export type Lang = (typeof langs)[number];
 // French is the main language and lives at the root; English is at /en/.
 export const homePath: Record<Lang, string> = { fr: "/", en: "/en/" };
 export const legalPath: Record<Lang, string> = { fr: "/mentions-legales/", en: "/en/legal-notice/" };
+/** Blog: /blog/ in French, /en/blog/ in English. */
+export const blogPath: Record<Lang, string> = { fr: "/blog/", en: "/en/blog/" };
+export const postPath = (lang: Lang, slug: string) => `${blogPath[lang]}${slug}/`;
 /** Case-study pages: /realisations/<slug>/ in French, /en/work/<slug>/ in English. */
 export const casePath = (lang: Lang, slug: string) => (lang === "fr" ? `/realisations/${slug}/` : `/en/work/${slug}/`);
 
@@ -69,6 +72,19 @@ export const strings = {
     caseAll: "All our sites",
     caseLink: "Case study",
     caseDraft: "Draft, not yet published: this page is hidden from search engines until it's approved.",
+    blogName: "Blog",
+    blogTitle: "Blog: websites, explained | The Vitrine",
+    blogHeading: "Websites, explained",
+    blogLede: "How a website can help you, and how we work: practical notes from Antony and Julien.",
+    blogDescription: "Practical articles on what a website can do for you, how we build ours, and how we work with you.",
+    blogBy: "By",
+    blogAnd: "and",
+    blogRead: "Read",
+    blogMinutes: "min read",
+    blogEmpty: "The first articles are on their way.",
+    blogDraft: "Draft, not yet published: this article is hidden from search engines until it's approved.",
+    blogBadgeDraft: "Draft",
+    blogAll: "All articles",
     legalLink: "Legal notice",
     shotAlt: "Home page of the {title} website ({host})",
     portfolioName: "Websites built by The Vitrine",
@@ -151,6 +167,19 @@ export const strings = {
     caseAll: "Tous nos sites",
     caseLink: "Étude de cas",
     caseDraft: "Brouillon, non publié : cette page reste invisible pour les moteurs de recherche jusqu'à sa validation.",
+    blogName: "Blog",
+    blogTitle: "Blog : les sites web expliqués | The Vitrine",
+    blogHeading: "Les sites web, expliqués",
+    blogLede: "Ce qu'un site peut faire pour vous, et comment nous travaillons : des articles concrets d'Antony et Julien.",
+    blogDescription: "Des articles concrets sur ce qu'un site peut faire pour vous, comment nous créons les nôtres et comment nous travaillons avec vous.",
+    blogBy: "Par",
+    blogAnd: "et",
+    blogRead: "Lire",
+    blogMinutes: "min de lecture",
+    blogEmpty: "Les premiers articles arrivent bientôt.",
+    blogDraft: "Brouillon, non publié : cet article reste invisible pour les moteurs de recherche jusqu'à sa validation.",
+    blogBadgeDraft: "Brouillon",
+    blogAll: "Tous les articles",
     legalLink: "Mentions légales",
     shotAlt: "Page d'accueil du site {title} ({host})",
     portfolioName: "Sites réalisés par The Vitrine",

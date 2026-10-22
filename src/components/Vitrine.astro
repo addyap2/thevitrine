@@ -3,7 +3,8 @@ import ProjectCard from "./ProjectCard.astro";
 import Hero from "./Hero.astro";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
-import { strings, homePath, legalPath, langs, type Lang } from "../i18n";
+import { strings, homePath, legalPath, blogPath, langs, type Lang } from "../i18n";
+import { postsFor, isPublished } from "../blog";
 import { spans } from "../wide";
 import { priceFrom, timescale, profiles, missingBusinessFields } from "../data/business";
 import { faq, missingFaqAnswers } from "../data/faq";
@@ -46,6 +47,8 @@ const priceLine =
 // FAQ: only questions with an answer are shown (the rest are placeholders).
 const faqShown = faq.filter((f) => f.a !== null).map((f) => ({ id: f.id, q: f.q[lang], a: f.a![lang] }));
 const faqMissing = missingFaqAnswers();
+// The blog is linked from the homepage once it has at least one published article.
+const hasBlog = (await postsFor(lang)).some(isPublished);
 if (faqMissing.length) console.warn(`[faq] Questions hidden until answered in src/data/faq.ts: ${faqMissing.join(", ")}`);
 const services = [
   [t.servicesWhoTitle, t.servicesWho],
@@ -263,7 +266,10 @@ const ld = {
       </div>
       <p class="small" data-reveal>
         <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
-        <a href={legalPath[lang]}>{t.legalLink}</a>
+        <span class="footer-links">
+          {hasBlog && <a href={blogPath[lang]}>{t.blogName}</a>}
+          <a href={legalPath[lang]}>{t.legalLink}</a>
+        </span>
       </p>
       </div>
     </footer>
@@ -835,6 +841,7 @@ const ld = {
     gap: 0.5rem 1.5rem;
   }
   .small a { color: var(--text-lo); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .footer-links { display: flex; gap: 1.25rem; }
   .small a:hover { color: var(--lamp); }
   @media (prefers-reduced-motion: reduce) {
     .person:hover { transform: none; }

@@ -1,0 +1,127 @@
+---
+// One article. Drafts carry a notice and stay out of search engines.
+import SubPage from "./SubPage.astro";
+import { render } from "astro:content";
+import { strings, blogPath, postPath, homePath, type Lang } from "../i18n";
+import { translationOf, isPublished, minutes, formatDate, postsFor, type Post } from "../blog";
+
+interface Props { post: Post }
+const { post } = Astro.props;
+const lang = post.data.lang as Lang;
+const t = strings[lang];
+const { Content } = await render(post);
+const other = await translationOf(post);
+const otherLang: Lang = lang === "fr" ? "en" : "fr";
+const paths = { [lang]: postPath(lang, post.data.slug), [otherLang]: other ? postPath(otherLang, other.data.slug) : blogPath[otherLang] } as Record<Lang, string>;
+const abs = (path: string) => new URL(path, Astro.site).href;
+const draft = !isPublished(post);
+const authors = post.data.authors.map((a) => (a === "Julien" ? "Julien Bourgois" : "Antony Addy"));
+const iso = post.data.date.toISOString().slice(0, 10);
+
+// Other articles to read next (published ones, or drafts while none are).
+const siblings = (await postsFor(lang)).filter((p) => p.id !== post.id);
+const next = (siblings.some(isPublished) ? siblings.filter(isPublished) : siblings).slice(0, 2);
+
+const ld = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "The Vitrine", item: abs(homePath[lang]) },
+        { "@type": "ListItem", position: 2, name: t.blogName, item: abs(blogPath[lang]) },
+        { "@type": "ListItem", position: 3, name: post.data.title, item: abs(paths[lang]) },
+      ],
+    },
+    {
+      "@type": "BlogPosting",
+      headline: post.data.title,
+      description: post.data.description,
+      inLanguage: lang,
+      datePublished: iso,
+      dateModified: iso,
+      url: abs(paths[lang]),
+      mainEntityOfPage: abs(paths[lang]),
+      image: abs(`/og/${lang}.jpg`),
+      author: post.data.authors.map((a) => ({ "@id": abs(a === "Julien" ? "/#julien" : "/#antony") })),
+      publisher: { "@id": abs("/#organization") },
+    },
+  ],
+};
+---
+
+<SubPage
+  lang={lang}
+  title={`${post.data.title} | The Vitrine`}
+  description={post.data.description}
+  paths={paths}
+  noindex={draft}
+  ogType="article"
+  ld={ld}
+  notice={draft ? t.blogDraft : null}
+>
+  <main class="wrap post">
+    <nav class="crumbs" aria-label={lang === "fr" ? "Fil d'Ariane" : "Breadcrumb"}>
+      <a href={homePath[lang]}>The Vitrine</a> <span aria-hidden="true">/</span>
+      <a href={blogPath[lang]}>{t.blogName}</a>
+    </nav>
+    <article>
+      <header>
+        <h1>{post.data.title}</h1>
+        <p class="meta">
+          {t.blogBy} {authors.join(` ${t.blogAnd} `)}{" "}<span aria-hidden="true">·</span>{" "}
+          <time datetime={iso}>{formatDate(post.data.date, lang)}</time>{" "}<span aria-hidden="true">·</span>{" "}
+          {minutes(post)} {t.blogMinutes}
+        </p>
+        <p class="lede">{post.data.description}</p>
+      </header>
+      <div class="prose">
+        <Content />
+      </div>
+    </article>
+
+    {next.length > 0 && (
+      <nav class="next" aria-label={t.blogAll}>
+        <a class="all" href={blogPath[lang]}><span aria-hidden="true">←</span> {t.blogAll}</a>
+        <ul>
+          {next.map((p) => (
+            <li><a href={postPath(lang, p.data.slug)}>{p.data.title} <span aria-hidden="true">→</span></a></li>
+          ))}
+        </ul>
+      </nav>
+    )}
+  </main>
+</SubPage>
+
+<style>
+  .post { max-width: 44rem; padding-top: 3rem; padding-bottom: 5rem; }
+  .crumbs { display: flex; gap: 0.5rem; font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 2rem; }
+  .crumbs a { color: var(--ink-soft); text-decoration: none; }
+  .crumbs a:hover { color: var(--accent); }
+  h1 { font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(2.1rem, 5.5vw, 3.3rem); line-height: 1.06; letter-spacing: -0.025em; margin: 0; text-wrap: balance; }
+  .meta { margin: 1rem 0 0; font-size: 0.9rem; color: var(--ink-soft); }
+  .lede { margin: 1.5rem 0 0; padding-bottom: 2rem; border-bottom: 1px solid var(--line); font-size: 1.2rem; line-height: 1.6; color: var(--ink); }
+
+  /* Long-form text: a comfortable measure, generous spacing, quiet accents. */
+  .prose { margin-top: 2rem; font-size: 1.1rem; line-height: 1.75; color: var(--ink); }
+  .prose :global(p) { margin: 0 0 1.25rem; text-wrap: pretty; }
+  .prose :global(h2) { margin: 2.75rem 0 0.9rem; font-family: var(--font-fraunces); font-weight: 500; font-size: 1.6rem; line-height: 1.25; letter-spacing: -0.015em; }
+  .prose :global(h3) { margin: 2rem 0 0.6rem; font-size: 1.1rem; font-weight: 600; }
+  .prose :global(ul), .prose :global(ol) { margin: 0 0 1.25rem; padding-left: 1.4rem; }
+  .prose :global(li) { margin: 0.4rem 0; }
+  .prose :global(li::marker) { color: var(--accent); }
+  .prose :global(a) { color: var(--brand); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .prose :global(strong) { font-weight: 600; }
+  .prose :global(blockquote) { margin: 1.75rem 0; padding: 0.25rem 0 0.25rem 1.25rem; border-left: 2px solid var(--lamp); color: var(--ink-soft); font-style: italic; }
+
+  .next { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+  .all { font-size: 0.9rem; color: var(--ink-soft); text-decoration: none; }
+  .all:hover { color: var(--accent); }
+  .next ul { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 0.75rem; }
+  .next li a {
+    display: block; padding: 1rem 1.25rem; border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
+    font-family: var(--font-fraunces); font-size: 1.15rem; color: var(--ink); text-decoration: none;
+    transition: border-color var(--dur-micro) var(--ease-hover);
+  }
+  .next li a:hover { border-color: var(--accent); }
+</style>

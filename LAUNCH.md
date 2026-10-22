@@ -139,6 +139,10 @@ Ticked items were verified in this audit. Unticked ones are still to do.
 - [x] Homepage FAQ (9 questions, French and English) with FAQPage structured data
 - [ ] Answer the hidden questions in `src/data/faq.ts`: hosting and domain name, editing the site yourself, what happens after launch
 
+### Blog
+- [x] Blog at `/blog/` and `/en/blog/`, with 5 draft articles in each language (in `src/content/blog/`)
+- [ ] Review the articles, then set `status: published` in each file's front matter (both languages): that indexes them, adds them to the sitemap and adds a "Blog" link to the homepage footer
+
 ### Analytics
 - [ ] Turn on Vercel Web Analytics or Plausible (B)
 - [ ] Track clicks on the hero CTAs, the pinned button and both contact cards

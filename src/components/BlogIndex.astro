@@ -1,0 +1,78 @@
+---
+// The list of articles in one language. Only published articles are listed;
+// while there are none, the drafts are shown (marked) for review and the page
+// stays out of search engines.
+import SubPage from "./SubPage.astro";
+import { strings, blogPath, postPath, homePath, type Lang } from "../i18n";
+import { postsFor, isPublished, minutes, formatDate } from "../blog";
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = strings[lang];
+const all = await postsFor(lang);
+const published = all.filter(isPublished);
+const listed = published.length ? published : all;
+const abs = (path: string) => new URL(path, Astro.site).href;
+
+const ld = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: t.blogHeading,
+  url: abs(blogPath[lang]),
+  inLanguage: lang,
+  publisher: { "@id": abs("/#organization") },
+  blogPost: published.map((p) => ({ "@type": "BlogPosting", headline: p.data.title, url: abs(postPath(lang, p.data.slug)), datePublished: p.data.date.toISOString().slice(0, 10) })),
+};
+---
+
+<SubPage lang={lang} title={t.blogTitle} description={t.blogDescription} paths={blogPath} noindex={published.length === 0} ld={ld}>
+  <main class="wrap index">
+    <nav class="crumbs" aria-label={lang === "fr" ? "Fil d'Ariane" : "Breadcrumb"}>
+      <a href={homePath[lang]}>The Vitrine</a> <span aria-hidden="true">/</span> <span aria-current="page">{t.blogName}</span>
+    </nav>
+    <h1>{t.blogHeading}</h1>
+    <p class="lede">{t.blogLede}</p>
+
+    {listed.length === 0 ? (
+      <p class="empty">{t.blogEmpty}</p>
+    ) : (
+      <ol class="posts">
+        {listed.map((p) => (
+          <li data-reveal>
+            <a href={postPath(lang, p.data.slug)}>
+              <p class="meta">
+                <time datetime={p.data.date.toISOString().slice(0, 10)}>{formatDate(p.data.date, lang)}</time>
+                <span aria-hidden="true">·</span> {minutes(p)} {t.blogMinutes}
+                {!isPublished(p) && <span class="badge">{t.blogBadgeDraft}</span>}
+              </p>
+              <h2>{p.data.title}</h2>
+              <p class="desc">{p.data.description}</p>
+              <span class="more">{t.blogRead} <span aria-hidden="true">→</span></span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    )}
+  </main>
+</SubPage>
+
+<style>
+  .index { max-width: 52rem; padding-top: 3rem; padding-bottom: 5rem; }
+  .crumbs { display: flex; gap: 0.5rem; font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 2rem; }
+  .crumbs a { color: var(--ink-soft); text-decoration: none; }
+  .crumbs a:hover { color: var(--accent); }
+  h1 { font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(2.4rem, 6vw, 3.8rem); line-height: 1.02; letter-spacing: -0.03em; margin: 0; }
+  .lede { margin: 1rem 0 0; font-size: 1.15rem; line-height: 1.6; color: var(--ink-soft); max-width: 38rem; }
+  .empty { margin-top: 3rem; color: var(--ink-soft); }
+  .posts { list-style: none; margin: 3rem 0 0; padding: 0; border-top: 1px solid var(--line); }
+  .posts li { border-bottom: 1px solid var(--line); }
+  .posts a { display: block; padding: 1.75rem 0; color: inherit; text-decoration: none; }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0 0 0.6rem; font-size: 0.85rem; color: var(--ink-soft); }
+  .badge { margin-left: 0.25rem; padding: 0.1rem 0.5rem; border: 1px dashed var(--accent); border-radius: 99px; font-size: 0.75rem; color: var(--accent); }
+  .posts h2 { margin: 0; font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(1.4rem, 3vw, 1.9rem); line-height: 1.2; letter-spacing: -0.015em; transition: color var(--dur-micro) var(--ease-hover); text-wrap: balance; }
+  .desc { margin: 0.6rem 0 0; color: var(--ink-soft); line-height: 1.6; max-width: 42rem; }
+  .more { display: inline-flex; gap: 0.4rem; margin-top: 0.9rem; font-size: 0.9rem; font-weight: 600; color: var(--brand); }
+  .more span { transition: transform var(--dur-short) var(--ease-hover); }
+  .posts a:hover h2 { color: var(--accent); }
+  .posts a:hover .more span { transform: translateX(3px); }
+</style>
