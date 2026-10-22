@@ -130,7 +130,7 @@ Ticked items were verified in this audit. Unticked ones are still to do.
 - [x] Sitemap includes the legal pages and `lastmod` dates
 - [ ] Fill the placeholders in `src/data/business.ts`: `priceFrom` and `timescale` (adds a price line to the page and the offer), `profiles` (Google Business Profile, Malt… for `sameAs`)
 - [x] Phase 3: 25 case studies drafted in French and English (`/realisations/<projet>/`, `/en/work/<project>/`), written only from what each live site shows
-- [ ] Review each draft, check with the client, then set `status: "published"` in `src/data/cases.ts` (that indexes it, adds it to the sitemap and links the card's title to it)
+- [x] All 25 case studies published (indexed, in the sitemap, card titles link to them)
 - [x] Driving school: 30 years of experience confirmed (its own site's hero still says 17; worth fixing there)
 - [x] Florian Bozzetti (osteopath, Julien) added to the Vitrine, with a draft case study
 - [ ] Phase 4: custom domain, links from antonyaddy.com and Julien's site, client-site credits, directory listings, Search Console and Bing Webmaster Tools
@@ -142,7 +142,7 @@ Ticked items were verified in this audit. Unticked ones are still to do.
 ### Blog
 - [x] Blog at `/blog/` and `/en/blog/`, with 5 draft articles in each language (in `src/content/blog/`)
 - [x] All five articles published in both languages (indexed, in the sitemap, "Blog" link in the homepage footer)
-- [ ] The articles link to case studies that are still drafts (noindex): publishing those case studies makes the links count for search
+- [x] The articles' links to case studies now point to published, indexable pages
 
 ### Analytics
 - [ ] Turn on Vercel Web Analytics or Plausible (B)

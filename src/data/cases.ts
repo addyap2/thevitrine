@@ -5,7 +5,7 @@
 // status "draft":     the page exists for review but is noindex, left out of
 //                     the sitemap and not linked from the homepage.
 // status "published": indexed, in the sitemap, and the card's title links to it.
-// Publish a case study only once the client has agreed to be featured.
+// All published on 22 October 2026, at Antony's request.
 
 type Text = { fr: string; en: string };
 export interface CaseStudy {
@@ -22,7 +22,7 @@ export interface CaseStudy {
 
 export const cases: Record<string, CaseStudy> = {
   "ristorante-lola": {
-    status: "draft",
+    status: "published",
     place: { fr: "Fermignano, Marches (Italie)", en: "Fermignano, Marche (Italy)" },
     client: {
       fr: "Le Ristorante da Lola est une pizzeria familiale de Fermignano, dans les Marches. On y sert la cuisine de la région dans une atmosphère simple : pâtes faites maison, viandes à la braise et une large carte de pizzas cuites au feu de bois. Le restaurant accueille aussi les familles, avec un boulodrome attenant et une aire de jeux.",
@@ -51,7 +51,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "wall-street": {
-    status: "draft",
+    status: "published",
     place: { fr: "Fréjus, Var", en: "Fréjus, Var" },
     client: {
       fr: "Wall Street est un bar-brasserie de Fréjus, un pub à l'anglaise version méditerranéenne : tables en tonneaux, bières Paulaner et Delirium, cocktails, concerts et DJ sets toute la semaine, et tous les grands matchs sur écran géant. En cuisine, tout est fait maison avec des produits frais.",
@@ -80,7 +80,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "so-good-diner": {
-    status: "draft",
+    status: "published",
     place: { fr: "Fréjus, Var", en: "Fréjus, Var" },
     client: {
       fr: "So Good Diner est un snack gourmand du centre de Fréjus : burgers, kumpir, box à partager et sandwichs. Le pain vient chaque jour du boulanger, la viande fraîche du boucher, les sauces sont faites sur place, et les steaks sont saisis devant les clients.",
@@ -109,7 +109,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "tandoor-global": {
-    status: "draft",
+    status: "published",
     place: { fr: "Fréjus, Var", en: "Fréjus, Var" },
     client: {
       fr: "Mr. Tandoors est un restaurant indien du cœur de Fréjus. Toutes les viandes sont certifiées halal et les plats sont cuits dans un véritable four tandoor : biryani, naan, curry, tikka masala. On y mange sur place, dans une salle décorée avec bar à cocktails, ou à emporter.",
@@ -138,7 +138,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "planb-global-connect": {
-    status: "draft",
+    status: "published",
     place: { fr: "Var et Alpes-Maritimes", en: "Var and Alpes-Maritimes" },
     client: {
       fr: "Plan B Concept est l'activité d'Anthony Gratton, assistant à maîtrise d'ouvrage sur la Côte d'Azur après plus de trente ans dans le bâtiment. Il représente des propriétaires, souvent étrangers, pendant leurs projets de rénovation ou de construction, en anglais comme en français, de Saint-Tropez à Monaco.",
@@ -167,7 +167,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   autoecole: {
-    status: "draft",
+    status: "published",
     place: { fr: "Fréjus, Var", en: "Fréjus, Var" },
     client: {
       fr: "L'auto-école La Tour de Mare forme les conducteurs de Fréjus, Saint-Raphaël et de l'Est varois : permis voiture en boîte manuelle ou automatique, conduite accompagnée, moto, cyclomoteur, voiturette et remorque. Forte de près de 30 ans d'expérience, elle figure au palmarès des Meilleures Auto-Écoles de France 2026 d'Auto Plus et VroomVroom.",
@@ -196,7 +196,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "E-Mconcept": {
-    status: "draft",
+    status: "published",
     place: { fr: "Var et Alpes-Maritimes", en: "Var and Alpes-Maritimes" },
     client: {
       fr: "EM Concept est électricien et intégrateur audiovisuel dans le Var et les Alpes-Maritimes depuis quinze ans : électricité générale et éclairage, TV et vidéo, home cinéma, sonorisation, réseau Wi-Fi, caméras et alarme. Un seul interlocuteur pour toute l'installation, de la conception à la mise en service.",
@@ -225,7 +225,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   julienb: {
-    status: "draft",
+    status: "published",
     place: { fr: "Studio web indépendant", en: "Independent web studio" },
     client: {
       fr: "C'est le site du studio de Julien Bourgois, l'un des deux créateurs de The Vitrine. Julien conçoit et développe des sites vitrines sur mesure pour les artisans, commerçants, thérapeutes et auteurs : rapides, pensés pour le téléphone et faits pour donner envie d'appeler.",
@@ -252,7 +252,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   stephanie: {
-    status: "draft",
+    status: "published",
     place: { fr: "Saint-Raphaël, Var", en: "Saint-Raphaël, Var" },
     client: {
       fr: "SR Bien-être est le cabinet d'une sophrologue et énergéticienne à Saint-Raphaël. Elle accompagne adultes, adolescents et enfants : sophrologie, soins énergétiques et Reiki, drainage lymphatique, massage modelant et yoga pour enfants, au cabinet ou à domicile autour de Saint-Raphaël.",
@@ -281,7 +281,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   taquet: {
-    status: "draft",
+    status: "published",
     place: { fr: "Psychologie et édition", en: "Psychology and publishing" },
     client: {
       fr: "Annick Taquet-Assoignons est psychologue clinicienne, conférencière, formatrice et autrice de onze livres chez trois éditeurs. Elle écrit des albums pour aider les enfants à mettre des mots sur ce qu'ils vivent, et des ouvrages pour les soignants et les proches aidants.",
@@ -308,7 +308,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   osteoflo: {
-    status: "draft",
+    status: "published",
     place: { fr: "Puget-sur-Argens, Var", en: "Puget-sur-Argens, Var" },
     client: {
       fr: "Florian Bozzetti est ostéopathe D.O. à Puget-sur-Argens, près de Fréjus. Spécialisé en thérapie manuelle mécaniste, il soigne toute la famille, des nourrissons aux seniors en passant par les sportifs et les femmes enceintes, en cherchant l'origine des douleurs plutôt que leurs seuls symptômes.",
@@ -337,7 +337,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "filton-athletic-fc": {
-    status: "draft",
+    status: "published",
     place: { fr: "Filton, Bristol (Royaume-Uni)", en: "Filton, Bristol (UK)" },
     client: {
       fr: "Filton Athletic FC est un club de football amateur du nord de Bristol, fondé dans les années 1960 à Filton, berceau du Concorde. L'équipe première, la réserve, l'équipe A et une section jeunes jouent à BBS Park North, en Marcliff Gloucestershire County Football League.",
@@ -366,7 +366,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "filton-social-club": {
-    status: "draft",
+    status: "published",
     place: { fr: "Filton, Bristol (Royaume-Uni)", en: "Filton, Bristol (UK)" },
     client: {
       fr: "Le Filton & District Social Club est un club de membres convivial de Filton, à Bristol : sport en direct sur Sky Sports et TNT Sports, soirées musicales le samedi, bingo, équipes de skittles, location de salles et un bar où les chiens sont les bienvenus. Les visiteurs sont aussi accueillis.",
@@ -393,7 +393,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "speakup-ai-english-trainer": {
-    status: "draft",
+    status: "published",
     place: { fr: "En ligne", en: "Online" },
     client: {
       fr: "SpeakUp AI est un outil créé par Antony Addy, formateur d'anglais certifié, pour s'entraîner à de vraies conversations en anglais : entretiens d'embauche, voyages, affaires et vie quotidienne. Il complète ses formations et reste gratuit pendant le lancement.",
@@ -422,7 +422,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "toeic-success-hub": {
-    status: "draft",
+    status: "published",
     place: { fr: "En ligne", en: "Online" },
     client: {
       fr: "ToeicPath est une plateforme de préparation au TOEIC créée par Antony Addy. Elle couvre les deux formats de l'examen, le TOEIC Listening & Reading et le TOEIC 4 compétences, et reste gratuite et sans inscription pendant le lancement.",
@@ -451,7 +451,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "cloe-prep-path": {
-    status: "draft",
+    status: "published",
     place: { fr: "En ligne", en: "Online" },
     client: {
       fr: "CLOE Prep est une préparation indépendante à la certification d'anglais CLOE, conçue par Antony Addy. Elle s'adresse aux professionnels qui doivent valider leur niveau sur l'anglais réellement utilisé au travail : e-mails, réunions, appels et relation client.",
@@ -478,7 +478,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "english-grammar-hub": {
-    status: "draft",
+    status: "published",
     place: { fr: "En ligne", en: "Online" },
     client: {
       fr: "Grammatica est une ressource de grammaire anglaise créée par Antony Addy pour les apprenants qui comprennent mieux une règle expliquée dans leur propre langue : français, espagnol, portugais, italien, allemand, russe, arabe ou chinois mandarin.",
@@ -505,7 +505,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "adventure-books": {
-    status: "draft",
+    status: "published",
     place: { fr: "En ligne", en: "Online" },
     client: {
       fr: "English Reading Adventures est une collection d'histoires interactives créée par Antony Addy pour les personnes qui apprennent l'anglais. Le lecteur est le héros : chaque page se termine par un choix, et bien choisir suppose d'avoir compris ce qu'on vient de lire.",
@@ -532,7 +532,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "listening-english-antonyaddy": {
-    status: "draft",
+    status: "published",
     place: { fr: "En ligne", en: "Online" },
     client: {
       fr: "ListenUp est une plateforme de compréhension orale en anglais créée par Antony Addy, du niveau débutant au niveau avancé. Elle s'appuie sur de vraies conversations du quotidien et du monde professionnel, et reste gratuite pendant le lancement.",
@@ -559,7 +559,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "anglais-a-distance-learn": {
-    status: "draft",
+    status: "published",
     place: { fr: "En ligne", en: "Online" },
     client: {
       fr: "Anglais à Distance est un site d'anglais en ligne gratuit pour les adultes francophones, créé par Antony Addy. Il part des fautes que font réellement les francophones (« depends of », « since 3 years »…) pour les corriger, les expliquer et les faire retenir.",
@@ -588,7 +588,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "biz-fluent-coach": {
-    status: "draft",
+    status: "published",
     place: { fr: "En ligne", en: "Online" },
     client: {
       fr: "TP English Pro est une plateforme d'anglais professionnel créée par Antony Addy pour les personnes qui préparent le titre professionnel Assistant de Direction, et notamment son épreuve orale d'anglais. Elle est gratuite.",
@@ -617,7 +617,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "addys-english-pro": {
-    status: "draft",
+    status: "published",
     place: { fr: "Côte d'Azur et à distance", en: "French Riviera and online" },
     client: {
       fr: "C'est le site principal d'Antony Addy, l'un des deux créateurs de The Vitrine : formateur d'anglais professionnel, britannique natif, certifié Formateur Professionnel d'Adultes depuis 2017, formateur en IA générative et créateur de sites web et d'outils pédagogiques, sur la Côte d'Azur et à distance.",
@@ -646,7 +646,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "addy-genai-training": {
-    status: "draft",
+    status: "published",
     place: { fr: "Fréjus et à distance", en: "Fréjus and online" },
     client: {
       fr: "Antony Addy, formateur certifié d'État basé à Fréjus, forme les entreprises et les indépendants à l'IA générative : ChatGPT, Claude, Gemini ou Copilot, en présentiel ou à distance, en français ou en anglais, à partir de leurs propres cas d'usage.",
@@ -675,7 +675,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "addy-sap-connect": {
-    status: "draft",
+    status: "published",
     place: { fr: "Sur site et à distance", en: "On site and online" },
     client: {
       fr: "Antony Addy propose des formations au module SAP Materials Management (MM) pour les professionnels et les entreprises. Britannique natif, bilingue en français et formateur certifié depuis 2017, il forme sur site, à distance ou sur mesure.",
@@ -702,7 +702,7 @@ export const cases: Record<string, CaseStudy> = {
   },
 
   "student-mark-tracker": {
-    status: "draft",
+    status: "published",
     place: { fr: "Outil interne", en: "Internal tool" },
     client: {
       fr: "Student Mark Tracker est un espace de travail privé développé pour Antony Addy Formations. Il sert à suivre le travail de chaque apprenant en formation d'anglais : documents, notes et progression individuelle.",
