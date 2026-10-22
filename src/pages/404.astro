@@ -2,6 +2,7 @@
 // Shown by Vercel for any unknown address. It can't know the visitor's
 // language, so it speaks both, French first.
 import { Font } from "astro:assets";
+import Brand from "../components/Brand.astro";
 import { strings, homePath, legalPath } from "../i18n";
 const { fr, en } = strings;
 ---
@@ -20,7 +21,7 @@ const { fr, en } = strings;
   </head>
   <body>
     <main>
-      <p class="mark">The Vitrine</p>
+      <div class="identity"><Brand href={homePath.fr} /></div>
       <h1>{fr.notFoundTitle}</h1>
       <p>{fr.notFoundText}</p>
       <a class="cta" href={homePath.fr}>{fr.notFoundCta} <span aria-hidden="true">→</span></a>
@@ -50,7 +51,7 @@ const { fr, en } = strings;
       linear-gradient(180deg, #10234d, #081227 70%);
   }
   main { max-width: 34rem; }
-  .mark { font-family: var(--font-fraunces); font-weight: 600; color: #79adff; margin: 0 0 3rem; }
+  .identity { margin-bottom: 3rem; }
   h1 { font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(2.4rem, 7vw, 3.6rem); line-height: 1.02; letter-spacing: -0.03em; margin: 0; }
   h2 { font-family: var(--font-fraunces); font-weight: 500; font-size: 1.3rem; margin: 0; }
   p { color: #b4c0dc; line-height: 1.6; }

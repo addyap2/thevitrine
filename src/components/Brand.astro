@@ -1,0 +1,22 @@
+---
+interface Props { href: string }
+const { href } = Astro.props;
+---
+
+<a class="brand" href={href} aria-label="The Vitrine">
+  <img src="/brand/logo-light.svg" alt="The Vitrine" width="250" height="64" decoding="async" />
+</a>
+
+<style>
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    min-height: 48px;
+    text-decoration: none;
+    view-transition-name: brand;
+  }
+  .brand img { display: block; width: 190px; height: auto; }
+  .brand:focus-visible { outline: 2px solid #ffc27d; outline-offset: 5px; border-radius: 2px; }
+  @media (max-width: 360px) { .brand img { width: 160px; } }
+</style>

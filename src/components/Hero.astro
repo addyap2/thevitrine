@@ -4,6 +4,7 @@
 // light spills onto a reflective floor. Transforms and opacity only, no WebGL.
 import { strings, homePath, type Lang } from "../i18n";
 import { srcset, src800, sizes } from "../img";
+import Brand from "./Brand.astro";
 
 interface Project {
   slug: string;
@@ -36,7 +37,7 @@ const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
   <div class="grain" aria-hidden="true"></div>
 
   <div class="bar wrap">
-    <p class="mark">The Vitrine</p>
+    <Brand href={homePath[lang]} />
     <a class="lang" href={homePath[other]} hreflang={other} lang={other} aria-label={t.switchLabel}>{t.switchTo}</a>
   </div>
 
@@ -274,15 +275,7 @@ const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
     padding-top: 1.5rem;
   }
   /* Named for the language-switch page transition: these two hold their place. */
-  .mark { view-transition-name: brand; }
   .lang { view-transition-name: lang-switch; }
-  .mark {
-    font-family: var(--display);
-    font-weight: 600;
-    font-size: 1.15rem;
-    color: var(--blue);
-    margin: 0;
-  }
   .lang {
     font-size: 0.875rem;
     font-weight: 500;
