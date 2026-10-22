@@ -6,6 +6,7 @@ import { categories } from "../data/overrides.json";
 import { strings, homePath, legalPath, langs, type Lang } from "../i18n";
 import { spans } from "../wide";
 import { priceFrom, timescale, profiles, missingBusinessFields } from "../data/business";
+import { faq, missingFaqAnswers } from "../data/faq";
 import "../styles/motion.css";
 import { Font } from "astro:assets";
 
@@ -42,6 +43,10 @@ const priceLine =
   priceFrom !== null && timescale
     ? t.servicesPrice.replace("{timescale}", timescale[lang]).replace("{price}", priceFrom.toLocaleString(lang === "fr" ? "fr-FR" : "en-GB"))
     : null;
+// FAQ: only questions with an answer are shown (the rest are placeholders).
+const faqShown = faq.filter((f) => f.a !== null).map((f) => ({ id: f.id, q: f.q[lang], a: f.a![lang] }));
+const faqMissing = missingFaqAnswers();
+if (faqMissing.length) console.warn(`[faq] Questions hidden until answered in src/data/faq.ts: ${faqMissing.join(", ")}`);
 const services = [
   [t.servicesWhoTitle, t.servicesWho],
   [t.servicesWhatTitle, t.servicesWhat],
@@ -90,6 +95,12 @@ const ld = {
       name: "The Vitrine",
       inLanguage: lang,
       publisher: { "@id": id.org },
+    },
+    {
+      "@type": "FAQPage",
+      "@id": abs(`${homePath[lang]}#faq`),
+      inLanguage: lang,
+      mainEntity: faqShown.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
     },
     {
       "@type": "ItemList",
@@ -159,7 +170,8 @@ const ld = {
   <body>
     <Hero lang={lang} projects={projects} total={projects.length} />
 
-    <main class="wrap" id="work">
+    <main class="wrap">
+      <div id="work">
       {projects.length === 0 ? (
         <p class="empty">{t.empty}</p>
       ) : (
@@ -203,6 +215,8 @@ const ld = {
           ))}
         </>
       )}
+      </div>
+      {/* The filter bar pins only within #work, so it lets go before these. */}
       <section class="services" aria-labelledby="services-title">
         <h2 id="services-title" data-reveal="heading">{t.servicesHeading}</h2>
         <p class="services-lede" data-reveal>{t.servicesLede}</p>
@@ -215,6 +229,18 @@ const ld = {
           ))}
         </div>
         {priceLine && <p class="services-price" data-reveal>{priceLine}</p>}
+      </section>
+
+      <section class="faq" id="faq" aria-labelledby="faq-title">
+        <h2 id="faq-title" data-reveal="heading">{t.faqHeading}</h2>
+        <div class="faq-list">
+          {faqShown.map((f) => (
+            <details class="qa" data-reveal>
+              <summary><h3>{f.q}</h3><span class="sign" aria-hidden="true"></span></summary>
+              <div class="answer"><p>{f.a}</p></div>
+            </details>
+          ))}
+        </div>
       </section>
     </main>
 
@@ -262,9 +288,29 @@ const ld = {
         },
         { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
       );
+      // Headings start fully clipped (clip-path), and Chromium measures what's
+      // visible after clipping, so a clipped heading would never count as on
+      // screen. Watch its unclipped parent instead and reveal the heading
+      // when the parent's top comes into view.
+      const headingFor = new Map<Element, HTMLElement>();
+      const ioHead = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            headingFor.get(e.target)?.classList.add("in");
+            ioHead.unobserve(e.target);
+          }
+        },
+        { rootMargin: "0px 0px -8% 0px", threshold: 0 },
+      );
       const reveal = document.querySelectorAll<HTMLElement>("[data-reveal]");
       reveal.forEach((el) => {
-        io.observe(el);
+        if (el.dataset.reveal === "heading" && el.parentElement) {
+          headingFor.set(el.parentElement, el);
+          ioHead.observe(el.parentElement);
+        } else {
+          io.observe(el);
+        }
         // Once settled, hand the element back to its own hover transitions.
         el.addEventListener("transitionend", function done(ev) {
           if (ev.target !== el || !el.classList.contains("in")) return;
@@ -274,6 +320,14 @@ const ld = {
         });
       });
       const revealAll = () => reveal.forEach((el) => el.classList.add("in"));
+      // The last lines of the page can sit inside the bottom margin even when
+      // fully scrolled, so reveal whatever is left once the page reaches its end.
+      const atEnd = () => {
+        if (innerHeight + scrollY < document.documentElement.scrollHeight - 4) return;
+        revealAll();
+        removeEventListener("scroll", atEnd);
+      };
+      addEventListener("scroll", atEnd, { passive: true });
 
       // ---- Screenshots fade up as they arrive instead of painting in strips.
       document.querySelectorAll<HTMLImageElement>(".shot img").forEach((img) => {
@@ -645,6 +699,65 @@ const ld = {
   }
   .service h3::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
   .service p { margin: 0; color: var(--ink-soft); line-height: 1.6; text-wrap: pretty; }
+  /* FAQ: native disclosure rows on hairlines; the + turns into a − when open. */
+  .faq { margin-top: 6rem; padding-top: 3rem; border-top: 1px solid var(--line); }
+  .faq h2 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 1.5rem;
+  }
+  .faq-list { max-width: 52rem; border-top: 1px solid var(--line); }
+  .qa { border-bottom: 1px solid var(--line); }
+  .qa summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.15rem 0;
+    cursor: pointer;
+    list-style: none;
+  }
+  .qa summary::-webkit-details-marker { display: none; }
+  .qa h3 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    line-height: 1.35;
+    color: var(--ink);
+    transition: color var(--dur-micro) var(--ease-hover);
+  }
+  .qa summary:hover h3 { color: var(--accent); }
+  .sign { position: relative; flex: none; width: 14px; height: 14px; }
+  .sign::before, .sign::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 14px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--accent);
+    transition: transform var(--dur-short) var(--ease-move);
+  }
+  .sign::after { transform: rotate(90deg); }
+  .qa[open] .sign::after { transform: rotate(0deg); }
+  .answer p { margin: 0; padding: 0 2.5rem 1.4rem 0; color: var(--ink-soft); font-size: 1rem; line-height: 1.7; max-width: 44rem; text-wrap: pretty; }
+  /* Where supported, the answer opens with a short height transition. */
+  @supports (interpolate-size: allow-keywords) {
+    .faq { interpolate-size: allow-keywords; }
+    .qa::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition: block-size var(--dur-base) var(--ease-move), content-visibility var(--dur-base) allow-discrete;
+    }
+    .qa[open]::details-content { block-size: auto; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .qa::details-content { transition: none; }
+  }
   .services-price { margin: 2.5rem 0 0; font-family: var(--display); font-size: 1.3rem; color: var(--ink); }
   /* Contact: you step back out into the night you came in from. It mirrors the
      hero (sky, lamp gradient, glass), so the visit has a beginning and an end. */

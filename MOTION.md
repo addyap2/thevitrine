@@ -86,6 +86,12 @@ other three load when the browser is idle.
 | Cards | Rise 28 px and fade in. Cards that enter together stagger 70 ms in reading order, capped at 6, so a fast scroll never queues a long cascade. |
 | Contact | Back into the night: the sill line at its top draws itself, then the heading, lede and both contact cards, staggered. |
 
+Headings that clip-reveal are watched through their parent element: Chromium
+measures an element's visible area after its own `clip-path`, so a fully
+clipped heading would never count as on screen. Anything still hidden when
+the page reaches its end is revealed then, because the last lines can sit
+inside the bottom margin even when fully scrolled.
+
 Reveals fire once, at 12 % visibility with an 8 % bottom margin, so content
 is already settling as it comes into view. Once settled, the
 `data-reveal` attribute is removed, which hands the element back to its own
@@ -127,6 +133,7 @@ The active chip scrolls into view inside its row on mobile.
 | Contact card (glass, at night) | Lifts 2 px, edge and glow turn warm, arrow nudges | — |
 | Language switch | Border brightens | `scale(.97)` |
 | Count | Number ticks in from 45 % above | — |
+| FAQ question | Text turns accent; the + turns into a − over `--dur-short`, and the answer opens with a height transition over `--dur-base` where the browser supports it | — |
 | "Live" dot | Slow 2.4 s halo pulse (decorative) | — |
 
 ### 7. Transitions between pages

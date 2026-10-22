@@ -135,6 +135,10 @@ Ticked items were verified in this audit. Unticked ones are still to do.
 - [x] Florian Bozzetti (osteopath, Julien) added to the Vitrine, with a draft case study
 - [ ] Phase 4: custom domain, links from antonyaddy.com and Julien's site, client-site credits, directory listings, Search Console and Bing Webmaster Tools
 
+### FAQ
+- [x] Homepage FAQ (9 questions, French and English) with FAQPage structured data
+- [ ] Answer the hidden questions in `src/data/faq.ts`: hosting and domain name, editing the site yourself, what happens after launch
+
 ### Analytics
 - [ ] Turn on Vercel Web Analytics or Plausible (B)
 - [ ] Track clicks on the hero CTAs, the pinned button and both contact cards
