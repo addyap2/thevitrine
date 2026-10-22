@@ -12,13 +12,13 @@
   /* Duration. Scales with the distance and size of what moves. */
   --dur-press: 90ms; /* button press */
   --dur-micro: 160ms; /* colour, border, icon nudges */
-  --dur-short: 260ms; /* hover lift, exits */
+  --dur-short: 220ms; /* hover lift, exits */
   --dur-base: 460ms; /* filtering, page transitions */
-  --dur-reveal: 820ms; /* content entering on scroll */
+  --dur-reveal: 520ms; /* content entering on scroll */
   --dur-scene: 1200ms; /* large, slow moves: hero, horizon lines, image settle */
 
-  --stagger: 70ms; /* gap between siblings revealing together */
-  --rise: 28px; /* how far content travels as it reveals */
+  --stagger: 45ms; /* gap between siblings revealing together */
+  --rise: 16px; /* how far content travels as it reveals */
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -44,18 +44,18 @@ html.js [data-reveal] {
   transition-delay: calc(var(--i, 0) * var(--stagger));
 }
 html.js [data-reveal="heading"] {
-  clip-path: inset(0 0 100% 0);
-  transition-property: opacity, transform, clip-path;
+  clip-path: none;
+  transition-property: opacity, transform;
 }
 html.js [data-reveal="line"] {
   opacity: 1;
-  transform: scaleX(0);
-  transition: transform var(--dur-scene) var(--ease-arrive);
+  transform: none;
+  transition: none;
 }
 html.js [data-reveal].in {
   opacity: 1;
   transform: none;
-  clip-path: inset(0 0 -20% 0);
+  clip-path: none;
 }
 
 /* Safety net (see the inline script in Vitrine.astro): if the main script never
@@ -113,4 +113,38 @@ html.reveal-all [data-reveal] {
     animation: none !important;
   }
   .tick { animation: none; }
+}
+
+/* A single amber reflection connects major chapters to the hero's frame. */
+:is(.services, .faq, .about > .shared) { position: relative; }
+.motion-rule { position:absolute; inset:0 0 auto; height:1px; background:var(--line); pointer-events:none; }
+.motion-rule, .horizon, .cat-head .rule { overflow:hidden; }
+.cat-head .rule { position:relative; }
+:is(.motion-rule, .horizon, .cat-head .rule)::after {
+  content:""; position:absolute; inset:0 auto 0 0; width:34%; pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--lamp,#ffc27d),transparent);
+  opacity:0; transform:translateX(-110%);
+}
+:is(.motion-rule, .horizon).in::after, .cat-head .rule.light-pass::after {
+  animation:chapter-light 850ms var(--ease-arrive) 120ms both;
+}
+@keyframes chapter-light {
+  0% {transform:translateX(-110%);opacity:0;}
+  20% {opacity:1;}
+  100% {transform:translateX(400%);opacity:0;}
+}
+/* Native details remain the fallback. The enhanced accordion owns one short height transition. */
+.qa[data-motion-accordion]::details-content { block-size:auto; transition:none; }
+:where(.btn,.cta,.bar-cta,.quote-link,.wa) {
+  transition:transform var(--dur-short) var(--ease-hover),border-color var(--dur-micro) var(--ease-hover),color var(--dur-micro) var(--ease-hover);
+}
+:where(.btn,.cta) > span[aria-hidden="true"] { display:inline-block; transition:transform var(--dur-short) var(--ease-hover); }
+@media(hover:hover) and (pointer:fine) {
+  :where(.btn,.cta):hover > span[aria-hidden="true"] {transform:translateX(2px);}
+}
+@media(prefers-reduced-motion:reduce) {
+  html.js [data-reveal] {opacity:1;transform:none;clip-path:none;transition:none;}
+  :is(.motion-rule,.horizon,.cat-head .rule)::after {animation:none!important;opacity:0;}
+  :where(button,.lang,.btn,.cta,.bar-cta,.quote-link,.wa):active {transform:none;}
+  :where(.btn,.cta) > span[aria-hidden="true"] {transform:none!important;transition:none;}
 }

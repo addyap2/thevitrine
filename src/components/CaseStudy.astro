@@ -204,24 +204,7 @@ const ld = {
       </div>
     </footer>
 
-    <script>
-      (window as any).__vitrine = true;
-      // The same once-only scroll reveal as the homepage.
-      const io = new IntersectionObserver(
-        (entries) => {
-          let i = 0;
-          for (const e of entries) {
-            if (!e.isIntersecting) continue;
-            const el = e.target as HTMLElement;
-            el.style.setProperty("--i", String(Math.min(i++, 5)));
-            el.classList.add("in");
-            io.unobserve(el);
-          }
-        },
-        { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
-      );
-      document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((el) => io.observe(el));
-    </script>
+
   </body>
 </html>
 

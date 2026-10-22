@@ -14,6 +14,10 @@ const { lang, altHref, current } = Astro.props;
     <Nav lang={lang} altHref={altHref} current={current} />
   </div>
 </div>
+<script>
+  import { initSiteMotion } from "../motion";
+  initSiteMotion();
+</script>
 <style>
   .skip { position: fixed; top: 8px; left: 8px; z-index: 200; transform: translateY(-160%); padding: 12px 20px; background: #ffc27d; color: #081227; border-radius: 8px; font-weight: 600; }
   .skip:focus { transform: none; }

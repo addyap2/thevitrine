@@ -84,31 +84,7 @@ const ogImage = new URL(`/og/${lang}.jpg`, Astro.site);
       </div>
     </footer>
 
-    <script>
-      (window as any).__vitrine = true;
-      const io = new IntersectionObserver(
-        (entries) => {
-          let i = 0;
-          for (const e of entries) {
-            if (!e.isIntersecting) continue;
-            const el = e.target as HTMLElement;
-            el.style.setProperty("--i", String(Math.min(i++, 5)));
-            el.classList.add("in");
-            io.unobserve(el);
-          }
-        },
-        { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
-      );
-      const reveal = document.querySelectorAll<HTMLElement>("[data-reveal]");
-      reveal.forEach((el) => io.observe(el));
-      // The last lines can sit inside the bottom margin even when fully scrolled.
-      const atEnd = () => {
-        if (innerHeight + scrollY < document.documentElement.scrollHeight - 4) return;
-        reveal.forEach((el) => el.classList.add("in"));
-        removeEventListener("scroll", atEnd);
-      };
-      addEventListener("scroll", atEnd, { passive: true });
-    </script>
+
   </body>
 </html>
 

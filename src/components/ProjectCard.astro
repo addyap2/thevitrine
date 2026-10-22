@@ -136,11 +136,11 @@ const titleHref = caseHref ?? p.url;
     display: block;
     transition:
       opacity var(--dur-base) var(--ease-arrive),
-      transform var(--dur-scene) var(--ease-arrive);
+      transform var(--dur-base) var(--ease-arrive);
   }
   /* Screenshots settle into place as they load, then lean in slightly on hover. */
   :global(html.js:not(.reveal-all)) .frame img:not(.loaded) { opacity: 0; transform: scale(1.04); }
-  .card:hover .frame img { transform: scale(1.025); }
+  .card:hover .frame img { transform: scale(1.018); }
   .placeholder {
     display: grid;
     place-items: center;
@@ -219,6 +219,11 @@ const titleHref = caseHref ?? p.url;
     white-space: nowrap;
   }
 
+  .pane { position:relative; }
+  .pane::after { content:"";position:absolute;inset:0;pointer-events:none;opacity:0;background:linear-gradient(105deg,transparent 30%,rgb(255 194 125 / .13) 48%,transparent 65%);transform:translateX(-120%); }
+  .card:focus-within {border-color:var(--lit-edge);box-shadow:0 12px 32px -24px var(--lit-glow);}
+  @media(hover:hover) and (pointer:fine) { .card:hover .pane::after {animation:window-light 650ms var(--ease-arrive) both;} }
+  @keyframes window-light {0%{transform:translateX(-120%);opacity:0}25%{opacity:1}100%{transform:translateX(120%);opacity:0}}
   /* Wide cards (breakpoints match the grid in Vitrine.astro) open a section.
      The screenshot hangs whole, as a lit pane in a dusk window (a small echo of
      the hero), with the label beside it, so a section's rows always close. */
@@ -250,7 +255,7 @@ const titleHref = caseHref ?? p.url;
         0 28px 50px -24px rgb(0 0 0 / 0.85),
         0 0 50px -12px rgb(255 178 102 / 0.35);
       transform: perspective(1400px) rotateY(-4deg);
-      transition: transform var(--dur-scene) var(--ease-arrive), box-shadow var(--dur-short) var(--ease-hover);
+      transition: transform var(--dur-base) var(--ease-arrive), box-shadow var(--dur-short) var(--ease-hover);
     }
     .card[data-w3] .chrome { background: #17244a; border-bottom-color: rgb(255 255 255 / 0.06); }
     .card[data-w3] .chrome i { background: rgb(255 255 255 / 0.2); }
@@ -286,7 +291,7 @@ const titleHref = caseHref ?? p.url;
         0 28px 50px -24px rgb(0 0 0 / 0.85),
         0 0 50px -12px rgb(255 178 102 / 0.35);
       transform: perspective(1400px) rotateY(-4deg);
-      transition: transform var(--dur-scene) var(--ease-arrive), box-shadow var(--dur-short) var(--ease-hover);
+      transition: transform var(--dur-base) var(--ease-arrive), box-shadow var(--dur-short) var(--ease-hover);
     }
     .card[data-w2] .chrome { background: #17244a; border-bottom-color: rgb(255 255 255 / 0.06); }
     .card[data-w2] .chrome i { background: rgb(255 255 255 / 0.2); }
@@ -306,8 +311,16 @@ const titleHref = caseHref ?? p.url;
     .card[data-w2] p { font-size: 1rem; }  }
 
 
+  @media(hover:none), (pointer:coarse) {
+    .card:hover {transform:none;border-color:var(--line);box-shadow:none;}
+    .card:hover .frame img,.card:hover .links .arrow {transform:none;}
+    .card[data-w3]:hover .pane,.card[data-w2]:hover .pane {transform:none;}
+    .pane::after {animation:none!important;}
+  }
   @media (prefers-reduced-motion: reduce) {
     .card:hover, .card:hover .frame img { transform: none; }
-    .pane { transition: none !important; }
+    .pane, .frame img, .arrow { transition: none !important; }
+    .pane::after {animation:none!important;}
+    .card[data-w3] .pane,.card[data-w2] .pane {transform:none!important;}
   }
 </style>

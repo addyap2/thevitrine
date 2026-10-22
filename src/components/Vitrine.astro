@@ -300,7 +300,8 @@ const ld = {
     <script>
       import { spans } from "../wide";
       import { decodeNumber } from "../protect";
-      (window as any).__vitrine = true;
+      import { initSiteMotion, revealAll } from "../motion";
+      initSiteMotion();
       // WhatsApp: build the wa.me link only when a visitor taps (the number is not in the page).
       document.querySelectorAll<HTMLAnchorElement>("a[data-wa]").forEach((a) =>
         a.addEventListener("click", (e) => {
@@ -311,61 +312,6 @@ const ld = {
       );
       const reduced = matchMedia("(prefers-reduced-motion: reduce)");
       const root = document.documentElement;
-
-      // ---- Scroll reveals: each batch that enters together staggers by --i.
-      const io = new IntersectionObserver(
-        (entries) => {
-          let i = 0;
-          for (const e of entries) {
-            if (!e.isIntersecting) continue;
-            const el = e.target as HTMLElement;
-            el.style.setProperty("--i", String(Math.min(i++, 5)));
-            el.classList.add("in");
-            io.unobserve(el);
-          }
-        },
-        { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
-      );
-      // Headings start fully clipped (clip-path), and Chromium measures what's
-      // visible after clipping, so a clipped heading would never count as on
-      // screen. Watch its unclipped parent instead and reveal the heading
-      // when the parent's top comes into view.
-      const headingFor = new Map<Element, HTMLElement>();
-      const ioHead = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (!e.isIntersecting) continue;
-            headingFor.get(e.target)?.classList.add("in");
-            ioHead.unobserve(e.target);
-          }
-        },
-        { rootMargin: "0px 0px -8% 0px", threshold: 0 },
-      );
-      const reveal = document.querySelectorAll<HTMLElement>("[data-reveal]");
-      reveal.forEach((el) => {
-        if (el.dataset.reveal === "heading" && el.parentElement) {
-          headingFor.set(el.parentElement, el);
-          ioHead.observe(el.parentElement);
-        } else {
-          io.observe(el);
-        }
-        // Once settled, hand the element back to its own hover transitions.
-        el.addEventListener("transitionend", function done(ev) {
-          if (ev.target !== el || !el.classList.contains("in")) return;
-          el.removeAttribute("data-reveal");
-          el.style.removeProperty("--i");
-          el.removeEventListener("transitionend", done);
-        });
-      });
-      const revealAll = () => reveal.forEach((el) => el.classList.add("in"));
-      // The last lines of the page can sit inside the bottom margin even when
-      // fully scrolled, so reveal whatever is left once the page reaches its end.
-      const atEnd = () => {
-        if (innerHeight + scrollY < document.documentElement.scrollHeight - 4) return;
-        revealAll();
-        removeEventListener("scroll", atEnd);
-      };
-      addEventListener("scroll", atEnd, { passive: true });
 
       // ---- Screenshots fade up as they arrive instead of painting in strips.
       document.querySelectorAll<HTMLImageElement>(".shot img").forEach((img) => {
@@ -422,33 +368,33 @@ const ld = {
       };
 
       const css = (name: string) => getComputedStyle(root).getPropertyValue(name).trim();
-      const ms = (name: string) => parseFloat(css(name)) || 0;
-      let swapping: Animation | null = null;
-      const swap = async () => {
-        swapping?.cancel();
-        const out = sections.map((s) =>
-          s.animate([{ opacity: 1 }, { opacity: 0 }], { duration: ms("--dur-micro"), easing: css("--ease-leave"), fill: "forwards" }),
-        );
-        swapping = out[0] ?? null;
-        await Promise.allSettled(out.map((a) => a.finished));
+      let filterAnimations: Animation[] = [];
+      const swap = () => {
+        filterAnimations.forEach(animation => animation.cancel());
+        filterAnimations = [];
+        const cards = [...document.querySelectorAll<HTMLElement>(".card")];
+        const before = new Map(cards.filter(card => !card.hidden).map(card => {
+          const r = card.getBoundingClientRect();
+          return [card,{left:r.left + scrollX,top:r.top + scrollY}];
+        }));
         apply();
-        out.forEach((a) => a.cancel());
-        // Bring the top of the results back under the pinned bar if we had scrolled past it.
         const bar = (filters?.offsetHeight ?? 0) + (document.querySelector("[data-site-header]")?.getBoundingClientRect().height ?? 0);
-        const first = sections.find((s) => !s.hidden);
-        if (first && first.getBoundingClientRect().top < bar) {
-          scrollTo({ top: scrollY + first.getBoundingClientRect().top - bar - 16, behavior: "instant" as ScrollBehavior });
-        }
-        let i = 0;
-        for (const el of document.querySelectorAll<HTMLElement>("section.category:not([hidden]) .cat-head, .card:not([hidden])")) {
-          const r = el.getBoundingClientRect();
-          if (r.top > innerHeight || r.bottom < 0) continue;
-          el.animate(
-            [{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }],
-            { duration: ms("--dur-reveal"), delay: Math.min(i++, 6) * ms("--stagger"), easing: css("--ease-arrive"), fill: "backwards" },
-          );
+        const first = sections.find(section => !section.hidden);
+        if(first && first.getBoundingClientRect().top < bar) scrollTo({top:scrollY + first.getBoundingClientRect().top - bar - 16,behavior:"instant" as ScrollBehavior});
+        const positions = cards.filter(card => !card.hidden).map(card => ({card,rect:card.getBoundingClientRect()}));
+        const easing = css("--ease-arrive");
+        let order = 0;
+        for(const {card,rect} of positions) {
+          if(rect.top > innerHeight + 80 || rect.bottom < 0) continue;
+          const previous = before.get(card);
+          const from = previous ? {opacity:1,transform:`translate(${previous.left - rect.left - scrollX}px,${previous.top - rect.top - scrollY}px)`} : {opacity:0,transform:"translateY(10px)"};
+          filterAnimations.push(card.animate([from,{opacity:1,transform:"none"}],{
+            duration:previous ? 330 : 460,delay:previous ? 0 : Math.min(order++,4)*35,easing,fill:"backwards",
+          }));
         }
       };
+
+      reduced.addEventListener("change", event => {if(event.matches)filterAnimations.forEach(animation => animation.cancel());});
 
       // ---- Sliding indicators: the maker switch's thumb and the tabs' underline
       // glide to the chosen button. Placed instantly on load and on resize.
@@ -476,7 +422,7 @@ const ld = {
           place(group, true);
           btn.scrollIntoView({ block: "nearest", inline: "nearest", behavior: reduced.matches ? "auto" : "smooth" });
           state[group.dataset.filter!] = btn.dataset.value ?? "";
-          revealAll();
+          revealAll(document.getElementById("work")!);
           if (reduced.matches) return apply();
           swap();
         });
@@ -485,7 +431,7 @@ const ld = {
       document.getElementById("filter-reset")?.addEventListener("click", () => {
         state.maker = ""; state.category = "";
         groups.forEach((g) => g.querySelectorAll<HTMLButtonElement>("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.value === ""))));
-        apply(); placeAll(); revealAll();
+        apply(); placeAll(); revealAll(document.getElementById("work")!);
         groups[0]?.querySelector<HTMLButtonElement>("button")?.focus();
       });
 
