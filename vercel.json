@@ -8,6 +8,17 @@
       "has": [
         {
           "type": "host",
+          "value": "thevitrine-eta.vercel.app"
+        }
+      ],
+      "destination": "https://thevitrine.fr/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
           "value": "www.thevitrine.fr"
         }
       ],
