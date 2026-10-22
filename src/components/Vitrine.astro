@@ -5,6 +5,7 @@ import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
 import { strings, homePath, legalPath, langs, type Lang } from "../i18n";
 import { spans } from "../wide";
+import { priceFrom, timescale, profiles, missingBusinessFields } from "../data/business";
 import "../styles/motion.css";
 import { Font } from "astro:assets";
 
@@ -31,18 +32,82 @@ const pad = (n: number) => String(n).padStart(2, "0");
 const plural = (n: number) => (n === 1 ? t.projectOne : t.projectMany);
 const canonical = new URL(homePath[lang], Astro.site);
 const ogImage = new URL(`/og/${lang}.jpg`, Astro.site);
-// Who we are, for search engines: the studio and its two makers.
+const description = t.description.replace("{n}", String(projects.length));
+const abs = (path: string) => new URL(path, Astro.site).href;
+
+// Placeholders in src/data/business.ts: lines without data stay off the page.
+const missing = missingBusinessFields();
+if (missing.length) console.warn(`[business] Placeholders left empty in src/data/business.ts: ${missing.join(", ")}`);
+const priceLine =
+  priceFrom !== null && timescale
+    ? t.servicesPrice.replace("{timescale}", timescale[lang]).replace("{price}", priceFrom.toLocaleString(lang === "fr" ? "fr-FR" : "en-GB"))
+    : null;
+const services = [
+  [t.servicesWhoTitle, t.servicesWho],
+  [t.servicesWhatTitle, t.servicesWhat],
+  [t.servicesWhereTitle, t.servicesWhere],
+  [t.servicesHowTitle, t.servicesHow],
+];
+
+// Structured data: the studio, its two makers, the site, the service it offers
+// and the portfolio, linked by @id so search engines see one connected entity.
+const id = { org: abs("/#organization"), site: abs(`${homePath[lang]}#website`), antony: abs("/#antony"), julien: abs("/#julien") };
+const makerId = (maker: string) => (maker === "Julien" ? id.julien : id.antony);
+const areaServed = [
+  { "@type": "AdministrativeArea", name: "Var" },
+  { "@type": "AdministrativeArea", name: "Alpes-Maritimes" },
+  { "@type": "City", name: "Bristol" },
+];
 const ld = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "The Vitrine",
-  url: canonical.href,
-  description: t.description,
-  image: ogImage.href,
-  knowsLanguage: ["fr", "en"],
-  founder: [
-    { "@type": "Person", name: "Antony Addy", url: "https://www.antonyaddy.com" },
-    { "@type": "Person", name: "Julien Bourgois", url: "https://julienb.vercel.app" },
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": id.org,
+      name: "The Vitrine",
+      url: abs(homePath.fr),
+      logo: { "@type": "ImageObject", url: abs("/apple-touch-icon.png"), width: 180, height: 180 },
+      image: ogImage.href,
+      description,
+      knowsLanguage: ["fr", "en"],
+      areaServed,
+      founder: [{ "@id": id.antony }, { "@id": id.julien }],
+      ...(profiles.length ? { sameAs: profiles } : {}),
+      makesOffer: {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: t.serviceName, serviceType: t.serviceName, areaServed, provider: { "@id": id.org } },
+        ...(priceFrom !== null
+          ? { priceSpecification: { "@type": "PriceSpecification", minPrice: priceFrom, priceCurrency: "EUR" } }
+          : {}),
+      },
+    },
+    { "@type": "Person", "@id": id.antony, name: "Antony Addy", url: "https://www.antonyaddy.com", sameAs: ["https://www.antonyaddy.com"], worksFor: { "@id": id.org } },
+    { "@type": "Person", "@id": id.julien, name: "Julien Bourgois", url: "https://julienb.vercel.app", sameAs: ["https://julienb.vercel.app"], worksFor: { "@id": id.org } },
+    {
+      "@type": "WebSite",
+      "@id": id.site,
+      url: canonical.href,
+      name: "The Vitrine",
+      inLanguage: lang,
+      publisher: { "@id": id.org },
+    },
+    {
+      "@type": "ItemList",
+      name: t.portfolioName,
+      numberOfItems: projects.length,
+      itemListElement: projects.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: {
+          "@type": "CreativeWork",
+          name: p.title,
+          ...(p.url ? { url: p.url } : {}),
+          ...(p.description[lang as "en" | "fr"] ? { description: p.description[lang as "en" | "fr"] } : {}),
+          ...(p.image ? { image: abs(p.image) } : {}),
+          creator: { "@id": makerId(p.maker) },
+        },
+      })),
+    },
   ],
 };
 ---
@@ -68,7 +133,7 @@ const ld = {
       });
     </script>
     <title>{t.title}</title>
-    <meta name="description" content={t.description} />
+    <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {langs.map((l) => <link rel="alternate" hreflang={l} href={new URL(homePath[l], Astro.site)} />)}
     <link rel="alternate" hreflang="x-default" href={new URL(homePath.fr, Astro.site)} />
@@ -76,7 +141,7 @@ const ld = {
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="The Vitrine" />
     <meta property="og:title" content={t.title} />
-    <meta property="og:description" content={t.description} />
+    <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={lang === "fr" ? "fr_FR" : "en_GB"} />
     <meta property="og:locale:alternate" content={lang === "fr" ? "en_GB" : "fr_FR"} />
@@ -126,9 +191,11 @@ const ld = {
           </nav>
           {sections.map((s, si) => (
             <section class="category" data-category={s.id} aria-labelledby={`cat-${s.id}`}>
-              <h2 id={`cat-${s.id}`} data-reveal="heading">
-                {s.label} <span class="rule" aria-hidden="true"></span><span class="n">{pad(s.projects.length)}</span>
-              </h2>
+              <div class="cat-head" data-reveal="heading">
+                <h2 id={`cat-${s.id}`}>{s.label}</h2>
+                <span class="rule" aria-hidden="true"></span>
+                <span class="n">{pad(s.projects.length)}</span>
+              </div>
               <div class="grid">
                 {s.projects.map((p, i) => <ProjectCard project={p} lang={lang} eager={si === 0 && i < 3} wide3={s.w3.has(i)} wide2={s.w2.has(i)} />)}
               </div>
@@ -136,6 +203,19 @@ const ld = {
           ))}
         </>
       )}
+      <section class="services" aria-labelledby="services-title">
+        <h2 id="services-title" data-reveal="heading">{t.servicesHeading}</h2>
+        <p class="services-lede" data-reveal>{t.servicesLede}</p>
+        <div class="services-grid">
+          {services.map(([title, text]) => (
+            <div class="service" data-reveal>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </div>
+          ))}
+        </div>
+        {priceLine && <p class="services-price" data-reveal>{priceLine}</p>}
+      </section>
     </main>
 
     <footer class="contact" id="contact">
@@ -267,7 +347,7 @@ const ld = {
           scrollTo({ top: scrollY + first.getBoundingClientRect().top - bar - 16, behavior: "instant" as ScrollBehavior });
         }
         let i = 0;
-        for (const el of document.querySelectorAll<HTMLElement>("section.category:not([hidden]) h2, .card:not([hidden])")) {
+        for (const el of document.querySelectorAll<HTMLElement>("section.category:not([hidden]) .cat-head, .card:not([hidden])")) {
           const r = el.getBoundingClientRect();
           if (r.top > innerHeight || r.bottom < 0) continue;
           el.animate(
@@ -519,18 +599,16 @@ const ld = {
   .category { margin-top: 4rem; }
   .category:first-of-type { margin-top: 1rem; }
   /* Chapter headings: the name, a hairline running to the edge, the count at the end. */
-  .category h2 {
+  .cat-head { display: flex; align-items: baseline; gap: 1rem; margin: 0 0 1.5rem; }
+  .cat-head h2 {
     font-family: var(--display);
     font-weight: 500;
     font-size: clamp(1.6rem, 3.5vw, 2.2rem);
     letter-spacing: -0.015em;
-    margin: 0 0 1.5rem;
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
+    margin: 0;
   }
-  .category h2 .rule { flex: 1; height: 1px; background: var(--line); align-self: center; transform: translateY(0.15em); }
-  .category h2 .n {
+  .cat-head .rule { flex: 1; height: 1px; background: var(--line); align-self: center; transform: translateY(0.15em); }
+  .cat-head .n {
     font-family: var(--text);
     font-size: 0.8rem;
     font-weight: 500;
@@ -539,6 +617,35 @@ const ld = {
     font-variant-numeric: tabular-nums;
   }
   .empty { padding: 3rem 0; color: var(--ink-soft); }
+  /* What we do: plain, scannable facts between the work and the contact. */
+  .services { margin-top: 6rem; padding-top: 3rem; border-top: 1px solid var(--line); }
+  .services h2 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0;
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+  .services-lede { color: var(--ink-soft); font-size: 1.05rem; line-height: 1.6; max-width: 40rem; margin: 1rem 0 2.5rem; }
+  .services-grid { display: grid; gap: 2rem 3rem; grid-template-columns: 1fr; max-width: 56rem; }
+  @media (min-width: 720px) { .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .service h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0 0 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .service h3::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .service p { margin: 0; color: var(--ink-soft); line-height: 1.6; text-wrap: pretty; }
+  .services-price { margin: 2.5rem 0 0; font-family: var(--display); font-size: 1.3rem; color: var(--ink); }
   /* Contact: you step back out into the night you came in from. It mirrors the
      hero (sky, lamp gradient, glass), so the visit has a beginning and an end. */
   .contact {

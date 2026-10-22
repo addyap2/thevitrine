@@ -36,7 +36,7 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
       </span>
       <span class="frame">
         {p.image ? (
-          <img src={src800(p.image)} srcset={srcset(p.image)} sizes={wide3 || wide2 ? sizes.wide : sizes.card} alt="" width="1280" height="800" loading={eager ? "eager" : "lazy"} decoding="async" />
+          <img src={src800(p.image)} srcset={srcset(p.image)} sizes={wide3 || wide2 ? sizes.wide : sizes.card} alt={t.shotAlt.replace("{title}", p.title).replace("{host}", host ?? "")} width="1280" height="800" loading={eager ? "eager" : "lazy"} decoding="async" />
         ) : (
           <span class="placeholder">{p.title.slice(0, 1)}</span>
         )}

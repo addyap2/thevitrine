@@ -120,6 +120,18 @@ Ticked items were verified in this audit. Unticked ones are still to do.
 - [ ] Add the site to Google Search Console and submit the sitemap
 - [ ] Check share previews (LinkedIn Post Inspector, WhatsApp) once live
 
+### SEO (audit of 22 October 2026)
+- [x] One URL per page: trailing slash everywhere; `/en`, `/index.html` and `/en/index.html` redirect permanently
+- [x] Titles and descriptions target "création de sites vitrines" (Var, Côte d'Azur) and "websites for small businesses" (French Riviera, Bristol)
+- [x] H1 starts with the keyword line; section counts moved out of the headings
+- [x] Descriptive alt text on every screenshot
+- [x] "What we do" section (who, what, where, how)
+- [x] Structured data: Organization, both founders, WebSite, service offer, 24-item portfolio
+- [x] Sitemap includes the legal pages and `lastmod` dates
+- [ ] Fill the placeholders in `src/data/business.ts`: `priceFrom` and `timescale` (adds a price line to the page and the offer), `profiles` (Google Business Profile, Malt… for `sameAs`)
+- [ ] Phase 3: one case-study page per project
+- [ ] Phase 4: custom domain, links from antonyaddy.com and Julien's site, client-site credits, directory listings, Search Console and Bing Webmaster Tools
+
 ### Analytics
 - [ ] Turn on Vercel Web Analytics or Plausible (B)
 - [ ] Track clicks on the hero CTAs, the pinned button and both contact cards

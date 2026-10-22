@@ -3,6 +3,8 @@ import { defineConfig, fontProviders } from "astro/config";
 export default defineConfig({
   // Replace with the real domain once it is connected in Vercel.
   site: "https://thevitrine-eta.vercel.app",
+  // One URL per page: always with a trailing slash (Vercel redirects the rest, see vercel.json).
+  trailingSlash: "always",
 
   // Content security policy: Astro hashes every script and style it emits and
   // writes them into a <meta> tag; everything else may only come from this site.
