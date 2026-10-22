@@ -148,7 +148,7 @@ Ticked items were verified in this audit. Unticked ones are still to do.
 - [x] Project questionnaire (`/devis/`, `/en/quote/`) and contact form (`/contact/`, `/en/contact/`), emailing Antony and Julien through Resend (`api/devis.js`, `api/contact.js`), with a confirmation to the sender
 - [x] Spam protection: signed one-time token, honeypot, minimum fill time, origin check, rate limits, link limit on messages
 - [x] Privacy notice describes both forms
-- [ ] `RESEND_API_KEY` is set for Production only: add it to Preview too if you want forms to work on preview deployments
+- [x] `RESEND_API_KEY` set for Production and Preview; emails go out as "The Vitrine <devis@thevitrine.fr>" (domain verified in Resend), tested end to end
 
 ### Analytics
 - [ ] Turn on Vercel Web Analytics or Plausible (B)
