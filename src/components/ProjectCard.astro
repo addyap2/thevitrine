@@ -314,7 +314,7 @@ const titleHref = caseHref ?? p.url;
   @media(hover:none), (pointer:coarse) {
     .card:hover {transform:none;border-color:var(--line);box-shadow:none;}
     .card:hover .frame img,.card:hover .links .arrow {transform:none;}
-    .card[data-w3]:hover .pane,.card[data-w2]:hover .pane {transform:none;}
+    .card[data-w3] .pane,.card[data-w2] .pane,.card[data-w3]:hover .pane,.card[data-w2]:hover .pane {transform:none;}
     .pane::after {animation:none!important;}
   }
   @media (prefers-reduced-motion: reduce) {
