@@ -1,6 +1,7 @@
 ---
 import ProjectCard from "./ProjectCard.astro";
-import Hero from "./Hero.astro";
+import ClassicHero from "./Hero.astro";
+import ShowcaseHero from "./HeroShowcase.astro";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
 import { strings, homePath, legalPath, blogPath, questionnairePath, contactPath, langs, type Lang } from "../i18n";
@@ -13,8 +14,11 @@ import { Font } from "astro:assets";
 
 interface Props {
   lang: Lang;
+  classicHero?: boolean;
+  noindex?: boolean;
 }
-const { lang } = Astro.props;
+const { lang, classicHero = false, noindex = false } = Astro.props;
+const Hero = classicHero ? ClassicHero : ShowcaseHero;
 const t = strings[lang];
 
 const makers = [...new Set(projects.map((p) => p.maker))].sort();
@@ -142,6 +146,7 @@ const ld = {
       addEventListener("pagereveal", (e) => e.viewTransition && document.documentElement.classList.add("no-intro"));
     </script>
     <title>{t.title}</title>
+    {noindex && <meta name="robots" content="noindex" />}
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {langs.map((l) => <link rel="alternate" hreflang={l} href={new URL(homePath[l], Astro.site)} />)}
