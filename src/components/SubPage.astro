@@ -16,17 +16,19 @@ interface Props {
   paths: Record<Lang, string>;
   noindex?: boolean;
   ogType?: "website" | "article";
+  socialImage?: string;
+  socialAlt?: string;
   ld?: object;
   /** Shown above the header, e.g. a draft notice. */
   notice?: string | null;
   /** Highlights the matching menu link. */
   current?: "blog" | "contact" | "project" | "about";
 }
-const { lang, title, description, paths, noindex = false, ogType = "website", ld, notice, current } = Astro.props;
+const { lang, title, description, paths, noindex = false, ogType = "website", ld, notice, current, socialImage, socialAlt } = Astro.props;
 const t = strings[lang];
 const other: Lang = lang === "fr" ? "en" : "fr";
 const canonical = new URL(paths[lang], Astro.site);
-const ogImage = new URL(`/og/${lang}.jpg`, Astro.site);
+const ogImage = new URL(socialImage ?? `/og/${lang}.jpg`, Astro.site);
 ---
 
 <!doctype html>
@@ -55,7 +57,7 @@ const ogImage = new URL(`/og/${lang}.jpg`, Astro.site);
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={t.ogAlt} />
+    <meta property="og:image:alt" content={socialAlt ?? t.ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
