@@ -9,7 +9,8 @@ const out = new URL("../public/og/", import.meta.url);
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch();
 for (const [lang, path] of [["en", "/en/"], ["fr", "/"]]) {
-  const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1, reducedMotion: "reduce" });
+  // bypassCSP: the site's content security policy would block the style tweaks below.
+  const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1, reducedMotion: "reduce", bypassCSP: true });
   await page.context().addCookies([{ name: "lang", value: lang, url: base }]);
   await page.goto(base + path, { waitUntil: "networkidle" });
   // A share card has no buttons to press: hide the controls and centre the scene.

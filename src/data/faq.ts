@@ -85,8 +85,8 @@ export const faq: Faq[] = [
     id: "languages",
     q: { fr: "Mon site peut-il être en plusieurs langues ?", en: "Can my site be in several languages?" },
     a: {
-      fr: "Oui. Nous créons des sites en français, en anglais et dans d'autres langues : le Ristorante da Lola, par exemple, existe en italien, anglais, français et allemand. Pratique sur la Côte d'Azur, où une partie de vos clients ne parle pas français.",
-      en: "Yes. We build sites in French, English and other languages: Ristorante da Lola, for example, is in Italian, English, French and German. Handy on the French Riviera, where some of your customers won't speak French.",
+      fr: "Oui, dans toutes les langues dont vos visiteurs ont besoin : le Ristorante da Lola, par exemple, existe en italien, anglais, français et allemand. Pratique sur la Côte d'Azur, où une partie de vos clients ne parle pas français.",
+      en: "Yes, in whatever languages your visitors need: Ristorante da Lola, for example, is in Italian, English, French and German. Handy on the French Riviera, where some of your customers won't speak French.",
     },
   },
   {
