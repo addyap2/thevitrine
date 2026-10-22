@@ -15,24 +15,36 @@ interface Props {
   };
   lang: Lang;
   eager?: boolean;
+  /** Runs double-width in the three-column grid (see src/wide.ts). */
+  wide3?: boolean;
+  /** Runs full-width in the two-column grid. */
+  wide2?: boolean;
 }
-const { project: p, lang, eager = false } = Astro.props;
+const { project: p, lang, eager = false, wide3 = false, wide2 = false } = Astro.props;
 const t = strings[lang];
 const description = p.description[lang];
 const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
 ---
 
-<article class="card" data-maker={p.maker} data-reveal>
+<article class="card" data-maker={p.maker} data-reveal data-w3={wide3 ? "" : undefined} data-w2={wide2 ? "" : undefined}>
   <a class="shot" href={p.url ?? p.repo ?? undefined} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-    {p.image ? (
-      <img src={p.image} alt="" width="1280" height="800" loading={eager ? "eager" : "lazy"} decoding="async" />
-    ) : (
-      <span class="placeholder">{p.title.slice(0, 1)}</span>
-    )}
+    <span class="pane">
+      <span class="chrome">
+        <i></i><i></i><i></i>
+        {host && <span class="url">{host}</span>}
+      </span>
+      <span class="frame">
+        {p.image ? (
+          <img src={p.image} alt="" width="1280" height="800" loading={eager ? "eager" : "lazy"} decoding="async" />
+        ) : (
+          <span class="placeholder">{p.title.slice(0, 1)}</span>
+        )}
+      </span>
+    </span>
   </a>
   <div class="body">
     <div class="meta">
-      <span class="maker">{p.maker}</span>
+      <span class="maker"><i class="dot" aria-hidden="true"></i>{p.maker}</span>
       {p.inProgress && <span class="badge">{t.inProgress}</span>}
     </div>
     <h3>
@@ -43,13 +55,14 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
       <ul class="tags">{p.tags.map((t) => <li>{t}</li>)}</ul>
     )}
     <div class="links">
-      {p.url && <a href={p.url} target="_blank" rel="noopener">{host} <span class="arrow" aria-hidden="true">↗</span></a>}
+      {p.url && <a href={p.url} target="_blank" rel="noopener">{t.visit}<span class="sr-only">, {p.title}</span> <span class="arrow" aria-hidden="true">↗</span></a>}
       {p.repo && <a class="code" href={p.repo} target="_blank" rel="noopener">{t.code}</a>}
     </div>
   </div>
 </article>
 
 <style>
+  /* Each card is a small shop window: a framed screenshot over a paper label. */
   .card {
     display: flex;
     flex-direction: column;
@@ -59,21 +72,55 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
     overflow: hidden;
     transition:
       transform var(--dur-short) var(--ease-hover),
-      box-shadow var(--dur-short) var(--ease-hover);
+      box-shadow var(--dur-short) var(--ease-hover),
+      border-color var(--dur-micro) var(--ease-hover);
   }
+  /* Hover: the window lights up warm, the same light as the hero's lamp. */
   .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 30px -18px var(--shadow);
+    transform: translateY(-3px);
+    border-color: var(--lit-edge);
+    box-shadow: 0 22px 44px -28px var(--lit-glow), 0 2px 6px -4px var(--shadow);
   }
   .card[hidden] { display: none; }
+
   .shot {
-    display: block;
-    aspect-ratio: 16 / 10;
+    display: flex;
+    flex-direction: column;
     background: var(--muted-bg);
     border-bottom: 1px solid var(--line);
     overflow: hidden;
+    text-decoration: none;
   }
-  .shot img {
+  .pane { display: flex; flex-direction: column; }
+  .chrome {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 10px;
+    background: var(--chrome);
+    border-bottom: 1px solid var(--line);
+  }
+  .chrome i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
+  .url {
+    margin-left: 8px;
+    min-width: 0;
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.01em;
+  }
+  .frame {
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    /* While a screenshot loads, the pane holds a faint dusk tone instead of flat grey. */
+    background: linear-gradient(160deg, var(--muted-bg), var(--chrome));
+  }
+  .frame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -84,8 +131,8 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
       transform var(--dur-scene) var(--ease-arrive);
   }
   /* Screenshots settle into place as they load, then lean in slightly on hover. */
-  :global(html.js) .shot img:not(.loaded) { opacity: 0; transform: scale(1.04); }
-  .card:hover .shot img { transform: scale(1.03); }
+  :global(html.js) .frame img:not(.loaded) { opacity: 0; transform: scale(1.04); }
+  .card:hover .frame img { transform: scale(1.025); }
   .placeholder {
     display: grid;
     place-items: center;
@@ -94,38 +141,44 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
     font-size: 4rem;
     color: var(--ink-soft);
   }
+
   .body {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
-    padding: 1.1rem 1.2rem 1.25rem;
+    gap: 0.55rem;
+    padding: 1.1rem 1.25rem 1.2rem;
     flex: 1;
   }
-  .meta { display: flex; gap: 0.5rem; align-items: center; }
+  .meta { display: flex; gap: 0.6rem; align-items: center; }
+  /* The maker is a signature, not a headline: a quiet name with its own colour dot. */
   .maker {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-soft);
   }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .card[data-maker="Julien"] .dot { background: var(--brand); }
   .badge {
     font-size: 0.7rem;
     padding: 0.1rem 0.5rem;
     border-radius: 99px;
-    background: var(--muted-bg);
+    border: 1px dashed var(--line);
     color: var(--ink-soft);
   }
   h3 {
     font-family: var(--display);
     font-size: 1.35rem;
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1.2;
+    letter-spacing: -0.01em;
     margin: 0;
   }
   h3 a { color: inherit; text-decoration: none; }
-  h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
-  p { margin: 0; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.55; }
+  h3 a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+  p { margin: 0; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.55; text-wrap: pretty; }
   .tags { display: flex; flex-wrap: wrap; gap: 0.35rem; list-style: none; margin: 0; padding: 0; }
   .tags li {
     font-size: 0.75rem;
@@ -137,18 +190,78 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
   .links {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
     gap: 1rem;
     margin-top: auto;
-    padding-top: 0.4rem;
-    font-size: 0.9rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.875rem;
   }
-  .links a { color: var(--ink); font-weight: 500; text-decoration: none; overflow-wrap: anywhere; }
-  .links a { transition: color var(--dur-micro) var(--ease-hover); }
+  .links a { color: var(--ink); font-weight: 500; text-decoration: none; transition: color var(--dur-micro) var(--ease-hover); }
   .links a:hover { color: var(--accent); }
   .arrow { display: inline-block; transition: transform var(--dur-short) var(--ease-hover); }
-  .links a:hover .arrow { transform: translate(2px, -2px); }
-  @media (prefers-reduced-motion: reduce) {
-    .card:hover, .card:hover .shot img { transform: none; }
+  .links a:hover .arrow, .card:hover .links a:first-child .arrow { transform: translate(2px, -2px); }
+  .links .code { color: var(--ink-soft); flex-shrink: 0; }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
-  .links .code { color: var(--ink-soft); flex-shrink: 0; overflow-wrap: normal; }
+
+  /* Wide cards (breakpoints match the grid in Vitrine.astro) open a section.
+     The screenshot hangs whole, as a lit pane in a dusk window (a small echo of
+     the hero), with the label beside it, so a section's rows always close. */
+  @media (min-width: 1000px) {
+    .card[data-w3] { grid-column: span 2; flex-direction: row; }
+    .card[data-w3] .shot { flex: 0 0 60%; }
+  }
+  @media (min-width: 640px) and (max-width: 999px) {
+    .card[data-w2] { grid-column: 1 / -1; flex-direction: row; }
+    .card[data-w2] .shot { flex: 0 0 58%; }
+  }
+  @media (min-width: 640px) {
+    :is(.card[data-w3], .card[data-w2]) .shot {
+      justify-content: center;
+      padding: clamp(1.25rem, 3vw, 2.25rem);
+      border-bottom: 0;
+      border-right: 1px solid var(--line);
+      background:
+        radial-gradient(70% 60% at 60% 35%, rgb(255 178 102 / 0.3), transparent 70%),
+        linear-gradient(180deg, var(--night-2), var(--night));
+    }
+    :is(.card[data-w3], .card[data-w2]) .pane {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgb(255 255 255 / 0.1),
+        0 28px 50px -24px rgb(0 0 0 / 0.85),
+        0 0 50px -12px rgb(255 178 102 / 0.35);
+      transform: perspective(1400px) rotateY(-4deg);
+      transition: transform var(--dur-scene) var(--ease-arrive), box-shadow var(--dur-short) var(--ease-hover);
+    }
+    :is(.card[data-w3], .card[data-w2]) .chrome { background: #17244a; border-bottom-color: rgb(255 255 255 / 0.06); }
+    :is(.card[data-w3], .card[data-w2]) .chrome i { background: rgb(255 255 255 / 0.2); }
+    :is(.card[data-w3], .card[data-w2]) .chrome i:first-child { background: #ff7b6b; }
+    :is(.card[data-w3], .card[data-w2]) .url { color: var(--text-lo); }
+    /* Hover: the pane turns to face you and its edge lights up. */
+    :is(.card[data-w3], .card[data-w2]):hover .pane {
+      transform: perspective(1400px) rotateY(0deg) translateY(-2px);
+      box-shadow:
+        0 0 0 1px rgb(255 226 184 / 0.45),
+        0 34px 60px -24px rgb(0 0 0 / 0.9),
+        0 0 70px -10px rgb(255 178 102 / 0.5);
+    }
+    :is(.card[data-w3], .card[data-w2]):hover .frame img { transform: none; }
+    :is(.card[data-w3], .card[data-w2]) .body { padding: 1.6rem 1.6rem 1.4rem; gap: 0.7rem; justify-content: center; }
+    :is(.card[data-w3], .card[data-w2]) h3 { font-size: clamp(1.5rem, 2.2vw, 1.9rem); }
+    :is(.card[data-w3], .card[data-w2]) p { font-size: 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card:hover, .card:hover .frame img { transform: none; }
+    .pane { transition: none !important; }
+  }
 </style>

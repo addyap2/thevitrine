@@ -80,11 +80,11 @@ other three load when the browser is idle.
 | Range | Behaviour |
 |---|---|
 | Hero, 0 → its own height | **Parallax in three layers.** The text sinks 40 px and fades to 10 %, the window rises 70 px and flattens by 12°/8°, and the light shaft drifts 60 px. One rAF loop sets `--sp`, a 0–1 progress value. |
-| Hero → work | **Scene change:** a 1 px horizon line (warm to blue) draws itself from the centre, `scaleX(0 → 1)` over `--dur-scene`. |
+| Hero → work | **Scene change:** the sill, a 1 px line (lamp to blue) along the hero's bottom edge, draws itself from the centre, `scaleX(0 → 1)` over `--dur-scene`. Lamp light spills onto the paper below it. |
 | Work section | The **filter bar pins** to the top of the screen (`position: sticky`). An IntersectionObserver sentinel adds `.stuck`, which fades in a hairline and a soft shadow over `--dur-short`. |
 | Section headings | Clip-reveal from the bottom (`inset(0 0 100% 0)` → visible), plus rise and fade. |
 | Cards | Rise 28 px and fade in. Cards that enter together stagger 70 ms in reading order, capped at 6, so a fast scroll never queues a long cascade. |
-| Contact | Another horizon line, then the heading, lede and both contact cards, staggered. |
+| Contact | Back into the night: the sill line at its top draws itself, then the heading, lede and both contact cards, staggered. |
 
 Reveals fire once, at 12 % visibility with an 8 % bottom margin, so content
 is already settling as it comes into view. Once settled, the
@@ -117,12 +117,13 @@ The active chip scrolls into view inside its row on mobile.
 
 | Element | Hover / focus | Press |
 |---|---|---|
-| Card | Lifts 4 px and gains a shadow (`--dur-short`); its screenshot leans in to `scale(1.03)` over `--dur-scene` | — |
+| Card | Lifts 3 px; its edge and shadow warm to lamp light (`--dur-short`); its screenshot leans in to `scale(1.025)` over `--dur-scene` | — |
+| Wide card | Its pane turns from `rotateY(-4deg)` to face you and its edge lights up, over `--dur-scene` | — |
 | Site link `↗` | Arrow nudges 2 px up-right, colour shifts to accent | — |
 | Filter chip | Text and border darken (`--dur-micro`); the selected chip fills in over `--dur-short` | — |
 | Primary CTA | Rises 2 px, glow intensifies | `scale(.97)`, 90 ms |
 | Hero front pane | Edge lights up warm | Opens the live site |
-| Contact card | Lifts 2 px, border turns brand blue, arrow nudges | — |
+| Contact card (glass, at night) | Lifts 2 px, edge and glow turn warm, arrow nudges | — |
 | Language switch | Border brightens | `scale(.97)` |
 | Count | Number ticks in from 45 % above | — |
 | "Live" dot | Slow 2.4 s halo pulse (decorative) | — |

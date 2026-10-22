@@ -4,6 +4,7 @@ import Hero from "./Hero.astro";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
 import { strings, homePath, langs, type Lang } from "../i18n";
+import { spans } from "../wide";
 import "../styles/motion.css";
 
 interface Props {
@@ -23,7 +24,9 @@ const sections = [...categories, { id: "more", label: { en: strings.en.more, fr:
       c.id === "more" ? !categories.some((k) => k.id === p.category) : p.category === c.id,
     ),
   }))
-  .filter((s) => s.projects.length > 0);
+  .filter((s) => s.projects.length > 0)
+  .map((s) => ({ ...s, ...spans(s.projects.length) }));
+const pad = (n: number) => String(n).padStart(2, "0");
 const plural = (n: number) => (n === 1 ? t.projectOne : t.projectMany);
 const canonical = new URL(homePath[lang], Astro.site);
 ---
@@ -71,7 +74,6 @@ const canonical = new URL(homePath[lang], Astro.site);
         <p class="empty">{t.empty}</p>
       ) : (
         <>
-          <div class="horizon" data-reveal="line" aria-hidden="true"></div>
           <div class="sentinel" aria-hidden="true"></div>
           <nav class="filters" aria-label={t.filterLabel}>
             {makers.length > 1 && (
@@ -93,10 +95,10 @@ const canonical = new URL(homePath[lang], Astro.site);
           {sections.map((s, si) => (
             <section class="category" data-category={s.id} aria-labelledby={`cat-${s.id}`}>
               <h2 id={`cat-${s.id}`} data-reveal="heading">
-                {s.label} <span class="n">{s.projects.length}</span>
+                {s.label} <span class="rule" aria-hidden="true"></span><span class="n">{pad(s.projects.length)}</span>
               </h2>
               <div class="grid">
-                {s.projects.map((p, i) => <ProjectCard project={p} lang={lang} eager={si === 0 && i < 3} />)}
+                {s.projects.map((p, i) => <ProjectCard project={p} lang={lang} eager={si === 0 && i < 3} wide3={s.w3.has(i)} wide2={s.w2.has(i)} />)}
               </div>
             </section>
           ))}
@@ -104,9 +106,10 @@ const canonical = new URL(homePath[lang], Astro.site);
       )}
     </main>
 
-    <footer class="contact wrap" id="contact">
-      <div class="horizon" data-reveal="line" aria-hidden="true"></div>
-      <h2 data-reveal="heading">{t.contactHeading}</h2>
+    <footer class="contact" id="contact">
+      <div class="sill horizon" data-reveal="line" aria-hidden="true"></div>
+      <div class="wrap">
+      <h2 data-reveal="heading">{t.contactLead} <em>{t.contactAccent}</em>{t.contactTail}</h2>
       <p class="contact-lede" data-reveal>{t.contactLede}</p>
       <div class="people">
         <a class="person" data-reveal href="https://www.antonyaddy.com/contact?sujet=sites" target="_blank" rel="noopener">
@@ -121,9 +124,11 @@ const canonical = new URL(homePath[lang], Astro.site);
         </a>
       </div>
       <p class="small" data-reveal>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</p>
+      </div>
     </footer>
 
     <script>
+      import { spans } from "../wide";
       const reduced = matchMedia("(prefers-reduced-motion: reduce)");
       const root = document.documentElement;
 
@@ -179,15 +184,21 @@ const canonical = new URL(homePath[lang], Astro.site);
         let shown = 0;
         for (const section of sections) {
           const inCategory = !state.category || section.dataset.category === state.category;
-          let visible = 0;
-          for (const card of section.querySelectorAll<HTMLElement>(".card")) {
+          const cards = [...section.querySelectorAll<HTMLElement>(".card")];
+          const shownHere: HTMLElement[] = [];
+          for (const card of cards) {
             const ok = inCategory && (!state.maker || card.dataset.maker === state.maker);
             card.hidden = !ok;
-            if (ok) visible++;
+            if (ok) shownHere.push(card);
           }
+          // Re-pick the wide cards so every row of what's left still closes.
+          const { w3, w2 } = spans(shownHere.length);
+          cards.forEach((c) => { c.removeAttribute("data-w3"); c.removeAttribute("data-w2"); });
+          shownHere.forEach((c, i) => { c.toggleAttribute("data-w3", w3.has(i)); c.toggleAttribute("data-w2", w2.has(i)); });
+          const visible = shownHere.length;
           section.hidden = visible === 0;
           const n = section.querySelector(".n");
-          if (n) n.textContent = String(visible);
+          if (n) n.textContent = String(visible).padStart(2, "0");
           shown += visible;
         }
         if (count && count.textContent !== String(shown)) {
@@ -255,27 +266,44 @@ const canonical = new URL(homePath[lang], Astro.site);
     --accent: #a8431f;
     --brand: #1f5fbf;
     --shadow: rgb(60 40 20 / 0.35);
+    --chrome: #efe9df;
+    /* Lamp light: the warm edge and glow a window gets when you look at it. */
+    --lit-edge: #e2b48c;
+    --lit-glow: rgb(168 67 31 / 0.45);
     --display: "Fraunces", Georgia, serif;
     --text: "Inter", system-ui, -apple-system, sans-serif;
+    /* Night: the hero and the contact section, the two ends of the visit. */
+    --night: #081227;
+    --night-2: #10234d;
+    --lamp: #ffc27d;
+    --lamp-hot: #ffe2b8;
+    --text-hi: #f6f2ea;
+    --text-lo: #b4c0dc;
+    --blue: #79adff;
     color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #161412;
-      --surface: #1f1c19;
-      --ink: #f2ede6;
-      --ink-soft: #b3aca2;
-      --line: #34302b;
-      --muted-bg: #2a2622;
-      --accent: #ec8a62;
-      --brand: #6fa8ff;
+      /* In dark mode the whole visit stays at blue hour, lit by the same lamp. */
+      --bg: #0a1329;
+      --surface: #101b36;
+      --ink: #f2efe8;
+      --ink-soft: #a7b1ca;
+      --line: #22305a;
+      --muted-bg: #14203f;
+      --chrome: #17244a;
+      --accent: #ffb27a;
+      --brand: #8ab6ff;
       --shadow: rgb(0 0 0 / 0.7);
+      --lit-edge: rgb(255 194 125 / 0.55);
+      --lit-glow: rgb(255 178 102 / 0.4);
       color-scheme: dark;
     }
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
+    overflow-x: clip;
     background: var(--bg);
     color: var(--ink);
     font-family: var(--text);
@@ -288,8 +316,20 @@ const canonical = new URL(homePath[lang], Astro.site);
 </style>
 
 <style>
-  #work { padding-top: 3.5rem; }
-  .horizon { margin-bottom: 0.5rem; }
+  /* Light from the window spills onto the paper just below the hero's sill. */
+  #work { position: relative; padding-top: 3rem; }
+  #work::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100vw;
+    height: 240px;
+    transform: translateX(-50%);
+    background: radial-gradient(45% 100% at 50% 0, rgb(255 178 102 / 0.16), transparent 100%);
+    pointer-events: none;
+    z-index: -1;
+  }
   .sentinel { height: 1px; }
   /* Pinned filter bar: full-bleed paper behind it, a shadow once it is stuck. */
   .filters {
@@ -302,11 +342,15 @@ const canonical = new URL(homePath[lang], Astro.site);
     align-items: center;
     padding: 0.85rem 0;
     margin-bottom: 1rem;
-    background: var(--bg);
-    border-image: linear-gradient(var(--bg) 0 0) fill 0 / / 0 100vw;
     transition: box-shadow var(--dur-short) var(--ease-hover);
   }
-  .filters.stuck { box-shadow: 0 1px 0 var(--line), 0 18px 24px -24px var(--shadow); }
+  /* Paper goes behind the bar only once it pins, so the window's light spill
+     above it isn't cut off while it sits in place. */
+  .filters.stuck {
+    background: var(--bg);
+    border-image: linear-gradient(var(--bg) 0 0) fill 0 / / 0 100vw;
+    box-shadow: 0 1px 0 var(--line), 0 18px 24px -24px var(--shadow);
+  }
   .group { display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .group button {
     font: inherit;
@@ -342,53 +386,104 @@ const canonical = new URL(homePath[lang], Astro.site);
     .count { margin: 0; }
     .filters.stuck .count { display: none; }
   }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr));
-    gap: 1.5rem;
-  }
-  .category { margin-top: 2.5rem; }
-  .category:first-of-type { margin-top: 0.5rem; }
+  /* Fixed column counts, so src/wide.ts can close every row (breakpoints match ProjectCard). */
+  .grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 640px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1000px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .category { margin-top: 4rem; }
+  .category:first-of-type { margin-top: 1rem; }
+  /* Chapter headings: the name, a hairline running to the edge, the count at the end. */
   .category h2 {
     font-family: var(--display);
     font-weight: 500;
-    font-size: clamp(1.5rem, 3.5vw, 2rem);
-    letter-spacing: -0.01em;
-    margin: 0 0 1.1rem;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    letter-spacing: -0.015em;
+    margin: 0 0 1.5rem;
     display: flex;
     align-items: baseline;
-    gap: 0.6rem;
+    gap: 1rem;
   }
-  .category h2 .n { font-family: var(--text); font-size: 0.9rem; font-weight: 500; color: var(--ink-soft); }
+  .category h2 .rule { flex: 1; height: 1px; background: var(--line); align-self: center; transform: translateY(0.15em); }
+  .category h2 .n {
+    font-family: var(--text);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
   .empty { padding: 3rem 0; color: var(--ink-soft); }
-  .contact .horizon { margin-bottom: 4rem; }
-  .contact { padding-top: 5rem; padding-bottom: 3rem; }
+  /* Contact: you step back out into the night you came in from. It mirrors the
+     hero (sky, lamp gradient, glass), so the visit has a beginning and an end. */
+  .contact {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin-top: 6rem;
+    padding: 6rem 0 2.5rem;
+    color: var(--text-hi);
+    color-scheme: dark;
+    background:
+      radial-gradient(55% 60% at 50% 0%, rgb(255 178 102 / 0.2), transparent 70%),
+      radial-gradient(70% 70% at 90% 100%, rgb(84 128 230 / 0.25), transparent 70%),
+      linear-gradient(180deg, var(--night) 0%, var(--night-2) 100%);
+  }
+  .contact .sill { position: absolute; top: 0; left: 0; right: 0; background: linear-gradient(90deg, transparent, var(--blue) 25%, var(--lamp) 65%, transparent); opacity: 0.8; }
   .contact h2 {
     font-family: var(--display);
     font-weight: 500;
-    font-size: clamp(1.9rem, 4.5vw, 3rem);
-    letter-spacing: -0.02em;
+    font-size: clamp(2.2rem, 5.5vw, 4rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
     margin: 0;
+    max-width: 16ch;
+    text-wrap: balance;
   }
-  .contact-lede { color: var(--ink-soft); font-size: 1.05rem; max-width: 40rem; margin: 0.8rem 0 2rem; }
+  .contact h2 em {
+    font-style: italic;
+    background: linear-gradient(100deg, var(--lamp-hot), var(--lamp) 45%, #ff9a5a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-right: 0.06em;
+  }
+  .contact-lede { color: var(--text-lo); font-size: 1.1rem; line-height: 1.6; max-width: 36rem; margin: 1.2rem 0 2.75rem; }
   .people { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+  /* Each contact is a pane of glass that lights up warm, like the hero's front window. */
   .person {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    padding: 1.4rem 1.5rem;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: var(--surface);
-    color: var(--ink);
+    gap: 0.45rem;
+    padding: 1.6rem 1.7rem;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-radius: 16px;
+    background: rgb(255 255 255 / 0.04);
+    backdrop-filter: blur(6px);
+    color: var(--text-hi);
     text-decoration: none;
-    transition: border-color var(--dur-micro) var(--ease-hover), transform var(--dur-short) var(--ease-hover);
+    transition:
+      border-color var(--dur-micro) var(--ease-hover),
+      box-shadow var(--dur-short) var(--ease-hover),
+      transform var(--dur-short) var(--ease-hover);
   }
-  .person:hover { border-color: var(--brand); transform: translateY(-2px); }
-  .person strong { font-family: var(--display); font-weight: 600; font-size: 1.3rem; }
-  .person span { color: var(--ink-soft); line-height: 1.5; }
-  .person em { font-style: normal; font-weight: 600; color: var(--brand); margin-top: 0.4rem; }
-  .person em span { display: inline-block; transition: transform var(--dur-short) var(--ease-hover); }
+  .person:hover {
+    border-color: rgb(255 226 184 / 0.5);
+    box-shadow: 0 0 60px -14px rgb(255 178 102 / 0.4);
+    transform: translateY(-2px);
+  }
+  .person strong { font-family: var(--display); font-weight: 500; font-size: 1.45rem; letter-spacing: -0.01em; }
+  .person span { color: var(--text-lo); line-height: 1.5; }
+  .person em { font-style: normal; font-weight: 600; color: var(--lamp); margin-top: 0.6rem; }
+  .person em span { display: inline-block; color: inherit; transition: transform var(--dur-short) var(--ease-hover); }
   .person:hover em span { transform: translate(3px, -3px); }
-  .small { margin: 3rem 0 0; font-size: 0.85rem; color: var(--ink-soft); }
+  .small {
+    margin: 5rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgb(255 255 255 / 0.1);
+    font-size: 0.85rem;
+    color: var(--text-lo);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .person:hover { transform: none; }
+  }
 </style>
