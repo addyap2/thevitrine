@@ -2,7 +2,8 @@
 // Written from what each of them says on their own site (antonyaddy.com,
 // julienb.vercel.app) on 22 October 2026: keep it in step with those.
 //
-// photo: a path in public/ (e.g. "/people/antony.jpg", square, at least 480px).
+// photo: a path in public/ (e.g. "/people/antony.jpg", square, at least 480px),
+// with a .webp copy next to it at the same name.
 // Left null, the page shows a monogram instead.
 
 type Text = { fr: string; en: string };
@@ -28,7 +29,7 @@ export const people: Person[] = [
     maker: "Antony",
     name: "Antony Addy",
     initials: "AA",
-    photo: null,
+    photo: "/people/antony.jpg",
     role: { fr: "Formateur, créateur de sites et d'outils avec l'IA", en: "Trainer, and builder of websites and learning tools with AI" },
     place: { fr: "Fréjus · Côte d'Azur et à distance", en: "Fréjus · French Riviera and online" },
     bio: {
