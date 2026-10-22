@@ -129,9 +129,10 @@ Ticked items were verified in this audit. Unticked ones are still to do.
 - [x] Structured data: Organization, both founders, WebSite, service offer, 24-item portfolio
 - [x] Sitemap includes the legal pages and `lastmod` dates
 - [ ] Fill the placeholders in `src/data/business.ts`: `priceFrom` and `timescale` (adds a price line to the page and the offer), `profiles` (Google Business Profile, Malt… for `sameAs`)
-- [x] Phase 3: 24 case studies drafted in French and English (`/realisations/<projet>/`, `/en/work/<project>/`), written only from what each live site shows
+- [x] Phase 3: 25 case studies drafted in French and English (`/realisations/<projet>/`, `/en/work/<project>/`), written only from what each live site shows
 - [ ] Review each draft, check with the client, then set `status: "published"` in `src/data/cases.ts` (that indexes it, adds it to the sitemap and links the card's title to it)
-- [ ] Confirm the driving school's experience figure: its site says 17 years in one place and 30 in another (the card summary uses 30)
+- [x] Driving school: 30 years of experience confirmed (its own site's hero still says 17; worth fixing there)
+- [x] Florian Bozzetti (osteopath, Julien) added to the Vitrine, with a draft case study
 - [ ] Phase 4: custom domain, links from antonyaddy.com and Julien's site, client-site credits, directory listings, Search Console and Bing Webmaster Tools
 
 ### Analytics
