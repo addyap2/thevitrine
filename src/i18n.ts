@@ -18,7 +18,7 @@ export const casePath = (lang: Lang, slug: string) => (lang === "fr" ? `/realisa
 
 export const strings = {
   en: {
-    title: "Website design on the French Riviera & in Bristol | The Vitrine",
+    title: "Website design on the French Riviera & in the United Kingdom | The Vitrine",
     description: "Fast, polished websites for individuals, associations, institutions and businesses, on the French Riviera and beyond, in any language. Browse our {n} live sites.",
     heading: "Websites and apps we've built with AI.",
     lede: "A shop window of our work. Each one is live: click through and try it.",
@@ -40,7 +40,7 @@ export const strings = {
     notFoundTitle: "This window is empty",
     notFoundText: "The page you were looking for isn't here, or it has moved.",
     notFoundCta: "Back to the sites",
-    heroEyebrow: "Made-to-measure websites · French Riviera & Bristol",
+    heroEyebrow: "Made-to-measure websites · French\u00a0Riviera\u00a0&\u00a0United\u00a0Kingdom",
     heroLine1: "Your best",
     heroAccent: "shop window",
     heroLine2: "is online.",
