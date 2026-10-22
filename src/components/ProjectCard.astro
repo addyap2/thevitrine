@@ -1,6 +1,8 @@
 ---
 import { strings, type Lang } from "../i18n";
 import { srcset, src800, sizes } from "../img";
+import { cases, caseSlug } from "../data/cases";
+import { casePath } from "../i18n";
 
 interface Props {
   project: {
@@ -25,6 +27,10 @@ const { project: p, lang, eager = false, wide3 = false, wide2 = false } = Astro.
 const t = strings[lang];
 const description = p.description[lang];
 const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
+// Once its case study is published, the card's title leads there (an internal
+// link); until then it goes straight to the live site.
+const caseHref = cases[p.slug]?.status === "published" ? casePath(lang, caseSlug(p.title)) : null;
+const titleHref = caseHref ?? p.url;
 ---
 
 <article class="card" data-maker={p.maker} data-reveal data-w3={wide3 ? "" : undefined} data-w2={wide2 ? "" : undefined}>
@@ -49,7 +55,7 @@ const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
       {p.inProgress && <span class="badge">{t.inProgress}</span>}
     </div>
     <h3>
-      {p.url ? <a href={p.url} target="_blank" rel="noopener">{p.title}</a> : p.title}
+      {caseHref ? <a href={caseHref}>{p.title}</a> : titleHref ? <a href={titleHref} target="_blank" rel="noopener">{p.title}</a> : p.title}
     </h3>
     {description && <p>{description}</p>}
     {p.tags.length > 0 && (

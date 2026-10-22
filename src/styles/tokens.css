@@ -1,0 +1,35 @@
+/* Colour tokens for the standalone pages (case studies). The homepage defines
+   the same values in Vitrine.astro; keep the two in step. */
+:root {
+  --bg: #f6f3ee;
+  --surface: #fffdf9;
+  --ink: #1d1b18;
+  --ink-soft: #5d574f;
+  --line: #e4ded4;
+  --chrome: #efe9df;
+  --accent: #a8431f;
+  --brand: #1f5fbf;
+  --shadow: rgb(60 40 20 / 0.35);
+  --night: #081227;
+  --night-2: #10234d;
+  --lamp: #ffc27d;
+  --lamp-hot: #ffe2b8;
+  --text-hi: #f6f2ea;
+  --text-lo: #b4c0dc;
+  --blue: #79adff;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a1329;
+    --surface: #101b36;
+    --ink: #f2efe8;
+    --ink-soft: #a7b1ca;
+    --line: #22305a;
+    --chrome: #17244a;
+    --accent: #ffb27a;
+    --brand: #8ab6ff;
+    --shadow: rgb(0 0 0 / 0.7);
+    color-scheme: dark;
+  }
+}

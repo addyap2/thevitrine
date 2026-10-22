@@ -1,0 +1,12 @@
+---
+import CaseStudy from "../../../components/CaseStudy.astro";
+import projects from "../../../data/projects.json";
+import { cases, caseSlug } from "../../../data/cases";
+
+export function getStaticPaths() {
+  return projects.filter((p) => cases[p.slug]).map((p) => ({ params: { slug: caseSlug(p.title) }, props: { project: p.slug } }));
+}
+const { project } = Astro.props;
+---
+
+<CaseStudy lang="en" project={project} />

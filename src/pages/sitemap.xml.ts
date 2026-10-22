@@ -1,8 +1,9 @@
 // Every indexable page, each with its alternate-language version and the date
 // its content last changed: home pages follow the most recently updated
-// project, legal pages follow src/data/legal.ts.
+// project, legal pages follow src/data/legal.ts, case studies their project.
 import type { APIRoute } from "astro";
-import { homePath, legalPath, langs, type Lang } from "../i18n";
+import { homePath, legalPath, casePath, langs, type Lang } from "../i18n";
+import { cases, caseSlug } from "../data/cases";
 import projects from "../data/projects.json";
 import { updated as legalUpdated } from "../data/legal";
 
@@ -13,6 +14,14 @@ export const GET: APIRoute = ({ site }) => {
   const pages: { paths: Record<Lang, string>; lastmod: string; xDefault: Lang }[] = [
     { paths: homePath, lastmod: day(latest), xDefault: "fr" },
     { paths: legalPath, lastmod: legalUpdated, xDefault: "fr" },
+    // Case studies count only once published (drafts are noindex).
+    ...projects
+      .filter((p) => cases[p.slug]?.status === "published")
+      .map((p) => ({
+        paths: { fr: casePath("fr", caseSlug(p.title)), en: casePath("en", caseSlug(p.title)) },
+        lastmod: day(p.updated ?? legalUpdated),
+        xDefault: "fr" as Lang,
+      })),
   ];
   const urls = pages.flatMap(({ paths, lastmod, xDefault }) => {
     const alternates =

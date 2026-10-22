@@ -4,6 +4,8 @@ export type Lang = (typeof langs)[number];
 // French is the main language and lives at the root; English is at /en/.
 export const homePath: Record<Lang, string> = { fr: "/", en: "/en/" };
 export const legalPath: Record<Lang, string> = { fr: "/mentions-legales/", en: "/en/legal-notice/" };
+/** Case-study pages: /realisations/<slug>/ in French, /en/work/<slug>/ in English. */
+export const casePath = (lang: Lang, slug: string) => (lang === "fr" ? `/realisations/${slug}/` : `/en/work/${slug}/`);
 
 export const strings = {
   en: {
@@ -49,6 +51,24 @@ export const strings = {
     contactJulien: "Made-to-measure websites for tradespeople, shops and independents",
     contactCta: "Get in touch",
     barCta: "Contact",
+    caseTitle: "{title}: case study | The Vitrine",
+    caseGlance: "At a glance",
+    caseSector: "Sector",
+    casePlace: "Where",
+    caseSite: "Website",
+    caseStatus: "Status",
+    caseLive: "Live",
+    caseInProgress: "Being finished",
+    caseClient: "The client",
+    caseBuilt: "What we built",
+    caseDesign: "Design choices",
+    caseVisit: "Visit the live site",
+    caseMadeBy: "Built by",
+    casePrev: "Previous project",
+    caseNext: "Next project",
+    caseAll: "All our sites",
+    caseLink: "Case study",
+    caseDraft: "Draft, not yet published: this page is hidden from search engines until it's approved.",
     legalLink: "Legal notice",
     shotAlt: "Home page of the {title} website ({host})",
     portfolioName: "Websites built by The Vitrine",
@@ -112,6 +132,24 @@ export const strings = {
     contactJulien: "Sites vitrines sur mesure pour artisans, commerces et indépendants",
     contactCta: "Prendre contact",
     barCta: "Contact",
+    caseTitle: "{title} : étude de cas | The Vitrine",
+    caseGlance: "En bref",
+    caseSector: "Secteur",
+    casePlace: "Lieu",
+    caseSite: "Site",
+    caseStatus: "État",
+    caseLive: "En ligne",
+    caseInProgress: "En cours de finalisation",
+    caseClient: "Le client",
+    caseBuilt: "Ce que nous avons construit",
+    caseDesign: "Les choix de conception",
+    caseVisit: "Voir le site en ligne",
+    caseMadeBy: "Réalisé par",
+    casePrev: "Projet précédent",
+    caseNext: "Projet suivant",
+    caseAll: "Tous nos sites",
+    caseLink: "Étude de cas",
+    caseDraft: "Brouillon, non publié : cette page reste invisible pour les moteurs de recherche jusqu'à sa validation.",
     legalLink: "Mentions légales",
     shotAlt: "Page d'accueil du site {title} ({host})",
     portfolioName: "Sites réalisés par The Vitrine",

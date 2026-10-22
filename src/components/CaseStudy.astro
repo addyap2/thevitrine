@@ -1,0 +1,385 @@
+---
+// One case study, in French or English. Text lives in src/data/cases.ts; the
+// project facts (title, maker, link, screenshot) come from projects.json.
+// Drafts are noindex, carry a notice, and are left out of the sitemap.
+import { Font } from "astro:assets";
+import "../styles/motion.css";
+import "../styles/tokens.css";
+import projects from "../data/projects.json";
+import { categories } from "../data/overrides.json";
+import { cases, caseSlug } from "../data/cases";
+import { strings, homePath, legalPath, casePath, type Lang } from "../i18n";
+import { srcset, src800 } from "../img";
+
+interface Props { lang: Lang; project: string }
+const { lang, project: slug } = Astro.props;
+const t = strings[lang];
+const other: Lang = lang === "fr" ? "en" : "fr";
+const fr = lang === "fr";
+
+// Projects that have a case study, in homepage order, for previous/next links.
+const withCases = projects.filter((p) => cases[p.slug]);
+const i = withCases.findIndex((p) => p.slug === slug);
+const p = withCases[i];
+const c = cases[slug];
+const prev = withCases[(i - 1 + withCases.length) % withCases.length];
+const next = withCases[(i + 1) % withCases.length];
+
+const urlSlug = caseSlug(p.title);
+const canonical = new URL(casePath(lang, urlSlug), Astro.site);
+const abs = (path: string) => new URL(path, Astro.site).href;
+const category = categories.find((k) => k.id === p.category)?.label[lang] ?? t.more;
+const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
+const description = p.description[lang as "en" | "fr"];
+const title = t.caseTitle.replace("{title}", p.title);
+const draft = c.status === "draft";
+
+const ld = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "The Vitrine", item: abs(homePath[lang]) },
+        { "@type": "ListItem", position: 2, name: p.title, item: canonical.href },
+      ],
+    },
+    {
+      "@type": "CreativeWork",
+      name: p.title,
+      description,
+      inLanguage: lang,
+      ...(p.url ? { url: p.url } : {}),
+      ...(p.image ? { image: abs(p.image) } : {}),
+      creator: { "@id": abs(p.maker === "Julien" ? "/#julien" : "/#antony") },
+      publisher: { "@id": abs("/#organization") },
+      mainEntityOfPage: canonical.href,
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      document.documentElement.classList.add("js");
+      setTimeout(function () { if (!window.__vitrine) document.documentElement.classList.add("reveal-all"); }, 3000);
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {draft && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="fr" href={new URL(casePath("fr", urlSlug), Astro.site)} />
+    <link rel="alternate" hreflang="en" href={new URL(casePath("en", urlSlug), Astro.site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL(casePath("fr", urlSlug), Astro.site)} />
+    <meta name="theme-color" content="#081227" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="The Vitrine" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={fr ? "fr_FR" : "en_GB"} />
+    {p.image && <meta property="og:image" content={abs(p.image)} />}
+    {p.image && <meta property="og:image:width" content="1280" />}
+    {p.image && <meta property="og:image:height" content="800" />}
+    {p.image && <meta property="og:image:alt" content={t.shotAlt.replace("{title}", p.title).replace("{host}", host ?? "")} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    <Font cssVariable="--font-fraunces" preload={[{ style: "normal", subset: "latin" }]} />
+    <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />
+  </head>
+  <body>
+    {draft && <p class="draft" role="note">{t.caseDraft}</p>}
+
+    <header class="hero">
+      <div class="wrap bar">
+        <a class="mark" href={homePath[lang]}>The Vitrine</a>
+        <a class="lang" href={casePath(other, urlSlug)} hreflang={other} lang={other}>{t.switchTo}</a>
+      </div>
+
+      <div class="wrap hero-grid">
+        <div class="copy">
+          <nav aria-label={fr ? "Fil d'Ariane" : "Breadcrumb"} class="crumbs">
+            <a href={`${homePath[lang]}#work`}>{t.caseAll}</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">{p.title}</span>
+          </nav>
+          <p class="eyebrow">{category} · {c.place[lang]}</p>
+          <h1>{p.title}</h1>
+          <p class="lede">{description}</p>
+          <p class="maker"><i class={`dot ${p.maker === "Julien" ? "julien" : ""}`} aria-hidden="true"></i>{t.caseMadeBy} {p.maker}</p>
+          {p.url && (
+            <a class="cta" href={p.url} target="_blank" rel="noopener">
+              {t.caseVisit} <span aria-hidden="true">↗</span>
+            </a>
+          )}
+        </div>
+
+        {p.image && (
+          <div class="stage">
+            <div class="pane">
+              <span class="chrome" aria-hidden="true">
+                <i></i><i></i><i></i>
+                {host && <span class="url">{host}</span>}
+              </span>
+              <img
+                src={src800(p.image)}
+                srcset={srcset(p.image)}
+                sizes="(min-width: 960px) 600px, calc(100vw - 2rem)"
+                alt={t.shotAlt.replace("{title}", p.title).replace("{host}", host ?? "")}
+                width="1280"
+                height="800"
+                fetchpriority="high"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+      <div class="sill horizon" aria-hidden="true"></div>
+    </header>
+
+    <main class="wrap article">
+      <section class="glance" aria-labelledby="glance" data-reveal>
+        <h2 id="glance">{t.caseGlance}</h2>
+        <dl>
+          <div><dt>{t.caseSector}</dt><dd>{category}</dd></div>
+          <div><dt>{t.casePlace}</dt><dd>{c.place[lang]}</dd></div>
+          <div><dt>{t.caseMadeBy}</dt><dd>{p.maker}</dd></div>
+          {host && <div><dt>{t.caseSite}</dt><dd><a href={p.url} target="_blank" rel="noopener">{host}</a></dd></div>}
+          <div><dt>{t.caseStatus}</dt><dd>{p.inProgress ? t.caseInProgress : t.caseLive}</dd></div>
+        </dl>
+      </section>
+      <section aria-labelledby="client" data-reveal>
+        <h2 id="client">{t.caseClient}</h2>
+        <p>{c.client[lang]}</p>
+      </section>
+      <section aria-labelledby="built" data-reveal>
+        <h2 id="built">{t.caseBuilt}</h2>
+        <ul>{c.built[lang].map((line) => <li>{line}</li>)}</ul>
+      </section>
+      <section aria-labelledby="design" data-reveal>
+        <h2 id="design">{t.caseDesign}</h2>
+        <p>{c.design[lang]}</p>
+      </section>
+      {p.url && (
+        <p class="visit" data-reveal>
+          <a href={p.url} target="_blank" rel="noopener">{t.caseVisit}{fr ? "\u00a0: " : ": "}{host} <span aria-hidden="true">↗</span></a>
+        </p>
+      )}
+
+      <nav class="pager" aria-label={fr ? "Autres projets" : "More projects"}>
+        <a href={casePath(lang, caseSlug(prev.title))} rel="prev">
+          <span class="dir"><span aria-hidden="true">←</span> {t.casePrev}</span>
+          <span class="name">{prev.title}</span>
+        </a>
+        <a href={casePath(lang, caseSlug(next.title))} rel="next" class="next">
+          <span class="dir">{t.caseNext} <span aria-hidden="true">→</span></span>
+          <span class="name">{next.title}</span>
+        </a>
+      </nav>
+    </main>
+
+    <footer class="contact">
+      <div class="sill horizon" aria-hidden="true"></div>
+      <div class="wrap">
+        <h2 data-reveal>{t.contactLead} <em>{t.contactAccent}</em>{t.contactTail}</h2>
+        <p class="contact-lede" data-reveal>{t.contactLede}</p>
+        <a class="cta" href={`${homePath[lang]}#contact`} data-reveal>{t.heroCta2} <span aria-hidden="true">→</span></a>
+        <p class="small">
+          <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
+          <a href={legalPath[lang]}>{t.legalLink}</a>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      (window as any).__vitrine = true;
+      // The same once-only scroll reveal as the homepage.
+      const io = new IntersectionObserver(
+        (entries) => {
+          let i = 0;
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            const el = e.target as HTMLElement;
+            el.style.setProperty("--i", String(Math.min(i++, 5)));
+            el.classList.add("in");
+            io.unobserve(el);
+          }
+        },
+        { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
+      );
+      document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>
+
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-inter); -webkit-font-smoothing: antialiased; overflow-x: hidden; overflow-x: clip; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+  @media (min-width: 640px) { .wrap { padding: 0 2rem; } }
+  :focus-visible { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; }
+  .hero, .contact { --focus: var(--lamp); }
+
+  .draft {
+    margin: 0;
+    padding: 0.6rem 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #1a0f04;
+    background: var(--lamp);
+  }
+
+  /* Hero: the project hangs in a lit window, as on the homepage. */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    color: var(--text-hi);
+    color-scheme: dark;
+    background:
+      radial-gradient(55% 60% at 75% 45%, rgb(255 178 102 / 0.24), transparent 70%),
+      radial-gradient(70% 60% at 10% 0%, rgb(84 128 230 / 0.3), transparent 70%),
+      linear-gradient(180deg, var(--night-2) 0%, var(--night) 70%);
+    padding-bottom: 4rem;
+  }
+  .bar { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; }
+  .mark { font-family: var(--font-fraunces); font-weight: 600; font-size: 1.15rem; color: var(--blue); text-decoration: none; view-transition-name: brand; }
+  .lang {
+    font-size: 0.875rem; font-weight: 500; color: var(--text-hi); text-decoration: none;
+    padding: 0.45rem 0.9rem; border: 1px solid rgb(255 255 255 / 0.18); border-radius: 99px;
+    background: rgb(255 255 255 / 0.04); view-transition-name: lang-switch;
+  }
+  .lang:hover { border-color: rgb(255 255 255 / 0.4); }
+  .hero-grid { display: grid; gap: 2.5rem; align-items: center; padding-top: 3rem; }
+  @media (min-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 3.5rem; padding-top: 3.5rem; } }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.85rem; color: var(--text-lo); margin-bottom: 1.75rem; }
+  .crumbs a { color: var(--text-lo); text-decoration: none; }
+  .crumbs a:hover { color: var(--lamp); }
+  .eyebrow { margin: 0 0 1rem; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--lamp); }
+  h1 {
+    font-family: var(--font-fraunces);
+    font-weight: 500;
+    font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .lede { margin: 1.25rem 0 0; font-size: clamp(1.05rem, 1.5vw, 1.2rem); line-height: 1.6; color: var(--text-lo); max-width: 34rem; }
+  .maker { display: flex; align-items: center; gap: 0.5rem; margin: 1.5rem 0 0; font-size: 0.9rem; color: var(--text-lo); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--lamp); }
+  .dot.julien { background: var(--blue); }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    margin-top: 1.75rem;
+    padding: 0 1.4rem;
+    border-radius: 99px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #1a0f04;
+    background: linear-gradient(180deg, var(--lamp-hot), var(--lamp));
+    box-shadow: 0 10px 30px -10px rgb(255 178 102 / 0.7), inset 0 1px 0 rgb(255 255 255 / 0.6);
+    transition: transform var(--dur-short) var(--ease-hover), box-shadow var(--dur-short) var(--ease-hover);
+  }
+  @media (hover: hover) { .cta:hover { transform: translateY(-2px); } }
+
+  .stage { perspective: 1600px; }
+  .pane {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0d1a36;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1), 0 40px 80px -30px rgb(0 0 0 / 0.8), 0 0 70px -10px rgb(255 178 102 / 0.35);
+    transform: rotateY(-8deg) rotateX(3deg);
+    animation: pane-in var(--dur-scene) var(--ease-arrive) both;
+  }
+  @keyframes pane-in { from { opacity: 0; transform: rotateY(-24deg) rotateX(8deg) translateZ(-120px); } }
+  .chrome { display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; background: linear-gradient(180deg, #1b2a4f, #142243); border-bottom: 1px solid rgb(255 255 255 / 0.06); }
+  .chrome i { width: 8px; height: 8px; border-radius: 50%; background: rgb(255 255 255 / 0.18); }
+  .chrome i:first-child { background: #ff7b6b; }
+  .url { margin-left: 10px; font-size: 11px; color: var(--text-lo); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pane img { display: block; width: 100%; height: auto; }
+  .sill { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, var(--lamp) 35%, var(--blue) 75%, transparent); opacity: 0.8; transform: none; }
+
+  /* The write-up: a readable column on paper. */
+  .article { max-width: 46rem; padding-top: 4rem; padding-bottom: 4rem; }
+  .article section + section { margin-top: 2.75rem; }
+  .article h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .article h2::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .article p { margin: 0; font-size: 1.1rem; line-height: 1.7; color: var(--ink); text-wrap: pretty; }
+  .glance { padding: 1.25rem 1.4rem; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+  .glance dl { display: grid; gap: 0.9rem 1.5rem; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); margin: 0; }
+  .glance dt { font-size: 0.75rem; color: var(--ink-soft); margin-bottom: 0.15rem; }
+  .glance dd { margin: 0; font-size: 0.95rem; font-weight: 500; overflow-wrap: anywhere; }
+  .glance a { color: var(--brand); text-decoration: none; }
+  .glance a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .article ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+  .article li { position: relative; padding-left: 1.5rem; font-size: 1.05rem; line-height: 1.6; color: var(--ink); }
+  .article li::before { content: "—"; position: absolute; left: 0; color: var(--ink-soft); }
+  .article .visit { margin-top: 2.75rem; }
+  .visit a { color: var(--brand); font-weight: 600; text-decoration: none; }
+  .visit a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+  .pager { display: grid; gap: 1rem; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+  @media (min-width: 640px) { .pager { grid-template-columns: 1fr 1fr; } }
+  .pager a {
+    display: flex; flex-direction: column; gap: 0.35rem; padding: 1.1rem 1.25rem;
+    border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink); text-decoration: none;
+    transition: border-color var(--dur-micro) var(--ease-hover), transform var(--dur-short) var(--ease-hover);
+  }
+  .pager a:hover { border-color: var(--accent); }
+  @media (hover: hover) { .pager a:hover { transform: translateY(-2px); } }
+  .pager .next { text-align: right; }
+  .dir { font-size: 0.8rem; color: var(--ink-soft); }
+  .name { font-family: var(--font-fraunces); font-size: 1.25rem; font-weight: 500; }
+
+  /* Back out into the night: the same close as the homepage. */
+  .contact {
+    position: relative;
+    overflow: hidden;
+    padding: 5rem 0 2.5rem;
+    color: var(--text-hi);
+    color-scheme: dark;
+    background:
+      radial-gradient(55% 60% at 50% 0%, rgb(255 178 102 / 0.2), transparent 70%),
+      linear-gradient(180deg, var(--night) 0%, var(--night-2) 100%);
+  }
+  .contact .sill { top: 0; bottom: auto; background: linear-gradient(90deg, transparent, var(--blue) 25%, var(--lamp) 65%, transparent); }
+  .contact h2 { font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.04; letter-spacing: -0.03em; margin: 0; max-width: 16ch; text-wrap: balance; }
+  .contact h2 em {
+    font-style: italic;
+    background: linear-gradient(100deg, var(--lamp-hot), var(--lamp) 45%, #ff9a5a);
+    -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.06em;
+  }
+  .contact-lede { color: var(--text-lo); font-size: 1.1rem; line-height: 1.6; max-width: 36rem; margin: 1rem 0 0; }
+  .small {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 1.5rem;
+    margin: 4rem 0 0; padding-top: 1.5rem; border-top: 1px solid rgb(255 255 255 / 0.1);
+    font-size: 0.85rem; color: var(--text-lo);
+  }
+  .small a { color: var(--text-lo); text-underline-offset: 3px; }
+  .small a:hover { color: var(--lamp); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pane { animation: none; }
+    .cta:hover, .pager a:hover { transform: none; }
+  }
+</style>
