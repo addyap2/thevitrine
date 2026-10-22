@@ -120,7 +120,8 @@ The active chip scrolls into view inside its row on mobile.
 | Card | Lifts 3 px; its edge and shadow warm to lamp light (`--dur-short`); its screenshot leans in to `scale(1.025)` over `--dur-scene` | — |
 | Wide card | Its pane turns from `rotateY(-4deg)` to face you and its edge lights up, over `--dur-scene` | — |
 | Site link `↗` | Arrow nudges 2 px up-right, colour shifts to accent | — |
-| Filter chip | Text and border darken (`--dur-micro`); the selected chip fills in over `--dur-short` | — |
+| Maker switch | Text darkens (`--dur-micro`); a raised thumb slides to the chosen name over `--dur-base`, `--ease-move` | `scale(.97)` |
+| Category tab | Text darkens (`--dur-micro`); the accent underline slides and resizes to the chosen tab over `--dur-base`, `--ease-move` | `scale(.97)` |
 | Primary CTA | Rises 2 px, glow intensifies | `scale(.97)`, 90 ms |
 | Hero front pane | Edge lights up warm | Opens the live site |
 | Contact card (glass, at night) | Lifts 2 px, edge and glow turn warm, arrow nudges | — |
@@ -159,7 +160,7 @@ The EN ↔ FR switch uses **cross-document View Transitions**
 - **No animation libraries.** Everything is CSS plus a few KB of plain
   TypeScript.
 - **Animated properties:** only `transform` and `opacity`, plus heading
-  `clip-path`.
+  `clip-path` and the `width` of the two small filter indicators.
 - **Event handling:**
   - At most one rAF loop runs, only while values are still settling.
   - The scroll listener is passive.

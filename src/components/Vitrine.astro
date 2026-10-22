@@ -76,21 +76,25 @@ const canonical = new URL(homePath[lang], Astro.site);
         <>
           <div class="sentinel" aria-hidden="true"></div>
           <nav class="filters" aria-label={t.filterLabel}>
-            {makers.length > 1 && (
-              <div class="group" data-filter="maker">
-                <button type="button" aria-pressed="true" data-value="">{t.everyone}</button>
-                {makers.map((m) => <button type="button" aria-pressed="false" data-value={m}>{m}</button>)}
-              </div>
-            )}
+            <div class="filters-top">
+              {makers.length > 1 && (
+                <div class="group seg" data-filter="maker">
+                  <span class="ind" aria-hidden="true"></span>
+                  <button type="button" aria-pressed="true" data-value="">{t.everyone}</button>
+                  {makers.map((m) => <button type="button" aria-pressed="false" data-value={m}>{m}</button>)}
+                </div>
+              )}
+              <p class="count" aria-live="polite" data-one={t.projectOne} data-many={t.projectMany}>
+                <span id="count">{projects.length}</span> <span id="count-word">{plural(projects.length)}</span>
+              </p>
+            </div>
             {sections.length > 1 && (
-              <div class="group" data-filter="category">
+              <div class="group tabs" data-filter="category">
+                <span class="ind" aria-hidden="true"></span>
                 <button type="button" aria-pressed="true" data-value="">{t.all}</button>
                 {sections.map((s) => <button type="button" aria-pressed="false" data-value={s.id}>{s.label}</button>)}
               </div>
             )}
-            <p class="count" aria-live="polite" data-one={t.projectOne} data-many={t.projectMany}>
-              <span id="count">{projects.length}</span> <span id="count-word">{plural(projects.length)}</span>
-            </p>
           </nav>
           {sections.map((s, si) => (
             <section class="category" data-category={s.id} aria-labelledby={`cat-${s.id}`}>
@@ -239,11 +243,30 @@ const canonical = new URL(homePath[lang], Astro.site);
         }
       };
 
-      document.querySelectorAll<HTMLElement>(".filters .group").forEach((group) => {
+      // ---- Sliding indicators: the maker switch's thumb and the tabs' underline
+      // glide to the chosen button. Placed instantly on load and on resize.
+      const groups = [...document.querySelectorAll<HTMLElement>(".filters .group")];
+      const place = (group: HTMLElement, glide: boolean) => {
+        const ind = group.querySelector<HTMLElement>(".ind");
+        const on = group.querySelector<HTMLElement>('button[aria-pressed="true"]');
+        if (!ind || !on) return;
+        if (!glide) ind.style.transition = "none";
+        ind.style.setProperty("--x", `${on.offsetLeft}px`);
+        ind.style.setProperty("--w", `${on.offsetWidth}px`);
+        if (!glide) { void ind.offsetWidth; ind.style.transition = ""; }
+      };
+      const placeAll = () => groups.forEach((g) => place(g, false));
+      groups.forEach((g) => g.classList.add("has-ind"));
+      placeAll();
+      document.fonts?.ready.then(placeAll);
+      if ("ResizeObserver" in window) groups.forEach((g) => new ResizeObserver(() => place(g, false)).observe(g));
+
+      groups.forEach((group) => {
         group.addEventListener("click", (e) => {
           const btn = (e.target as HTMLElement).closest("button");
           if (!btn || btn.getAttribute("aria-pressed") === "true") return;
           group.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+          place(group, true);
           btn.scrollIntoView({ block: "nearest", inline: "nearest", behavior: reduced.matches ? "auto" : "smooth" });
           state[group.dataset.filter!] = btn.dataset.value ?? "";
           revealAll();
@@ -331,17 +354,17 @@ const canonical = new URL(homePath[lang], Astro.site);
     z-index: -1;
   }
   .sentinel { height: 1px; }
-  /* Pinned filter bar: full-bleed paper behind it, a shadow once it is stuck. */
+  /* Pinned filter bar: a maker switch and the count on top, category tabs below
+     sitting on a hairline. Full-bleed paper and a shadow appear once it pins. */
   .filters {
     position: sticky;
     top: 0;
     z-index: 10;
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem 1.5rem;
-    align-items: center;
-    padding: 0.85rem 0;
-    margin-bottom: 1rem;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-top: 0.9rem;
+    margin-bottom: 1.75rem;
     transition: box-shadow var(--dur-short) var(--ease-hover);
   }
   /* Paper goes behind the bar only once it pins, so the window's light spill
@@ -349,42 +372,81 @@ const canonical = new URL(homePath[lang], Astro.site);
   .filters.stuck {
     background: var(--bg);
     border-image: linear-gradient(var(--bg) 0 0) fill 0 / / 0 100vw;
-    box-shadow: 0 1px 0 var(--line), 0 18px 24px -24px var(--shadow);
+    box-shadow: 0 18px 24px -24px var(--shadow);
   }
-  .group { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .filters-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .group { position: relative; display: flex; }
   .group button {
+    position: relative;
+    z-index: 1;
     font: inherit;
     font-size: 0.875rem;
-    padding: 0.4rem 0.85rem;
-    border-radius: 99px;
-    border: 1px solid var(--line);
+    font-weight: 500;
+    border: 0;
     background: transparent;
     color: var(--ink-soft);
     cursor: pointer;
     white-space: nowrap;
-    transition:
-      color var(--dur-micro) var(--ease-hover),
-      background-color var(--dur-short) var(--ease-hover),
-      border-color var(--dur-micro) var(--ease-hover),
-      transform var(--dur-micro) var(--ease-hover);
+    transition: color var(--dur-micro) var(--ease-hover);
   }
-  .group button:hover { color: var(--ink); border-color: var(--ink-soft); }
-  .group button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-  .count { margin: 0 0 0 auto; font-size: 0.875rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
-  /* On small screens each filter row scrolls sideways instead of stacking into a wall. */
+  .group button:hover, .group button[aria-pressed="true"] { color: var(--ink); }
+  /* The indicator is positioned by script from the chosen button (--x, --w).
+     Its width animates too: one small, absolutely placed element, so it stays cheap. */
+  .ind {
+    position: absolute;
+    left: 0;
+    width: var(--w, 0);
+    transform: translateX(var(--x, 0));
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform var(--dur-base) var(--ease-move),
+      width var(--dur-base) var(--ease-move);
+  }
+  .has-ind .ind { opacity: 1; }
+
+  /* Maker: a segmented switch. A raised thumb slides under the chosen name. */
+  .seg {
+    padding: 3px;
+    border-radius: 99px;
+    background: var(--muted-bg);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .seg button { padding: 0.42rem 1.05rem; border-radius: 99px; }
+  .seg .ind {
+    top: 3px;
+    bottom: 3px;
+    border-radius: 99px;
+    background: var(--surface);
+    box-shadow: 0 0 0 1px var(--line), 0 2px 6px -2px var(--shadow);
+  }
+  /* Without script the chosen segment simply fills in. */
+  .seg:not(.has-ind) button[aria-pressed="true"] { background: var(--surface); box-shadow: 0 0 0 1px var(--line); }
+
+  /* Categories: quiet text tabs on a hairline; an accent underline marks the choice. */
+  .tabs { gap: 1.75rem; box-shadow: inset 0 -1px 0 var(--line); }
+  .tabs button { padding: 0.5rem 0 0.8rem; font-size: 0.9rem; }
+  .tabs .ind { bottom: 0; height: 2px; border-radius: 2px; background: var(--accent); }
+  .tabs:not(.has-ind) button[aria-pressed="true"] { box-shadow: inset 0 -2px 0 var(--accent); }
+
+  .count { margin: 0; font-size: 0.875rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+
+  /* On small screens the tabs scroll sideways instead of stacking into a wall. */
   @media (max-width: 720px) {
-    .filters { flex-wrap: nowrap; flex-direction: column; align-items: stretch; gap: 0.5rem; }
-    .group {
-      flex-wrap: nowrap;
+    .filters { gap: 0.6rem; padding-top: 0.75rem; }
+    .tabs {
+      gap: 1.4rem;
       overflow-x: auto;
       scrollbar-width: none;
       margin-inline: -1rem;
       padding-inline: 1rem;
       mask-image: linear-gradient(90deg, transparent, #000 1rem, #000 calc(100% - 1.5rem), transparent);
     }
-    .group::-webkit-scrollbar { display: none; }
-    .count { margin: 0; }
-    .filters.stuck .count { display: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .filters.stuck .count { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ind { transition: none; }
   }
   /* Fixed column counts, so src/wide.ts can close every row (breakpoints match ProjectCard). */
   .grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
