@@ -2,10 +2,12 @@
 // Empty slots are placeholders: the matching line is left off the page (and
 // out of the structured data), and the build log lists what's still missing.
 
-/** Starting price for a site vitrine, in euros (e.g. 900). */
+/** Starting price for a site vitrine, in euros (e.g. 900). Left empty on
+ *  purpose: price is quoted per project (decided 23 October 2026). */
 export const priceFrom: number | null = null;
 
-/** Typical time from first call to launch, in each language (e.g. "2 à 3 semaines"). */
+/** Typical time from first call to launch (e.g. "2 à 3 semaines"). Left empty on
+ *  purpose: the timescale is set per project, in the quote. */
 export const timescale: { fr: string; en: string } | null = null;
 
 /** WhatsApp numbers, encoded (see src/protect.ts): decoded only when a visitor taps the button. */
@@ -20,8 +22,6 @@ export const profiles: string[] = [];
 
 export function missingBusinessFields(): string[] {
   const missing: string[] = [];
-  if (priceFrom === null) missing.push("priceFrom");
-  if (timescale === null) missing.push("timescale");
   if (profiles.length === 0) missing.push("profiles");
   return missing;
 }
