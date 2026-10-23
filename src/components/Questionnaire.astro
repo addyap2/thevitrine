@@ -26,6 +26,7 @@ const u = UI[lang];
         <p class="dv-noscript">{u.noscript} <a href={`${homePath[lang]}#contact`}>{u.noscriptLink}</a>.</p>
       </noscript>
 
+      <p class="dv-current" id="dv-current" aria-live="polite"></p>
       <ol class="dv-progress" id="dv-progress" aria-label={u.steps}></ol>
       <p class="dv-restart-row"><button type="button" class="dv-restart" id="dv-restart" hidden>{u.restart}</button></p>
 
@@ -129,7 +130,7 @@ const u = UI[lang];
   }
 
   function buildField(f: Field) {
-    const wrap = el("div", { class: "dv-field", "data-field": f.id });
+    const wrap = el("div", { class: ["text", "email", "tel", "number"].includes(f.type) ? "dv-field dv-short" : "dv-field", "data-field": f.id });
     const fid = "f-" + f.id;
 
     if (f.type === "consent") {
@@ -185,7 +186,9 @@ const u = UI[lang];
       head.appendChild(text("span", { class: "dv-step-num", "aria-hidden": "true" }, num));
       head.appendChild(text("span", { class: "dv-step-title" }, s[lang]));
       step.appendChild(head);
-      s.fields.forEach((f) => step.appendChild(buildField(f)));
+      const fields = el("div", {class:"dv-fields"});
+      s.fields.forEach((f) => fields.appendChild(buildField(f)));
+      step.appendChild(fields);
       stepsEl.appendChild(step);
 
       // Each step label is a button: earlier steps are one tap away, so a visitor
@@ -265,6 +268,7 @@ const u = UI[lang];
     nextBtn.hidden = last;
     submitBtn.hidden = !last;
     countEl.textContent = u("step").replace("{n}", String(current + 1)).replace("{t}", String(SCHEMA.length));
+    document.getElementById("dv-current")!.textContent = `${countEl.textContent} — ${SCHEMA[current].short[lang]}`;
     progressEl.querySelectorAll("li").forEach((li, i) => {
       li.className = i < current ? "is-done" : i === current ? "is-current" : "";
       if (i === current) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
@@ -341,7 +345,7 @@ const u = UI[lang];
         doneEl.querySelector<HTMLElement>(".done-sent")!.hidden = result.confirmationSent === false;
         try { localStorage.removeItem(LS_DRAFT); } catch {}
         document.getElementById("dv-sent-to")!.textContent = valuesOf("email")[0] || "";
-        form.hidden = true; progressEl.hidden = true; restartBtn.hidden = true;
+        form.hidden = true; document.getElementById("dv-current")!.hidden = true; progressEl.hidden = true; restartBtn.hidden = true;
         doneEl.hidden = false; doneEl.focus();
         doneEl.scrollIntoView({ block: "start" });
       })
@@ -402,6 +406,8 @@ const u = UI[lang];
   .dv-noscript { margin-top: 2rem; padding: 1rem 1.25rem; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
 
   /* Progress: one bar per step, lit in lamp light up to where you are. */
+  .dv-current { margin:2rem 0 -.8rem; color:var(--ink-soft); font-size:.9rem; }
+  @media(min-width:700px){.dv-form :global(.dv-fields){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.25rem}.dv-form :global(.dv-field){grid-column:1/-1}.dv-form :global(.dv-short){grid-column:auto}}
   .dv-progress { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.5rem; margin: 2.5rem 0 0; padding: 0; list-style: none; }
   .dv-progress :global(li) { min-width: 0; }
   .dv-progress :global(.dv-jump) {

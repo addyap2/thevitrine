@@ -90,10 +90,8 @@ export const SCHEMA: Step[] = [
       { id: "email", type: "email", req: true, auto: "email", fr: "E-mail", en: "Email" },
       { id: "phone", type: "tel", auto: "tel", fr: "Téléphone", en: "Phone" },
       { id: "company", type: "text", auto: "organization", fr: "Nom de l'entreprise ou de l'association", en: "Business or organisation name" },
-      { id: "siret", type: "text", fr: "SIRET (si applicable)", en: "Company registration number (if any)" },
       { id: "activity", type: "textarea", fr: "Que fait votre entreprise ? Qui sont vos clients ?", en: "What does your business do? Who are your customers?" },
       { id: "area", type: "text", fr: "Zone géographique couverte", en: "Area you serve" },
-      { id: "approver", type: "text", fr: "Qui valide le projet ?", en: "Who approves the project?" }
     ]
   },
   {
@@ -199,6 +197,9 @@ export const SCHEMA: Step[] = [
   {
     id: "budget", fr: "Budget et délais", en: "Budget and timeline", short: { fr: "Budget", en: "Budget" },
     fields: [
+      { id: "siret", type: "text", fr: "SIRET (si applicable)", en: "Company registration number (if any)" },
+      { id: "approver", type: "text", fr: "Qui valide le projet ?", en: "Who approves the project?" },
+
       { id: "budget", type: "radio", fr: "Budget envisagé", en: "Budget range",
         options: [
           o("lt1000", "Moins de 1 000 €", "Under €1,000"),

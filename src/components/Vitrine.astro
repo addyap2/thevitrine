@@ -224,6 +224,7 @@ const ld = {
               </div>
             </section>
           ))}
+          <div class="work-more" hidden id="work-more"><p>{lang === "fr" ? "Une sélection de nos réalisations. Explorez tout le portfolio ou choisissez une catégorie." : "A selection of our work. Explore the full portfolio or choose a category."}</p><button type="button" id="work-expand">{lang === "fr" ? `Voir les ${projects.length} réalisations` : `See all ${projects.length} projects`}</button></div>
         </>
       )}
       </div>
@@ -340,6 +341,11 @@ const ld = {
       const countWord = document.getElementById("count-word");
       const countBox = document.querySelector<HTMLElement>(".count");
 
+      let expanded = false;
+      const featured = new Set<HTMLElement>();
+      sections.forEach(section => { const card = section.querySelector<HTMLElement>(".card"); if (card) featured.add(card); });
+      document.querySelectorAll<HTMLElement>("#work .card").forEach(card => { if(featured.size < 8) featured.add(card); });
+      const more = document.getElementById("work-more")!;
       const apply = () => {
         let shown = 0;
         for (const section of sections) {
@@ -347,7 +353,7 @@ const ld = {
           const cards = [...section.querySelectorAll<HTMLElement>(".card")];
           const shownHere: HTMLElement[] = [];
           for (const card of cards) {
-            const ok = inCategory && (!state.maker || card.dataset.maker === state.maker);
+            const ok = inCategory && (!state.maker || card.dataset.maker === state.maker) && (expanded || featured.has(card));
             card.hidden = !ok;
             if (ok) shownHere.push(card);
           }
@@ -361,6 +367,7 @@ const ld = {
           if (n) n.textContent = String(visible).padStart(2, "0");
           shown += visible;
         }
+        more.hidden = expanded;
         document.getElementById("filter-empty")!.hidden = shown !== 0;
         if (count && count.textContent !== String(shown)) {
           count.textContent = String(shown);
@@ -368,7 +375,7 @@ const ld = {
           void count.offsetWidth;
           count.classList.add("tick");
         }
-        if (countWord && countBox) countWord.textContent = (shown === 1 ? countBox.dataset.one : countBox.dataset.many) ?? "";
+        if (countWord && countBox) countWord.textContent = !expanded ? (root.lang === "fr" ? "projets sélectionnés" : "selected projects") : (shown === 1 ? countBox.dataset.one : countBox.dataset.many) ?? "";
       };
 
       const css = (name: string) => getComputedStyle(root).getPropertyValue(name).trim();
@@ -425,6 +432,7 @@ const ld = {
           group.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
           place(group, true);
           btn.scrollIntoView({ block: "nearest", inline: "nearest", behavior: reduced.matches ? "auto" : "smooth" });
+          expanded = true;
           state[group.dataset.filter!] = btn.dataset.value ?? "";
           revealAll(document.getElementById("work")!);
           if (reduced.matches) return apply();
@@ -433,10 +441,21 @@ const ld = {
       });
 
       document.getElementById("filter-reset")?.addEventListener("click", () => {
+        expanded = true;
         state.maker = ""; state.category = "";
         groups.forEach((g) => g.querySelectorAll<HTMLButtonElement>("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.value === ""))));
         apply(); placeAll(); revealAll(document.getElementById("work")!);
         groups[0]?.querySelector<HTMLButtonElement>("button")?.focus();
+      });
+
+      apply();
+      document.getElementById("work-expand")?.addEventListener("click", () => {
+        const next = [...document.querySelectorAll<HTMLElement>("#work .card")].find(card => card.hidden);
+        expanded = true;
+        apply();
+        revealAll(document.getElementById("work")!);
+        next?.querySelector<HTMLAnchorElement>('a:not([aria-hidden="true"])')?.focus({preventScroll:true});
+        next?.scrollIntoView({block:"center",behavior:reduced.matches ? "instant" : "smooth"});
       });
 
       // Arriving with ?maker=Julien (from the About page): start with that maker's sites.
@@ -446,6 +465,7 @@ const ld = {
         const btn = group?.querySelector<HTMLButtonElement>(`button[data-value="${CSS.escape(wanted)}"]`);
         if (group && btn) {
           group.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+          expanded = true;
           state.maker = wanted;
           apply();
           place(group, false);
@@ -611,12 +631,15 @@ const ld = {
   /* Categories: quiet text tabs on a hairline; an accent underline marks the choice. */
   /* The row scrolls sideways on its own whenever the tabs don't fit (tablets
      included), instead of widening the page. */
-  .tabs { gap: 1.75rem; box-shadow: inset 0 -1px 0 var(--line); overflow-x: auto; scrollbar-width: none; }
+  .tabs { mask-image:linear-gradient(90deg,#000 calc(100% - 1.5rem),transparent); padding-right:1.5rem; gap: 1.75rem; box-shadow: inset 0 -1px 0 var(--line); overflow-x: auto; scrollbar-width: none; }
   .tabs::-webkit-scrollbar { display: none; }
   .tabs button { padding: 0.5rem 0 0.8rem; font-size: 0.9rem; }
   .tabs .ind { bottom: 0; height: 2px; border-radius: 2px; background: var(--accent); }
   .tabs:not(.has-ind) button[aria-pressed="true"] { box-shadow: inset 0 -2px 0 var(--accent); }
 
+  .work-more { text-align:center; padding:2rem 0 1rem; }
+  .work-more p { color:var(--ink-soft); line-height:1.6; }
+  .work-more button { min-height:44px; padding:.8rem 1.4rem; border:1px solid var(--line); border-radius:99px; background:var(--surface); color:var(--ink); font:inherit; font-weight:600; cursor:pointer; }
   .count { margin: 0; font-size: 0.875rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
   .bar-end { display: flex; align-items: center; gap: 1rem; }
   /* Once the bar pins, a way out to the contact section rides along with it. */

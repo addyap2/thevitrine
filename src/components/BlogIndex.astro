@@ -4,8 +4,7 @@
 // stays out of search engines.
 import SubPage from "./SubPage.astro";
 import { strings, blogPath, postPath, homePath, type Lang } from "../i18n";
-import { postsFor, isPublished, minutes, formatDate, projectFor } from "../blog";
-import { srcset } from "../img";
+import { postsFor, isPublished, minutes, formatDate } from "../blog";
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -40,13 +39,7 @@ const ld = {
       <ol class="posts">
         {listed.map((p) => (
           <li data-reveal>
-            <a href={postPath(lang, p.data.slug)} class={p.data.cover ? "has-cover" : undefined}>
-              {p.data.cover && (
-                <picture class="thumb">
-                  <source type="image/webp" srcset={srcset(projectFor(p.data.cover).image)} sizes="(min-width: 640px) 224px, calc(100vw - 2rem)" />
-                  <img src={projectFor(p.data.cover).image} alt="" width="1280" height="800" loading="lazy" decoding="async" />
-                </picture>
-              )}
+            <a href={postPath(lang, p.data.slug)}>
               <div class="text">
               <p class="meta">
                 <time datetime={p.data.date.toISOString().slice(0, 10)}>{formatDate(p.data.date, lang)}</time>
@@ -76,12 +69,6 @@ const ld = {
   .posts { list-style: none; margin: 3rem 0 0; padding: 0; border-top: 1px solid var(--line); }
   .posts li { border-bottom: 1px solid var(--line); }
   .posts a { display: grid; gap: 1.1rem; padding: 1.75rem 0; color: inherit; text-decoration: none; }
-  .thumb img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 1px solid var(--line); border-radius: 12px; transition: border-color var(--dur-micro) var(--ease-hover); }
-  .posts a:hover .thumb img { border-color: var(--accent); }
-  @media (min-width: 640px) {
-    .posts a.has-cover { grid-template-columns: minmax(0, 1fr) 14rem; gap: 2rem; align-items: center; }
-    .has-cover .thumb { order: 2; }
-  }
   .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0 0 0.6rem; font-size: 0.85rem; color: var(--ink-soft); }
   .badge { margin-left: 0.25rem; padding: 0.1rem 0.5rem; border: 1px dashed var(--accent); border-radius: 99px; font-size: 0.75rem; color: var(--accent); }
   .posts h2 { margin: 0; font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(1.4rem, 3vw, 1.9rem); line-height: 1.2; letter-spacing: -0.015em; transition: color var(--dur-micro) var(--ease-hover); text-wrap: balance; }
