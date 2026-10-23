@@ -6,6 +6,7 @@ lang: fr
 slug: comment-nous-travaillons
 key: our-process
 date: 2026-10-23
+updated: 2026-10-23
 status: published
 cover: autoecole
 cases: [autoecole, planb-global-connect, so-good-diner]
@@ -60,7 +61,7 @@ Le site passe sur votre nom de domaine (votre adresse, par exemple *votre-commer
 
 ## 7. Après la mise en ligne
 
-Un site vit : un nouveau menu, des horaires d'été, un nouveau service. Avant la mise en ligne, nous convenons ensemble de la façon de faire ces mises à jour, pour que vous sachiez toujours à qui vous adresser. Et comme vous connaissez déjà la personne qui a créé votre site, un message suffit.
+Un site vit : un nouveau menu, des horaires d'été, un nouveau service. Avant la mise en ligne, nous convenons ensemble de ce qui vous convient : vous faites vous-même les petites mises à jour, vous nous les confiez dans le cadre d'un abonnement, ou vous faites appel à nous quand le site doit évoluer. Et comme vous connaissez déjà la personne qui a créé votre site, un message suffit.
 
 ## À quoi cela ressemble, une fois terminé
 

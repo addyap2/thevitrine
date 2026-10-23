@@ -109,12 +109,18 @@ export const faq: Faq[] = [
   {
     id: "edits",
     q: { fr: "Pourrai-je modifier mon site moi-même ?", en: "Can I update my site myself?" },
-    a: null,
+    a: {
+      fr: "Oui, si vous le souhaitez : vous pouvez mettre à jour vous-même vos textes, vos horaires ou vos photos. Vous préférez ne pas vous en occuper ? Nous faisons les mises à jour pour vous, dans le cadre d'un abonnement.",
+      en: "Yes, if you'd like to: you can update your text, opening hours or photos yourself. Would you rather not deal with it? We can make the updates for you, as part of a subscription.",
+    },
   },
   {
     id: "support",
     q: { fr: "Que se passe-t-il après la mise en ligne ?", en: "What happens after the site goes live?" },
-    a: null,
+    a: {
+      fr: "Cela dépend de vos souhaits, et nous en convenons ensemble pour chaque projet : vous gérez vous-même les petites mises à jour, vous nous les confiez avec un abonnement, ou vous faites appel à nous quand votre site doit évoluer (nouvelle page, nouvelle langue…). Dans tous les cas, vous gardez la même personne à qui écrire.",
+      en: "It depends on what you'd like, and we agree it together for each project: you handle small updates yourself, you leave them to us with a subscription, or you call on us when your site needs to grow (a new page, a new language…). Either way, you keep the same person to write to.",
+    },
   },
 ];
 

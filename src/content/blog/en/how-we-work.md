@@ -6,6 +6,7 @@ lang: en
 slug: how-we-work
 key: our-process
 date: 2026-10-23
+updated: 2026-10-23
 status: published
 cover: autoecole
 cases: [autoecole, planb-global-connect, so-good-diner]
@@ -60,7 +61,7 @@ The site goes live on your domain name (your address, for example *your-business
 
 ## 7. After launch
 
-A website keeps changing: a new menu, summer hours, a new service. Before launch, we agree together how those updates will be handled, so you always know who to ask. And since you already know the person who built your site, a message is all it takes.
+A website keeps changing: a new menu, summer hours, a new service. Before launch, we agree together what suits you: you make small updates yourself, you leave them to us as part of a subscription, or you call on us when the site needs to grow. And since you already know the person who built your site, a message is all it takes.
 
 ## What it looks like when it's done
 
