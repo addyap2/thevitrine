@@ -29,7 +29,7 @@ const people = [
 
     <div class="grid">
       <div class="card form-card">
-        <p id="cf-fallback">{lang === "fr" ? "Si le formulaire ne s’affiche pas, écrivez-nous :" : "If the form does not appear, email us:"} <a href="mailto:antony@antonyaddy.com">antony@antonyaddy.com</a></p>
+        <p id="cf-fallback">{lang === "fr" ? "Si le formulaire ne s'affiche pas, écrivez-nous :" : "If the form does not appear, email us:"} <a href="mailto:antony@antonyaddy.com">antony@antonyaddy.com</a></p>
       <form hidden id="cf-form" novalidate>
           <div class="row2">
             <div class="field">
@@ -65,7 +65,7 @@ const people = [
           <div class="done-badge" aria-hidden="true"><svg viewBox="0 0 52 52"><path d="M15 27.5 22.5 35 37.5 18.5" /></svg></div>
           <h2 id="cf-done-title">{t.cfDoneH}</h2>
           <p>{t.cfDoneP}</p>
-          <p id="cf-confirmation-warning" hidden>{lang === "fr" ? "Votre demande a bien été transmise. L’e-mail de confirmation n’a pas pu être envoyé ; inutile de renvoyer le formulaire." : "Your request has reached us. The confirmation email could not be sent; there is no need to submit again."}</p>
+          <p id="cf-confirmation-warning" hidden>{lang === "fr" ? "Votre demande a bien été transmise. L'e-mail de confirmation n'a pas pu être envoyé ; inutile de renvoyer le formulaire." : "Your request has reached us. The confirmation email could not be sent; there is no need to submit again."}</p>
           <p class="sent">{t.cfSentTo} <strong id="cf-sent-to"></strong>.</p>
           <div class="actions">
             <a class="btn primary" href={`${homePath[lang]}#work`}>{lang === "fr" ? "Voir nos réalisations" : "See our work"}</a>

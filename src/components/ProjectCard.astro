@@ -34,7 +34,7 @@ const titleHref = caseHref ?? p.url;
 ---
 
 <article class="card" data-maker={p.maker} data-reveal data-w3={wide3 ? "" : undefined} data-w2={wide2 ? "" : undefined}>
-  <a class="shot" href={p.url ?? p.repo ?? undefined} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+  <a class="shot" href={p.url ?? undefined} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
     <span class="pane">
       <span class="chrome">
         <i></i><i></i><i></i>
@@ -63,7 +63,6 @@ const titleHref = caseHref ?? p.url;
     )}
     <div class="links">
       {p.url && <a href={p.url} target="_blank" rel="noopener">{t.visit}<span class="sr-only">, {p.title}</span> <span class="arrow" aria-hidden="true">↗</span></a>}
-      {p.repo && <a class="code" href={p.repo} target="_blank" rel="noopener">{t.code}</a>}
     </div>
   </div>
 </article>
@@ -209,7 +208,6 @@ const titleHref = caseHref ?? p.url;
   .links a:hover { color: var(--accent); }
   .arrow { display: inline-block; transition: transform var(--dur-short) var(--ease-hover); }
   .links a:hover .arrow, .card:hover .links a:first-child .arrow { transform: translate(2px, -2px); }
-  .links .code { color: var(--ink-soft); flex-shrink: 0; }
   .sr-only {
     position: absolute;
     width: 1px;

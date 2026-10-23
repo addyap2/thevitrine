@@ -29,7 +29,7 @@ const u = UI[lang];
       <ol class="dv-progress" id="dv-progress" aria-label={u.steps}></ol>
       <p class="dv-restart-row"><button type="button" class="dv-restart" id="dv-restart" hidden>{u.restart}</button></p>
 
-      <p id="dv-fallback">{lang === "fr" ? "Si le formulaire ne s’affiche pas, écrivez-nous :" : "If the form does not appear, email us:"} <a href="mailto:antony@antonyaddy.com">antony@antonyaddy.com</a></p>
+      <p id="dv-fallback">{lang === "fr" ? "Si le formulaire ne s'affiche pas, écrivez-nous :" : "If the form does not appear, email us:"} <a href="mailto:antony@antonyaddy.com">antony@antonyaddy.com</a></p>
       <form hidden id="dv-form" class="dv-form" novalidate>
         <div id="dv-steps"></div>
 
@@ -56,7 +56,7 @@ const u = UI[lang];
         <p class="eyebrow">{u.doneEyebrow}</p>
         <h2 id="dv-done-title">{u.doneH}</h2>
         <p class="done-lead">{u.doneP}</p>
-        <p id="dv-confirmation-warning" hidden>{lang === "fr" ? "Votre demande a bien été transmise. L’e-mail de confirmation n’a pas pu être envoyé ; inutile de renvoyer le formulaire." : "Your request has reached us. The confirmation email could not be sent; there is no need to submit again."}</p>
+        <p id="dv-confirmation-warning" hidden>{lang === "fr" ? "Votre demande a bien été transmise. L'e-mail de confirmation n'a pas pu être envoyé ; inutile de renvoyer le formulaire." : "Your request has reached us. The confirmation email could not be sent; there is no need to submit again."}</p>
           <p class="done-sent">{u.doneSentTo} <strong id="dv-sent-to"></strong>.</p>
         <div class="done-steps">
           <p class="done-steps-title">{u.doneStepsTitle}</p>
@@ -69,7 +69,7 @@ const u = UI[lang];
       </section>
 
       <p class="dv-alt">{u.alt} <a href={`${homePath[lang]}#contact`}>{u.altLink}</a>.</p>
-      <p class="dv-privacy">{lang === "fr" ? "Votre brouillon reste dans ce navigateur pendant 7 jours. Le bouton « Recommencer » permet de l’effacer." : "Your draft stays in this browser for 7 days. Use “Start again” to delete it."}</p>
+      <p class="dv-privacy">{lang === "fr" ? "Votre brouillon reste dans ce navigateur pendant 7 jours. Le bouton « Recommencer » permet de l'effacer." : "Your draft stays in this browser for 7 days. Use “Start again” to delete it."}</p>
       <p class="dv-privacy">{u.privacy}</p>
     </div>
   </main>

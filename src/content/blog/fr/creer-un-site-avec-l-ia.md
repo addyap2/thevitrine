@@ -1,6 +1,6 @@
 ---
 title: "Créer un site avec l'IA : ce qui change, et ce qui ne change pas"
-seoTitle: "Créer un site avec l’IA : notre méthode"
+seoTitle: "Créer un site avec l'IA : notre méthode"
 updated: 2026-10-22
 description: "Nous utilisons l'IA pour créer vos sites. Ce qu'elle fait vraiment, ce qu'elle ne fait pas, et pourquoi votre site ne sera pas générique."
 lang: fr

@@ -47,7 +47,7 @@ export const UI = {
     doneBlog: "Lire nos conseils",
     alt: "Vous préférez en parler directement ?",
     altLink: "Écrivez-nous ou passez par WhatsApp",
-    privacy: "Vos réponses sont envoyées par e-mail à Antony et Julien, uniquement pour préparer votre devis. Elles ne sont pas enregistrées sur ce site. Un brouillon reste dans votre navigateur pendant 7 jours maximum, ou jusqu’à l’envoi ou sa suppression.",
+    privacy: "Vos réponses sont envoyées par e-mail à Antony et Julien, uniquement pour préparer votre devis. Elles ne sont pas enregistrées sur ce site. Un brouillon reste dans votre navigateur pendant 7 jours maximum, ou jusqu'à l'envoi ou sa suppression.",
   },
   en: {
     title: "Your website project — Questionnaire | The Vitrine",

@@ -66,7 +66,7 @@
     "url": "https://tandoor-global.vercel.app",
     "description": {
       "en": "An ordering-focused site for a 100% halal Indian tandoor restaurant in Fréjus — menu, story and click-to-order takeaway.",
-      "fr": "Un site orienté commande pour un restaurant indien tandoor 100% halal à Fréjus — menu, histoire et commande à emporter en un clic."
+      "fr": "Un site orienté commande pour un restaurant indien tandoor 100 % halal à Fréjus — menu, histoire et commande à emporter en un clic."
     },
     "maker": "Antony",
     "image": "/shots/tandoor-global.jpg"
@@ -75,8 +75,8 @@
     "slug": "planb-global-connect",
     "title": "Plan B Concept",
     "description": {
-      "en": "A bilingual project-management site for the Côte d'Azur — 30+ years of build experience, from first sketch to final handover.",
-      "fr": "Un site bilingue de gestion de projet pour la Côte d'Azur — plus de 30 ans d'expérience du bâtiment, du premier croquis à la livraison finale."
+      "en": "A bilingual site for an owner's representative on the French Riviera — 30+ years in construction, from first sketch to final handover.",
+      "fr": "Un site bilingue pour un assistant à maîtrise d'ouvrage sur la Côte d'Azur — plus de 30 ans d'expérience du bâtiment, du premier croquis à la livraison finale."
     },
     "url": "https://www.planb-concept.com",
     "repo": "https://github.com/addyap/planb-global-connect",
