@@ -2,8 +2,10 @@
 // One article. Drafts carry a notice and stay out of search engines.
 import SubPage from "./SubPage.astro";
 import { render } from "astro:content";
-import { strings, blogPath, postPath, homePath, type Lang } from "../i18n";
-import { translationOf, isPublished, minutes, formatDate, postsFor, type Post } from "../blog";
+import { strings, blogPath, postPath, homePath, casePath, type Lang } from "../i18n";
+import { translationOf, isPublished, minutes, formatDate, nextFor, projectFor, shareImage, type Post } from "../blog";
+import { caseSlug } from "../data/cases";
+import { srcset, src800 } from "../img";
 
 interface Props { post: Post }
 const { post } = Astro.props;
@@ -18,9 +20,13 @@ const draft = !isPublished(post);
 const authors = post.data.authors.map((a) => (a === "Julien" ? "Julien Bourgois" : "Antony Addy"));
 const iso = post.data.date.toISOString().slice(0, 10);
 
-// Other articles to read next (published ones, or drafts while none are).
-const siblings = (await postsFor(lang)).filter((p) => p.id !== post.id);
-const next = (siblings.some(isPublished) ? siblings.filter(isPublished) : siblings).slice(0, 2);
+// The screenshot at the top, the case studies cited, and what to read next.
+const cover = post.data.cover ? projectFor(post.data.cover) : null;
+const cases = post.data.cases.map(projectFor);
+const next = (await nextFor(post)).map((p) => ({ post: p, cover: p.data.cover ? projectFor(p.data.cover) : null }));
+const caseHref = (slug: string) => casePath(lang, caseSlug(slug));
+const coverSizes = "(min-width: 760px) 704px, calc(100vw - 2rem)";
+const thumbSizes = "(min-width: 760px) 340px, calc(100vw - 2rem)";
 
 const ld = {
   "@context": "https://schema.org",
@@ -42,7 +48,7 @@ const ld = {
       dateModified: (post.data.updated ?? post.data.date).toISOString().slice(0, 10),
       url: abs(paths[lang]),
       mainEntityOfPage: abs(paths[lang]),
-      image: abs(`/og/${lang}.jpg`),
+      image: abs(shareImage(post)),
       author: post.data.authors.map((a) => ({ "@id": abs(a === "Julien" ? "/#julien" : "/#antony") })),
       publisher: { "@id": abs("/#organization") },
     },
@@ -59,6 +65,8 @@ const ld = {
   ogType="article"
   current="blog"
   ld={ld}
+  ogImage={shareImage(post)}
+  ogAlt={post.data.title}
   notice={draft ? t.blogDraft : null}
 >
   <main id="main-content" tabindex="-1" class="wrap post">
@@ -76,17 +84,63 @@ const ld = {
         </p>
         <p class="lede">{post.data.description}</p>
       </header>
+      {cover && (
+        <figure class="cover">
+          <div class="frame">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <picture>
+              <source type="image/webp" srcset={srcset(cover.image)} sizes={coverSizes} />
+              <img src={cover.image} alt="" width="1280" height="800" fetchpriority="high" decoding="async" />
+            </picture>
+          </div>
+          <figcaption>
+            {t.blogCover.replace("{name}", cover.title)} · <a href={caseHref(cover.slug)}>{t.blogCoverLink} <span aria-hidden="true">→</span></a>
+          </figcaption>
+        </figure>
+      )}
       <div class="prose">
         <Content />
       </div>
     </article>
 
-    {next.length > 0 && (
-      <nav class="next" aria-label={t.blogAll}>
-        <a class="all" href={blogPath[lang]}><span aria-hidden="true">←</span> {t.blogAll}</a>
+    {cases.length > 0 && (
+      <section class="cases" aria-labelledby="cases-title">
+        <h2 id="cases-title">{t.blogCases}</h2>
         <ul>
-          {next.map((p) => (
-            <li><a href={postPath(lang, p.data.slug)}>{p.data.title} <span aria-hidden="true">→</span></a></li>
+          {cases.map((c) => (
+            <li>
+              <a href={caseHref(c.slug)}>
+                <img src={src800(c.image)} alt="" width="1280" height="800" loading="lazy" decoding="async" />
+                <span class="name">{c.title}</span>
+                <span class="go">{t.blogCoverLink} <span aria-hidden="true">→</span></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {next.length > 0 && (
+      <nav class="next" aria-labelledby="next-title">
+        <div class="next-head">
+          <h2 id="next-title">{t.blogNext}</h2>
+          <a class="all" href={blogPath[lang]}>{t.blogAll} <span aria-hidden="true">→</span></a>
+        </div>
+        <ul>
+          {next.map(({ post: p, cover: c }) => (
+            <li>
+              <a href={postPath(lang, p.data.slug)}>
+                {c && (
+                  <picture>
+                    <source type="image/webp" srcset={srcset(c.image)} sizes={thumbSizes} />
+                    <img src={c.image} alt="" width="1280" height="800" loading="lazy" decoding="async" />
+                  </picture>
+                )}
+                <span class="title">{p.data.title}</span>
+                <span class="desc">{p.data.description}</span>
+                <span class="go">{t.blogRead} <span aria-hidden="true">→</span></span>
+              </a>
+            </li>
           ))}
         </ul>
       </nav>
@@ -115,14 +169,36 @@ const ld = {
   .prose :global(strong) { font-weight: 600; }
   .prose :global(blockquote) { margin: 1.75rem 0; padding: 0.25rem 0 0.25rem 1.25rem; border-left: 2px solid var(--lamp); color: var(--ink-soft); font-style: italic; }
 
-  .next { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+  /* The cover: a project screenshot in a quiet browser frame. */
+  .cover { margin: 2.25rem 0 0; }
+  .frame { overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: 0 24px 50px -30px rgb(8 18 39 / 0.45); }
+  .dots { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+  .frame img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+  figcaption { margin-top: 0.75rem; font-size: 0.85rem; color: var(--ink-soft); }
+  figcaption a { color: var(--brand); text-underline-offset: 3px; }
+
+  .cases, .next { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+  .cases h2, .next h2 { margin: 0; font-family: var(--font-fraunces); font-weight: 500; font-size: 1.5rem; letter-spacing: -0.01em; }
+  .cases ul, .next ul { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 1rem; }
+  .cases ul { grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); }
+  .next ul { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+  .cases a, .next li a {
+    display: flex; flex-direction: column; height: 100%; overflow: hidden;
+    border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink); text-decoration: none;
+    transition: border-color var(--dur-micro) var(--ease-hover), transform var(--dur-short) var(--ease-hover);
+  }
+  .cases img, .next img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-bottom: 1px solid var(--line); }
+  .name, .title { padding: 0.9rem 1.1rem 0; font-family: var(--font-fraunces); line-height: 1.25; }
+  .name { font-size: 1.1rem; }
+  .title { font-size: 1.2rem; text-wrap: balance; }
+  .desc { padding: 0.5rem 1.1rem 0; font-size: 0.92rem; line-height: 1.55; color: var(--ink-soft); }
+  .go { margin-top: auto; padding: 0.75rem 1.1rem 1rem; font-size: 0.88rem; font-weight: 600; color: var(--brand); }
+  .next-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1rem; }
   .all { font-size: 0.9rem; color: var(--ink-soft); text-decoration: none; }
   .all:hover { color: var(--accent); }
-  .next ul { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 0.75rem; }
-  .next li a {
-    display: block; padding: 1rem 1.25rem; border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
-    font-family: var(--font-fraunces); font-size: 1.15rem; color: var(--ink); text-decoration: none;
-    transition: border-color var(--dur-micro) var(--ease-hover);
+  @media (hover: hover) {
+    .cases a:hover, .next li a:hover { border-color: var(--accent); transform: translateY(-2px); }
   }
-  .next li a:hover { border-color: var(--accent); }
+  @media (prefers-reduced-motion: reduce) { .cases a:hover, .next li a:hover { transform: none; } }
 </style>

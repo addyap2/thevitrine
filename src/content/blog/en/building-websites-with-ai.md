@@ -8,6 +8,9 @@ slug: building-websites-with-ai
 key: ai-built-websites
 date: 2026-10-22
 status: published
+cover: E-Mconcept
+cases: [E-Mconcept, filton-athletic-fc, wall-street]
+next: [our-process, why-a-website]
 ---
 
 We say it openly: we build our websites with the help of artificial intelligence. The next question is usually the same: "So AI makes my website?" No. Here's how it actually works.

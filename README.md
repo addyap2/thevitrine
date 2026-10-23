@@ -79,6 +79,11 @@ it has the topic. Don't commit that output.
 - `npm run og` renders the share images in `public/og/` from the hero of a
   running preview (`npm run build && npx astro preview`, then
   `npm run og -- http://localhost:4321`). Re-run it when the hero changes.
+- Each blog article has its own share image in `public/og/blog/`, made by
+  `npm run og:blog` from its title and `cover` project. Re-run it after adding an
+  article or changing a title or cover, and commit the images. In an article's
+  frontmatter, `cover` picks the screenshot, `cases` the case studies listed at
+  the end, and `next` (article keys) the two articles suggested next.
 - The site lives at https://thevitrine.fr. In Vercel (Settings → Domains), `www.thevitrine.fr`
   and `thevitrine-eta.vercel.app` redirect to it permanently.
 - Security headers and caching live in `vercel.json`; the content security

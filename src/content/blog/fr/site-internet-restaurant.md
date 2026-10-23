@@ -8,6 +8,9 @@ slug: site-internet-restaurant
 key: restaurant-website
 date: 2026-10-22
 status: published
+cover: ristorante-lola
+cases: [ristorante-lola, wall-street, so-good-diner]
+next: [local-google, multilingual-websites]
 ---
 
 Quand quelqu'un cherche un restaurant, il a souvent faim, il est souvent sur son téléphone, et il compare. Votre site a quelques secondes pour répondre à ses questions et lui donner envie de venir. Voici ce qui compte vraiment.

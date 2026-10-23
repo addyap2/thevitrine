@@ -8,6 +8,9 @@ slug: creer-un-site-avec-l-ia
 key: ai-built-websites
 date: 2026-10-22
 status: published
+cover: E-Mconcept
+cases: [E-Mconcept, filton-athletic-fc, wall-street]
+next: [our-process, why-a-website]
 ---
 
 Nous le disons ouvertement : nous créons nos sites avec l'aide de l'intelligence artificielle. La question qui suit est souvent la même : « Alors c'est l'IA qui fait mon site ? » Non. Voici comment cela se passe vraiment.

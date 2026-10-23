@@ -21,6 +21,12 @@ const blog = defineCollection({
     /** "draft": readable for review, but noindex, out of the sitemap and the index. */
     status: z.enum(["draft", "published"]).default("draft"),
     authors: z.array(z.enum(["Antony", "Julien"])).default(["Antony", "Julien"]),
+    /** Project slug (projects.json) whose screenshot illustrates the article and its share image. */
+    cover: z.string().optional(),
+    /** Project slugs whose case studies are linked at the end of the article. */
+    cases: z.array(z.string()).default([]),
+    /** Keys of the articles suggested next. Falls back to the latest ones. */
+    next: z.array(z.string()).default([]),
   }),
 });
 

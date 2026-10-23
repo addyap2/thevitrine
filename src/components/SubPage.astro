@@ -20,12 +20,15 @@ interface Props {
   notice?: string | null;
   /** Highlights the matching menu link. */
   current?: "blog" | "contact" | "project" | "about";
+  /** Share image path; defaults to the hero card for the language. */
+  ogImage?: string;
+  ogAlt?: string;
 }
-const { lang, title, description, paths, noindex = false, ogType = "website", ld, notice, current } = Astro.props;
+const { lang, title, description, paths, noindex = false, ogType = "website", ld, notice, current, ogImage: ogPath, ogAlt } = Astro.props;
 const t = strings[lang];
 const other: Lang = lang === "fr" ? "en" : "fr";
 const canonical = new URL(paths[lang], Astro.site);
-const ogImage = new URL(`/og/${lang}.jpg`, Astro.site);
+const ogImage = new URL(ogPath ?? `/og/${lang}.jpg`, Astro.site);
 ---
 
 <!doctype html>
@@ -54,8 +57,9 @@ const ogImage = new URL(`/og/${lang}.jpg`, Astro.site);
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={t.ogAlt} />
+    <meta property="og:image:alt" content={ogAlt ?? t.ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     {ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}

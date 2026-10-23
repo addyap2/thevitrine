@@ -8,6 +8,9 @@ slug: club-and-association-website
 key: club-website
 date: 2026-10-22
 status: published
+cover: filton-athletic-fc
+cases: [filton-athletic-fc, filton-social-club]
+next: [why-a-website, our-process]
 ---
 
 A club or association lives on its members, its volunteers and the people who might become one. Often everything happens in a WhatsApp group or on a Facebook page, and newcomers don't know where to start. A simple website changes that.
