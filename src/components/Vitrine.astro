@@ -79,7 +79,7 @@ const ld = {
       "@id": id.org,
       name: "The Vitrine",
       url: abs(homePath.fr),
-      logo: { "@type": "ImageObject", url: abs("/apple-touch-icon.png"), width: 180, height: 180 },
+      logo: { "@type": "ImageObject", url: abs("/icon-512.png"), width: 512, height: 512 },
       image: ogImage.href,
       description,
       knowsLanguage: ["fr", "en"],
@@ -164,8 +164,10 @@ const ld = {
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={t.ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
     <Font cssVariable="--font-fraunces" preload={[{ style: "normal", subset: "latin" }]} />
     <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />

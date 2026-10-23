@@ -60,8 +60,10 @@ const ogImage = new URL(ogPath ?? `/og/${lang}.jpg`, Astro.site);
     <meta property="og:image:alt" content={ogAlt ?? t.ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImage} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     {ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
     <Font cssVariable="--font-fraunces" preload={[{ style: "normal", subset: "latin" }]} />
     <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />

@@ -1,0 +1,14 @@
+{
+  "name": "The Vitrine",
+  "short_name": "The Vitrine",
+  "description": "Sites web d'Antony Addy et Julien Bourgois · Websites by Antony Addy and Julien Bourgois",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#081227",
+  "theme_color": "#081227",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
