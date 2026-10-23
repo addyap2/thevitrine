@@ -35,11 +35,11 @@ export const people: Person[] = [
     bio: {
       fr: [
         "Britannique de naissance, Antony vit et travaille en France depuis plus de vingt ans. Formateur Professionnel d'Adultes certifié depuis 2017, il forme d'abord à l'anglais professionnel, puis à l'IA générative.",
-        "Aujourd'hui, il conçoit aussi avec l'IA des sites et des outils pédagogiques : des sites de restaurants, de clubs et de praticiens, et des plateformes pour apprendre l'anglais, souvent en plusieurs langues.",
+        "Aujourd'hui, il met son métier de formateur au service du web : il conçoit avec l'IA des sites qui vont droit à l'essentiel, du restaurant de Fréjus au club de football de Bristol, et des plateformes d'apprentissage disponibles en une dizaine de langues.",
       ],
       en: [
         "Born British, Antony has lived and worked in France for more than twenty years. A certified adult trainer (Formateur Professionnel d'Adultes) since 2017, he trains people in professional English and in generative AI.",
-        "Today he also builds websites and learning tools with AI: sites for restaurants, clubs and practitioners, and platforms for learning English, often in several languages.",
+        "Today he brings a trainer's eye to the web, building websites with AI that get straight to the point, from a restaurant in Fréjus to a football club in Bristol, and learning platforms available in around ten languages.",
       ],
     },
     facts: {
