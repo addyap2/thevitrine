@@ -18,6 +18,8 @@ export interface CaseStudy {
   built: { fr: string[]; en: string[] };
   /** Visible design decisions. */
   design: Text;
+  /** Shorter search description (under 160 characters) when the card's text is too long. */
+  seoDescription?: Partial<Text>;
 }
 
 export const cases: Record<string, CaseStudy> = {
@@ -365,6 +367,7 @@ export const cases: Record<string, CaseStudy> = {
 
   "speakup-ai-english-trainer": {
     status: "published",
+    seoDescription: { fr: "Un coach d'anglais IA pour de vraies conversations : entretiens, voyages et affaires en 38 scénarios, avec un retour CECR instantané." },
     place: { fr: "En ligne", en: "Online" },
     client: {
       fr: "SpeakUp AI est un outil créé par Antony Addy, formateur d'anglais certifié, pour s'entraîner à de vraies conversations en anglais : entretiens d'embauche, voyages, affaires et vie quotidienne. Il complète ses formations et reste gratuit pendant le lancement.",
@@ -394,6 +397,7 @@ export const cases: Record<string, CaseStudy> = {
 
   "toeic-success-hub": {
     status: "published",
+    seoDescription: { fr: "Une préparation au TOEIC complète et guidée, sur les quatre compétences, avec examens blancs et entraînement adaptatif, sans compte." },
     place: { fr: "En ligne", en: "Online" },
     client: {
       fr: "ToeicPath est une plateforme de préparation au TOEIC créée par Antony Addy. Elle couvre les deux formats de l'examen, le TOEIC Listening & Reading et le TOEIC 4 compétences, et reste gratuite et sans inscription pendant le lancement.",
@@ -589,6 +593,7 @@ export const cases: Record<string, CaseStudy> = {
 
   "addys-english-pro": {
     status: "published",
+    seoDescription: { fr: "Le site d'Antony : formations d'anglais professionnel, ateliers d'IA générative et création de sites web, dans le Var, les Alpes-Maritimes et à distance." },
     place: { fr: "Côte d'Azur et à distance", en: "French Riviera and online" },
     client: {
       fr: "C'est le site principal d'Antony Addy, l'un des deux créateurs de The Vitrine : formateur d'anglais professionnel, britannique natif, certifié Formateur Professionnel d'Adultes depuis 2017, formateur en IA générative et créateur de sites web et d'outils pédagogiques, sur la Côte d'Azur et à distance.",
@@ -674,6 +679,7 @@ export const cases: Record<string, CaseStudy> = {
 
   "student-mark-tracker": {
     status: "published",
+    seoDescription: { fr: "Un espace privé et sécurisé pour un organisme de formation : documents, notes et progression de chaque apprenant, protégés par connexion." },
     place: { fr: "Outil interne", en: "Internal tool" },
     client: {
       fr: "Student Mark Tracker est un espace de travail privé développé pour Antony Addy Formations. Il sert à suivre le travail de chaque apprenant en formation d'anglais : documents, notes et progression individuelle.",

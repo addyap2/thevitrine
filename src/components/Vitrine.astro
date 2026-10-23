@@ -5,6 +5,7 @@ import ShowcaseHero from "./HeroShowcase.astro";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
 import { strings, homePath, legalPath, blogPath, questionnairePath, contactPath, langs, type Lang } from "../i18n";
+import { feedPath } from "../rss";
 import { postsFor, isPublished } from "../blog";
 import { spans } from "../wide";
 import { priceFrom, timescale, profiles, whatsapp, missingBusinessFields } from "../data/business";
@@ -168,6 +169,7 @@ const ld = {
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="application/rss+xml" title={`${t.blogHeading} · The Vitrine`} href={feedPath[lang]} />
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
     <Font cssVariable="--font-fraunces" preload={[{ style: "normal", subset: "latin" }]} />
     <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />

@@ -6,6 +6,7 @@ import SiteHeader from "./SiteHeader.astro";
 import "../styles/motion.css";
 import "../styles/tokens.css";
 import { strings, homePath, legalPath, questionnairePath, contactPath, type Lang } from "../i18n";
+import { feedPath } from "../rss";
 
 interface Props {
   lang: Lang;
@@ -64,6 +65,7 @@ const ogImage = new URL(ogPath ?? `/og/${lang}.jpg`, Astro.site);
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="application/rss+xml" title={`${t.blogHeading} · The Vitrine`} href={feedPath[lang]} />
     {ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
     <Font cssVariable="--font-fraunces" preload={[{ style: "normal", subset: "latin" }]} />
     <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />

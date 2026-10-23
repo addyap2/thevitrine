@@ -1,7 +1,7 @@
 ---
 title: "Être trouvé sur Google à Fréjus, Saint-Raphaël et dans le Var"
 seoTitle: "Être trouvé sur Google à Fréjus et dans le Var"
-description: "Fiche Google, avis, site internet : comment ils travaillent ensemble pour que les gens près de chez vous vous trouvent, et ce que vous pouvez faire dès cette semaine."
+description: "Fiche Google, avis, site internet : comment ils travaillent ensemble pour que l'on vous trouve près de chez vous, et quoi faire dès cette semaine."
 lang: fr
 slug: etre-trouve-sur-google-frejus-var
 key: local-google

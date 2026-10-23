@@ -6,6 +6,7 @@
 import SubPage from "./SubPage.astro";
 import { strings, contactPath, questionnairePath, homePath, type Lang } from "../i18n";
 import { whatsapp } from "../data/business";
+import { pageLd } from "../ld";
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -17,7 +18,8 @@ const people = [
 ];
 ---
 
-<SubPage lang={lang} title={t.cfTitle} description={t.cfDescription} paths={contactPath} current="contact">
+<SubPage lang={lang} title={t.cfTitle} description={t.cfDescription} paths={contactPath} current="contact"
+  ld={pageLd({ site: Astro.site!, lang, path: contactPath[lang], name: "Contact", description: t.cfDescription, type: "ContactPage" })}>
   <main class="wrap cp" id="contact-main" tabindex="-1" data-lang={lang}>
     <div class="intro">
       <p class="eyebrow">{t.cfEyebrow}</p>

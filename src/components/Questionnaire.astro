@@ -4,6 +4,7 @@
 // emails them to Antony and Julien (api/devis.js). Ported from antonyaddy.com.
 import SubPage from "./SubPage.astro";
 import { UI } from "../devis";
+import { pageLd } from "../ld";
 import { homePath, questionnairePath, blogPath, type Lang } from "../i18n";
 
 interface Props { lang: Lang }
@@ -11,7 +12,8 @@ const { lang } = Astro.props;
 const u = UI[lang];
 ---
 
-<SubPage lang={lang} title={u.title} description={u.description} paths={questionnairePath} current="project">
+<SubPage lang={lang} title={u.title} description={u.description} paths={questionnairePath} current="project"
+  ld={pageLd({ site: Astro.site!, lang, path: questionnairePath[lang], name: lang === "fr" ? "Questionnaire projet" : "Project questionnaire", description: u.description })}>
   <main class="dv" id="devis-main" tabindex="-1" data-lang={lang}>
     <div class="dv-wrap">
       <div class="dv-intro">
