@@ -101,7 +101,10 @@ export const faq: Faq[] = [
   {
     id: "hosting",
     q: { fr: "Qui s'occupe de l'hébergement et du nom de domaine ?", en: "Who looks after hosting and the domain name?" },
-    a: null,
+    a: {
+      fr: "Nous nous en occupons. Votre site est hébergé chez Vercel, un hébergeur rapide et fiable utilisé par de nombreux sites professionnels, et votre nom de domaine (votre adresse, par exemple votre-commerce.fr) est réservé chez OVH. Si vous avez déjà un nom de domaine, nous le relions simplement à votre nouveau site.",
+      en: "We do. Your site is hosted on Vercel, a fast, reliable host used by many professional websites, and your domain name (your address, for example your-business.com) is registered with OVH. If you already have a domain name, we simply connect it to your new site.",
+    },
   },
   {
     id: "edits",
