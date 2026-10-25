@@ -430,5 +430,23 @@
     "order": 4,
     "updated": "2026-07-15T17:52:40Z",
     "image": "/shots/student-mark-tracker.jpg"
+  },
+  {
+    "slug": "jan-stenborg",
+    "title": "Jan Stenborg",
+    "url": "https://janstenborg.com",
+    "description": {
+      "en": "A Swedish-language website for independent novelist Jan Stenborg — discover his Viking-era trilogy, book signings and author story, with links to read or listen to his books.",
+      "fr": "Un site en suédois pour le romancier indépendant Jan Stenborg : sa trilogie à l’époque viking, ses séances de dédicaces et son parcours, avec des liens pour lire ou écouter ses livres."
+    },
+    "maker": "Antony",
+    "category": "authors",
+    "order": 1,
+    "repo": null,
+    "tags": [],
+    "featured": false,
+    "inProgress": false,
+    "updated": null,
+    "image": "/shots/jan-stenborg.jpg"
   }
 ]

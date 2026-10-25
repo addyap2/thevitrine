@@ -41,6 +41,13 @@
         "en": "Training & AI",
         "fr": "Formation & IA"
       }
+    },
+    {
+      "id": "authors",
+      "label": {
+        "en": "Books & authors",
+        "fr": "Livres & auteurs"
+      }
     }
   ],
   "projects": {
@@ -338,6 +345,18 @@
       "maker": "Antony",
       "category": "training",
       "order": 3
+    },
+    {
+      "slug": "jan-stenborg",
+      "title": "Jan Stenborg",
+      "url": "https://janstenborg.com",
+      "description": {
+        "en": "A Swedish-language website for independent novelist Jan Stenborg — discover his Viking-era trilogy, book signings and author story, with links to read or listen to his books.",
+        "fr": "Un site en suédois pour le romancier indépendant Jan Stenborg : sa trilogie à l’époque viking, ses séances de dédicaces et son parcours, avec des liens pour lire ou écouter ses livres."
+      },
+      "maker": "Antony",
+      "category": "authors",
+      "order": 1
     }
   ]
 }
