@@ -2,10 +2,13 @@
 // "/shots/lola.jpg" → "/shots/w/lola-480.webp 480w, …".
 const WIDTHS = [480, 800, 1280];
 
-export const srcset = (image: string) =>
-  WIDTHS.map((w) => `${image.replace(/^\/shots\/(.+)\.jpg$/, `/shots/w/$1-${w}.webp`)} ${w}w`).join(", ");
+// Refresh cached copies when an existing project receives new screenshots.
+export const screenshotSrc = (image: string) => image.includes("/julienb.") || image.includes("/julienb-") ? `${image}?v=20261025` : image;
 
-export const src800 = (image: string) => image.replace(/^\/shots\/(.+)\.jpg$/, "/shots/w/$1-800.webp");
+export const srcset = (image: string) =>
+  WIDTHS.map((w) => `${screenshotSrc(image.replace(/^\/shots\/(.+)\.jpg$/, `/shots/w/$1-${w}.webp`))} ${w}w`).join(", ");
+
+export const src800 = (image: string) => screenshotSrc(image.replace(/^\/shots\/(.+)\.jpg$/, "/shots/w/$1-800.webp"));
 
 // Rendered widths, matching the grid in Vitrine.astro and ProjectCard.astro.
 export const sizes = {

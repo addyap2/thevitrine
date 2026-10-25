@@ -1,7 +1,7 @@
 ---
 import SiteHeader from "./SiteHeader.astro";
 import { strings, homePath, questionnairePath, type Lang } from "../i18n";
-import { srcset, src800 } from "../img";
+import { srcset, src800, screenshotSrc } from "../img";
 interface Project { slug: string; title: string; url: string | null; maker: string; image: string | null }
 interface Props { lang: Lang; projects: Project[]; total: number }
 const { lang, projects, total } = Astro.props;
@@ -32,7 +32,7 @@ const words = fr ? ["Votre plus belle", "vitrine."] : ["Your best", "shop window
             <div class="device-chrome" aria-hidden="true"><span class="traffic"><i></i><i></i><i></i></span><span>{new URL(p.url!).hostname.replace(/^www\./, "")}</span><span>↗</span></div>
             <img src={i === 0 ? src800(p.image!) : undefined} srcset={i === 0 ? srcset(p.image!) : undefined} data-src={src800(p.image!)} data-srcset={srcset(p.image!)} sizes="(min-width: 1100px) 760px, (min-width: 640px) 85vw, 92vw" width="1280" height="800" alt={t.shotAlt.replace("{title}",p.title).replace("{host}",new URL(p.url!).host)} fetchpriority={i === 0 ? "high" : undefined} loading={i ? "lazy" : "eager"} />
           </a>
-          <a class="mobile-device" href={p.url!} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><span class="speaker"></span><img src={i === 0 ? `/shots/mobile/${p.slug}.webp` : undefined} data-src={`/shots/mobile/${p.slug}.webp`} width="390" height="844" alt="" loading={i ? "lazy" : "eager"} /><span class="home-indicator"></span></a>
+          <a class="mobile-device" href={p.url!} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><span class="speaker"></span><img src={i === 0 ? screenshotSrc(`/shots/mobile/${p.slug}.webp`) : undefined} data-src={screenshotSrc(`/shots/mobile/${p.slug}.webp`)} width="390" height="844" alt="" loading={i ? "lazy" : "eager"} /><span class="home-indicator"></span></a>
         </div>)}
       </div>
       <div class="view-controls" role="group" aria-label={fr ? "Présentation du site" : "Website presentation"}><button type="button" data-view-button="desktop" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="11" rx="2"/><path d="M7 18h6M10 14v4"/></svg>{fr ? "Grand écran" : "Desktop"}</button><button type="button" data-view-button="mobile" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="1" width="10" height="18" rx="2"/><path d="M9 16h2"/></svg>Mobile</button></div>
