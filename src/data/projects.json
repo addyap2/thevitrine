@@ -14,7 +14,7 @@
     "featured": false,
     "inProgress": false,
     "order": 1,
-    "updated": "2026-10-07T22:07:10Z",
+    "updated": "2026-10-26T04:45:12Z",
     "image": "/shots/ristorante-lola.jpg"
   },
   {
@@ -32,7 +32,7 @@
     "featured": false,
     "inProgress": false,
     "order": 2,
-    "updated": "2026-10-25T09:35:01Z",
+    "updated": "2026-10-25T13:00:58Z",
     "image": "/shots/wall-street.jpg"
   },
   {
@@ -432,6 +432,13 @@
     "image": "/shots/student-mark-tracker.jpg"
   },
   {
+    "repo": null,
+    "category": "authors",
+    "tags": [],
+    "featured": false,
+    "inProgress": false,
+    "order": 1,
+    "updated": null,
     "slug": "jan-stenborg",
     "title": "Jan Stenborg",
     "url": "https://janstenborg.com",
@@ -440,13 +447,6 @@
       "fr": "Un site en suédois pour le romancier indépendant Jan Stenborg : sa trilogie à l’époque viking, ses séances de dédicaces et son parcours, avec des liens pour lire ou écouter ses livres."
     },
     "maker": "Antony",
-    "category": "authors",
-    "order": 1,
-    "repo": null,
-    "tags": [],
-    "featured": false,
-    "inProgress": false,
-    "updated": null,
     "image": "/shots/jan-stenborg.jpg"
   }
 ]
