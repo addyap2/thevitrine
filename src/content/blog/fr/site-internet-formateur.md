@@ -12,7 +12,7 @@ cases: [addy-genai-training, addys-english-pro, toeic-success-hub, student-mark-
 next: [ai-built-websites, website-cost]
 ---
 
-Un formateur s'adresse souvent à deux publics à la fois : la personne qui va suivre la formation, et celle qui la valide ou la finance, un responsable RH, un dirigeant, parfois un financeur. Votre site doit parler aux deux. Antony, formateur certifié depuis 2017, construit les siens avec cette idée en tête.
+Un formateur s'adresse souvent à deux publics à la fois : la personne qui va suivre la formation, et celle qui la valide ou la finance, un responsable RH, un dirigeant, parfois un financeur. Votre site doit parler aux deux. Nous connaissons ce métier de l'intérieur : Antony est formateur certifié depuis 2017, et nous avons construit ses sites avec cette idée en tête.
 
 ## 1. Des parcours clairs, par public
 
@@ -51,4 +51,4 @@ Un site de formation peut aussi devenir un outil de travail : exercices en ligne
 
 Si vous formez des publics étrangers ou à l'international, une version anglaise, ou dans la langue de vos stagiaires, élargit tout de suite votre audience.
 
-[Parlez-nous de vos formations](/devis/) : nous connaissons ce métier de l'intérieur.
+[Parlez-nous de vos formations](/devis/) : nous partons de vos stagiaires et de votre offre.

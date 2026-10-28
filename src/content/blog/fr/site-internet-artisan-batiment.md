@@ -8,7 +8,7 @@ key: tradespeople-website
 date: 2026-10-28
 status: published
 cover: E-Mconcept
-cases: [E-Mconcept, planb-global-connect, julienb]
+cases: [E-Mconcept, planb-global-connect, autoecole]
 next: [local-google, website-cost]
 ---
 
@@ -49,4 +49,4 @@ Sur la Côte d'Azur, beaucoup de propriétaires sont étrangers. Le site de [Pla
 
 ## En résumé
 
-Un bon site d'artisan n'a pas besoin d'être grand : votre métier et votre zone, vos réalisations, vos garanties, et un moyen de vous appeler tout de suite. Julien a fait des sites pour artisans une spécialité de [son studio](/realisations/julien-bourgois/). [Parlez-nous de votre activité](/devis/) : nous partons de la façon dont vos clients vous trouvent aujourd'hui.
+Un bon site d'artisan n'a pas besoin d'être grand : votre métier et votre zone, vos réalisations, vos garanties, et un moyen de vous appeler tout de suite. C'est un métier que nous connaissons bien : [voyez nos réalisations](/#work). [Parlez-nous de votre activité](/devis/) : nous partons de la façon dont vos clients vous trouvent aujourd'hui.

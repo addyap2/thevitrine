@@ -43,10 +43,10 @@ export const faq: Faq[] = [
   },
   {
     id: "who",
-    q: { fr: "Qui contacter : Antony ou Julien ?", en: "Who should I contact, Antony or Julien?" },
+    q: { fr: "Qui va créer mon site ?", en: "Who will build my site?" },
     a: {
-      fr: "L'un ou l'autre : vous échangez ensuite directement avec la personne qui crée votre site. Antony propose aussi des formations d'anglais et d'IA, dans le Var et les Alpes-Maritimes ; Julien crée des sites sur mesure pour les artisans, commerces et indépendants. Les deux liens sont en bas de cette page.",
-      en: "Either of us: you then deal directly with the person who builds your site. Antony also runs English and AI training in the Var and Alpes-Maritimes; Julien builds made-to-measure sites for tradespeople, shops and independents. Both links are at the bottom of this page.",
+      fr: "Antony et Julien, ensemble : The Vitrine, c'est nous deux. Écrivez à l'un ou à l'autre, sur WhatsApp ou par le formulaire de contact : vous échangez directement avec nous, sans intermédiaire, du premier échange à la mise en ligne.",
+      en: "Antony and Julien, together: The Vitrine is the two of us. Message either of us on WhatsApp or use the contact form: you deal with us directly, with no middlemen, from the first conversation to launch.",
     },
   },
   {

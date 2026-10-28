@@ -22,7 +22,7 @@ const { lang, projects, total } = Astro.props;
 const t = strings[lang];
 const other: Lang = lang === "en" ? "fr" : "en";
 
-// One striking site per kind of client, alternating makers.
+// One striking site per kind of client.
 const pick = ["ristorante-lola", "autoecole", "speakup-ai-english-trainer", "E-Mconcept", "stephanie", "wall-street"];
 const panes = pick
   .map((s) => projects.find((p) => p.slug === s))
@@ -67,7 +67,6 @@ const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
               rel="noopener"
               data-slot={slotOf(i)}
               data-title={p.title}
-              data-maker={p.maker}
               data-host={host(p.url!)}
               tabindex={i === 0 ? undefined : -1}
               aria-hidden={i === 0 ? undefined : "true"}
@@ -97,7 +96,7 @@ const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
         <div class="caption">
           <p>
             <strong data-cap-title>{panes[0].title}</strong>
-            <span data-cap-meta>{panes[0].maker} · {host(panes[0].url!)}</span>
+            <span data-cap-meta>The Vitrine · {host(panes[0].url!)}</span>
           </p>
           <button type="button" class="pause" data-pause aria-pressed="false" aria-label={t.heroPause} data-label-pause={t.heroPause} data-label-play={t.heroPlay}>
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path class="i-pause" d="M4 3h3v10H4zM9 3h3v10H9z" /><path class="i-play" d="M5 3l8 5-8 5z" /></svg>
@@ -146,7 +145,7 @@ const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
         else p.setAttribute("aria-hidden", "true");
         if (front) {
           capTitle.textContent = p.dataset.title!;
-          capMeta.textContent = `${p.dataset.maker} · ${p.dataset.host}`;
+          capMeta.textContent = `The Vitrine · ${p.dataset.host}`;
         }
       });
       caption.classList.remove("swap");

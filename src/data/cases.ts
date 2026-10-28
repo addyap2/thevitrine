@@ -230,8 +230,8 @@ export const cases: Record<string, CaseStudy> = {
     status: "published",
     place: { fr: "Studio web indépendant", en: "Independent web studio" },
     client: {
-      fr: "C'est le site du studio de Julien Bourgois, l'un des deux créateurs de The Vitrine. Julien conçoit et développe des sites vitrines sur mesure pour les artisans, commerçants, thérapeutes et auteurs : rapides, pensés pour le téléphone et faits pour donner envie d'appeler.",
-      en: "This is the studio site of Julien Bourgois, one of the two makers behind The Vitrine. Julien designs and builds made-to-measure websites for tradespeople, shopkeepers, therapists and authors: fast, made for phones and designed to make people want to call.",
+      fr: "C'est le site du studio de Julien Bourgois, cofondateur de The Vitrine. Julien conçoit et développe des sites vitrines sur mesure pour les artisans, commerçants, thérapeutes et auteurs : rapides, pensés pour le téléphone et faits pour donner envie d'appeler.",
+      en: "This is the studio site of Julien Bourgois, co-founder of The Vitrine. Julien designs and builds made-to-measure websites for tradespeople, shopkeepers, therapists and authors: fast, made for phones and designed to make people want to call.",
     },
     built: {
       fr: [
@@ -596,8 +596,8 @@ export const cases: Record<string, CaseStudy> = {
     seoDescription: { fr: "Le site d'Antony : formations d'anglais professionnel, ateliers d'IA générative et création de sites web, dans le Var, les Alpes-Maritimes et à distance." },
     place: { fr: "Côte d'Azur et à distance", en: "French Riviera and online" },
     client: {
-      fr: "C'est le site principal d'Antony Addy, l'un des deux créateurs de The Vitrine : formateur d'anglais professionnel, britannique natif, certifié Formateur Professionnel d'Adultes depuis 2017, formateur en IA générative et créateur de sites web et d'outils pédagogiques, sur la Côte d'Azur et à distance.",
-      en: "This is the main site of Antony Addy, one of the two makers behind The Vitrine: a native British professional English trainer, certified as a Formateur Professionnel d'Adultes since 2017, a generative-AI trainer and a builder of websites and learning tools, on the French Riviera and online.",
+      fr: "C'est le site principal d'Antony Addy, cofondateur de The Vitrine : formateur d'anglais professionnel, britannique natif, certifié Formateur Professionnel d'Adultes depuis 2017, formateur en IA générative et créateur de sites web et d'outils pédagogiques, sur la Côte d'Azur et à distance.",
+      en: "This is the main site of Antony Addy, co-founder of The Vitrine: a native British professional English trainer, certified as a Formateur Professionnel d'Adultes since 2017, a generative-AI trainer and a builder of websites and learning tools, on the French Riviera and online.",
     },
     built: {
       fr: [

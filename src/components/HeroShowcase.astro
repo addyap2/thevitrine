@@ -38,19 +38,19 @@ const words = fr ? ["Votre plus belle", "vitrine."] : ["Your best", "shop window
       <div class="view-controls" role="group" aria-label={fr ? "Présentation du site" : "Website presentation"}><button type="button" data-view-button="desktop" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="11" rx="2"/><path d="M7 18h6M10 14v4"/></svg>{fr ? "Grand écran" : "Desktop"}</button><button type="button" data-view-button="mobile" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="1" width="10" height="18" rx="2"/><path d="M9 16h2"/></svg>Mobile</button></div>
     </div>
     <div class="exhibit-bottom">
-      <div class="project-title"><span class="small-label">{fr ? "À L'AFFICHE" : "IN THE WINDOW"}</span><strong class="sr-only" data-title>{selected[0]?.title}</strong><select data-project-picker aria-label={fr ? "Choisir une réalisation" : "Choose a project"}>{selected.map((p,i)=><option value={i}>{p.title}</option>)}</select><span class="project-maker" data-maker>{selected[0]?.maker} / {fr ? "Conception & développement" : "Design & development"}</span></div>
+      <div class="project-title"><span class="small-label">{fr ? "À L'AFFICHE" : "IN THE WINDOW"}</span><strong class="sr-only" data-title>{selected[0]?.title}</strong><select data-project-picker aria-label={fr ? "Choisir une réalisation" : "Choose a project"}>{selected.map((p,i)=><option value={i}>{p.title}</option>)}</select><span class="project-maker">The Vitrine / {fr ? "Conception & développement" : "Design & development"}</span></div>
       <div class="project-controls"><button type="button" data-previous aria-label={fr ? "Projet précédent" : "Previous project"}>←</button><button type="button" data-pause aria-pressed="false" aria-label={t.heroPause} data-pause-label={t.heroPause} data-play-label={t.heroPlay}><span data-pause-icon aria-hidden="true">Ⅱ</span></button><button type="button" data-next aria-label={fr ? "Projet suivant" : "Next project"}>→</button></div>
     </div>
   </div>
   <div class="signature"><p>{fr ? "Particuliers · Associations · Institutions · Entreprises" : "Individuals · Associations · Institutions · Businesses"}</p><a href="#work"><span class="signature-number">{total}</span> {fr ? "projets à découvrir" : "projects to explore"}<span aria-hidden="true">↘</span></a><p>{fr ? "Sans frontières. Dans vos langues." : "Without borders. In your languages."}</p></div>
   <span class="sr-only" data-announcement role="status"></span>
-  <script type="application/json" data-projects set:html={JSON.stringify(selected.map(p => ({title:p.title,maker:p.maker}))).replace(/</g,"\\u003c")} />
+  <script type="application/json" data-projects set:html={JSON.stringify(selected.map(p => ({title:p.title}))).replace(/</g,"\\u003c")} />
 </header>
 <script>
   document.querySelectorAll<HTMLElement>("[data-showcase]").forEach(root => {
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
     const fine = matchMedia("(hover: hover) and (pointer: fine)");
-    const data: {title: string; maker: string}[] = JSON.parse(root.querySelector("[data-projects]")!.textContent!);
+    const data: {title: string}[] = JSON.parse(root.querySelector("[data-projects]")!.textContent!);
     const scenes = [...root.querySelectorAll<HTMLElement>("[data-scene]")];
     const pause = root.querySelector<HTMLButtonElement>("[data-pause]")!;
     const portal = root.querySelector<HTMLElement>("[data-portal]")!;
@@ -101,7 +101,6 @@ const words = fr ? ["Votre plus belle", "vitrine."] : ["Your best", "shop window
       picker.value = String(index);
       scenes.forEach((scene,i) => { scene.inert = i !== index; scene.setAttribute("aria-hidden",String(i !== index)); scene.dataset.active = String(i === index); });
       root.querySelector("[data-title]")!.textContent = data[index].title;
-      root.querySelector("[data-maker]")!.textContent = `${data[index].maker} / ${document.documentElement.lang === "fr" ? "Conception & développement" : "Design & development"}`;
       root.querySelector("[data-project-count]")!.textContent = String(index+1).padStart(2,"0");
       if(announce) root.querySelector("[data-announcement]")!.textContent = data[index].title;
     };

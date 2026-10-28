@@ -33,7 +33,7 @@ const caseHref = cases[p.slug]?.status === "published" ? casePath(lang, caseSlug
 const titleHref = caseHref ?? p.url;
 ---
 
-<article class="card" data-maker={p.maker} data-reveal data-w3={wide3 ? "" : undefined} data-w2={wide2 ? "" : undefined}>
+<article class="card" data-reveal data-w3={wide3 ? "" : undefined} data-w2={wide2 ? "" : undefined}>
   <a class="shot" href={p.url ?? undefined} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
     <span class="pane">
       <span class="chrome">
@@ -50,10 +50,7 @@ const titleHref = caseHref ?? p.url;
     </span>
   </a>
   <div class="body">
-    <div class="meta">
-      <span class="maker"><i class="dot" aria-hidden="true"></i>{p.maker}</span>
-      {p.inProgress && <span class="badge">{t.inProgress}</span>}
-    </div>
+    {p.inProgress && <div class="meta"><span class="badge">{t.inProgress}</span></div>}
     <h3>
       {caseHref ? <a href={caseHref}>{p.title}</a> : titleHref ? <a href={titleHref} target="_blank" rel="noopener">{p.title}</a> : p.title}
     </h3>
@@ -157,17 +154,6 @@ const titleHref = caseHref ?? p.url;
     flex: 1;
   }
   .meta { display: flex; gap: 0.6rem; align-items: center; }
-  /* The maker is a signature, not a headline: a quiet name with its own colour dot. */
-  .maker {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--ink-soft);
-  }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-  .card[data-maker="Julien"] .dot { background: var(--brand); }
   .badge {
     font-size: 0.7rem;
     padding: 0.1rem 0.5rem;

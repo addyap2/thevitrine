@@ -12,7 +12,7 @@ cases: [addy-genai-training, addys-english-pro, toeic-success-hub, student-mark-
 next: [ai-built-websites, website-cost]
 ---
 
-A trainer often speaks to two audiences at once: the person who'll take the course, and the person who approves or pays for it, an HR manager, a business owner, sometimes a funding body. Your website has to speak to both. Antony, a certified trainer since 2017, builds his with that in mind.
+A trainer often speaks to two audiences at once: the person who'll take the course, and the person who approves or pays for it, an HR manager, a business owner, sometimes a funding body. Your website has to speak to both. We know this line of work from the inside: Antony has been a certified trainer since 2017, and we built his sites with that in mind.
 
 ## 1. Clear paths, by audience
 
@@ -51,4 +51,4 @@ A training website can also become a working tool: online exercises, exam simula
 
 If you train people from abroad or internationally, a version in English, or in your learners' language, widens your audience straight away.
 
-[Tell us about your courses](/en/quote/): we know this line of work from the inside.
+[Tell us about your courses](/en/quote/): we'll start from your learners and your offer.

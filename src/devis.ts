@@ -22,10 +22,10 @@ export type Step = { id: string; fr: string; en: string; short: { fr: string; en
 export const UI = {
   fr: {
     title: "Votre projet de site — Questionnaire | The Vitrine",
-    description: "Décrivez votre projet de site en quelques minutes : Antony ou Julien vous répond avec un devis clair. Six étapes, en français ou en anglais.",
+    description: "Décrivez votre projet de site en quelques minutes : nous vous répondons avec un devis clair. Six étapes, en français ou en anglais.",
     eyebrow: "Questionnaire projet",
     h1: "Votre projet de site",
-    lead: "Quelques minutes pour nous décrire votre projet. Remplissez seulement ce qui vous concerne : nous verrons le reste ensemble. Antony ou Julien vous répond avec un devis clair.",
+    lead: "Quelques minutes pour nous décrire votre projet. Remplissez seulement ce qui vous concerne : nous verrons le reste ensemble. Nous vous répondons avec un devis clair.",
     noscript: "Ce questionnaire a besoin de JavaScript. Vous pouvez aussi nous contacter directement :",
     noscriptLink: "nos coordonnées",
     prev: "Précédent", next: "Suivant", submit: "Envoyer", sending: "Envoi…",
@@ -51,10 +51,10 @@ export const UI = {
   },
   en: {
     title: "Your website project — Questionnaire | The Vitrine",
-    description: "Tell us about your website project in a few minutes, and Antony or Julien will come back to you with a clear quote. Six short steps, in English or French.",
+    description: "Tell us about your website project in a few minutes, and we'll come back to you with a clear quote. Six short steps, in English or French.",
     eyebrow: "Project questionnaire",
     h1: "Your website project",
-    lead: "A few minutes to tell us about your project. Only fill in what applies to you; we'll go through the rest together. Antony or Julien will come back to you with a clear quote.",
+    lead: "A few minutes to tell us about your project. Only fill in what applies to you; we'll go through the rest together. We'll come back to you with a clear quote.",
     noscript: "This questionnaire needs JavaScript. You can also reach us directly:",
     noscriptLink: "our contact details",
     prev: "Back", next: "Next", submit: "Send", sending: "Sending…",

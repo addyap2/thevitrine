@@ -13,7 +13,7 @@ cases: [autoecole, planb-global-connect, so-good-diner]
 next: [website-cost, domain-hosting]
 ---
 
-Having a website made can feel vague: how many meetings, who writes the words, when do you get to see something? Here's how it works with us, step by step. From start to finish, you talk to the person building your site, Antony or Julien, with no one in between.
+Having a website made can feel vague: how many meetings, who writes the words, when do you get to see something? Here's how it works with us, step by step. From start to finish, you talk directly to the people building your site, Antony and Julien, with no one in between.
 
 ## 1. The first conversation
 

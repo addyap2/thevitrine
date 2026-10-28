@@ -15,8 +15,9 @@ animation library. The motion system is documented in [MOTION.md](MOTION.md).
 3. That's it. The daily sync picks it up, takes a screenshot and redeploys.
    To skip the wait, run **Actions → Sync projects → Run workflow**.
 
-The account must be listed in [`vitrine.config.json`](vitrine.config.json),
-together with the name to show as its maker.
+The account must be listed in [`vitrine.config.json`](vitrine.config.json).
+Each project keeps a `maker` field in the data, but the site never shows it:
+every site is presented as The Vitrine's work, by Antony and Julien together.
 
 ## Languages
 

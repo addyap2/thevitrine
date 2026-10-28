@@ -22,7 +22,6 @@ const { lang, classicHero = false, noindex = false } = Astro.props;
 const Hero = classicHero ? ClassicHero : ShowcaseHero;
 const t = strings[lang];
 
-const makers = [...new Set(projects.map((p) => p.maker))].sort();
 // One section per category, in the order overrides.json lists them; anything
 // uncategorised (a freshly tagged repo) lands in "More" until it gets one.
 const sections = [...categories, { id: "more", label: { en: strings.en.more, fr: strings.fr.more } }]
@@ -62,10 +61,9 @@ const services = [
   [t.servicesHowTitle, t.servicesHow],
 ];
 
-// Structured data: the studio, its two makers, the site, the service it offers
+// Structured data: the studio and its two founders, the site, the service it offers
 // and the portfolio, linked by @id so search engines see one connected entity.
 const id = { org: abs("/#organization"), site: abs(`${homePath[lang]}#website`), antony: abs("/#antony"), julien: abs("/#julien") };
-const makerId = (maker: string) => (maker === "Julien" ? id.julien : id.antony);
 const areaServed = [
   { "@type": "AdministrativeArea", name: "Var" },
   { "@type": "AdministrativeArea", name: "Alpes-Maritimes" },
@@ -124,7 +122,7 @@ const ld = {
           ...(p.url ? { url: p.url } : {}),
           ...(p.description[lang as "en" | "fr"] ? { description: p.description[lang as "en" | "fr"] } : {}),
           ...(p.image ? { image: abs(p.image) } : {}),
-          creator: { "@id": makerId(p.maker) },
+          creator: { "@id": id.org },
         },
       })),
     },
@@ -186,13 +184,6 @@ const ld = {
           <div class="sentinel" aria-hidden="true"></div>
           <nav class="filters" aria-label={t.filterLabel}>
             <div class="filters-top">
-              {makers.length > 1 && (
-                <div class="group seg" data-filter="maker">
-                  <span class="ind" aria-hidden="true"></span>
-                  <button type="button" aria-pressed="true" data-value="">{t.everyone}</button>
-                  {makers.map((m) => <button type="button" aria-pressed="false" data-value={m}>{m}</button>)}
-                </div>
-              )}
               <div class="bar-end">
                 <p class="count" aria-live="polite" data-one={t.projectOne} data-many={t.projectMany}>
                   <span id="count">{projects.length}</span> <span id="count-word">{plural(projects.length)}</span>
@@ -269,12 +260,12 @@ const ld = {
       <div class="people">
         <div class="person" data-reveal>
           <strong>Antony Addy</strong>
-          <span class="role">{t.contactAntony}</span>
+          <span class="role">{t.contactRole}</span>
           <div class="person-actions">
-            <a class="person-link" href="https://www.antonyaddy.com/contact?sujet=sites" target="_blank" rel="noopener">{t.contactCta} <span aria-hidden="true">↗</span></a>
+            <a class="person-link" href={contactPath[lang]}>{t.contactCta} <span aria-hidden="true">→</span></a>
             {/* The number is not in the page: the link is built on tap from the encoded
-                value (src/protect.ts). Without JavaScript it opens the contact page. */}
-            <a class="wa" href="https://www.antonyaddy.com/contact?sujet=sites" data-wa={whatsapp.antony} data-text={t.waText.replace("{name}", "Antony")} target="_blank" rel="nofollow noopener" aria-label={t.waAria.replace("{name}", "Antony")}>
+                value (src/protect.ts). Without JavaScript it opens our contact page. */}
+            <a class="wa" href={contactPath[lang]} data-wa={whatsapp.antony} data-text={t.waText.replace("{name}", "Antony")} target="_blank" rel="nofollow noopener" aria-label={t.waAria.replace("{name}", "Antony")}>
               <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.9-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>
               {t.waLabel}
             </a>
@@ -282,10 +273,10 @@ const ld = {
         </div>
         <div class="person" data-reveal>
           <strong>Julien Bourgois</strong>
-          <span class="role">{t.contactJulien}</span>
+          <span class="role">{t.contactRole}</span>
           <div class="person-actions">
-            <a class="person-link" href="https://julienb.vercel.app/#contact" target="_blank" rel="noopener">{t.contactCta} <span aria-hidden="true">↗</span></a>
-            <a class="wa" href="https://julienb.vercel.app/#contact" data-wa={whatsapp.julien} data-text={t.waText.replace("{name}", "Julien")} target="_blank" rel="nofollow noopener" aria-label={t.waAria.replace("{name}", "Julien")}>
+            <a class="person-link" href={contactPath[lang]}>{t.contactCta} <span aria-hidden="true">→</span></a>
+            <a class="wa" href={contactPath[lang]} data-wa={whatsapp.julien} data-text={t.waText.replace("{name}", "Julien")} target="_blank" rel="nofollow noopener" aria-label={t.waAria.replace("{name}", "Julien")}>
               <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.9-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>
               {t.waLabel}
             </a>
@@ -335,7 +326,7 @@ const ld = {
 
       // ---- Filtering: the results dim, the view returns to the top of the list,
       // and the new set rises in reading order. Nothing travels across the screen.
-      const state: Record<string, string> = { maker: "", category: "" };
+      const state: Record<string, string> = { category: "" };
       const sections = [...document.querySelectorAll<HTMLElement>("section.category")];
       const count = document.getElementById("count");
       const countWord = document.getElementById("count-word");
@@ -353,7 +344,7 @@ const ld = {
           const cards = [...section.querySelectorAll<HTMLElement>(".card")];
           const shownHere: HTMLElement[] = [];
           for (const card of cards) {
-            const ok = inCategory && (!state.maker || card.dataset.maker === state.maker) && (expanded || featured.has(card));
+            const ok = inCategory && (expanded || featured.has(card));
             card.hidden = !ok;
             if (ok) shownHere.push(card);
           }
@@ -407,7 +398,7 @@ const ld = {
 
       reduced.addEventListener("change", event => {if(event.matches)filterAnimations.forEach(animation => animation.cancel());});
 
-      // ---- Sliding indicators: the maker switch's thumb and the tabs' underline
+      // ---- Sliding indicator: the category tabs' underline
       // glide to the chosen button. Placed instantly on load and on resize.
       const groups = [...document.querySelectorAll<HTMLElement>(".filters .group")];
       const place = (group: HTMLElement, glide: boolean) => {
@@ -442,7 +433,7 @@ const ld = {
 
       document.getElementById("filter-reset")?.addEventListener("click", () => {
         expanded = true;
-        state.maker = ""; state.category = "";
+        state.category = "";
         groups.forEach((g) => g.querySelectorAll<HTMLButtonElement>("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.value === ""))));
         apply(); placeAll(); revealAll(document.getElementById("work")!);
         groups[0]?.querySelector<HTMLButtonElement>("button")?.focus();
@@ -458,19 +449,6 @@ const ld = {
         next?.scrollIntoView({block:"center",behavior:reduced.matches ? "instant" : "smooth"});
       });
 
-      // Arriving with ?maker=Julien (from the About page): start with that maker's sites.
-      const wanted = new URLSearchParams(location.search).get("maker");
-      if (wanted) {
-        const group = document.querySelector<HTMLElement>('.filters .group[data-filter="maker"]');
-        const btn = group?.querySelector<HTMLButtonElement>(`button[data-value="${CSS.escape(wanted)}"]`);
-        if (group && btn) {
-          group.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
-          expanded = true;
-          state.maker = wanted;
-          apply();
-          place(group, false);
-        }
-      }
     </script>
   </body>
 </html>
@@ -557,7 +535,7 @@ const ld = {
     z-index: -1;
   }
   .sentinel { height: 1px; }
-  /* Pinned filter bar: a maker switch and the count on top, category tabs below
+  /* Pinned filter bar: the count and quote link on top, category tabs below
      sitting on a hairline. Full-bleed paper and a shadow appear once it pins. */
   .filters {
     position: sticky;
@@ -577,8 +555,8 @@ const ld = {
     border-image: linear-gradient(var(--bg) 0 0) fill 0 / / 0 100vw;
     box-shadow: 0 18px 24px -24px var(--shadow);
   }
-  .filters-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-  /* The narrowest phones: the count wraps under the maker switch rather than widening the page. */
+  .filters-top { display: flex; align-items: center; gap: 1rem; }
+  /* The narrowest phones: the quote link wraps under the count rather than widening the page. */
   @media (max-width: 359px) { .filters-top { flex-wrap: wrap; row-gap: 0.5rem; } }
   .group { position: relative; display: flex; }
   .group button {
@@ -610,24 +588,6 @@ const ld = {
   }
   .has-ind .ind { opacity: 1; }
 
-  /* Maker: a segmented switch. A raised thumb slides under the chosen name. */
-  .seg {
-    padding: 3px;
-    border-radius: 99px;
-    background: var(--muted-bg);
-    box-shadow: inset 0 0 0 1px var(--line);
-  }
-  .seg button { padding: 0.42rem 1.05rem; border-radius: 99px; }
-  .seg .ind {
-    top: 3px;
-    bottom: 3px;
-    border-radius: 99px;
-    background: var(--surface);
-    box-shadow: 0 0 0 1px var(--line), 0 2px 6px -2px var(--shadow);
-  }
-  /* Without script the chosen segment simply fills in. */
-  .seg:not(.has-ind) button[aria-pressed="true"] { background: var(--surface); box-shadow: 0 0 0 1px var(--line); }
-
   /* Categories: quiet text tabs on a hairline; an accent underline marks the choice. */
   /* The row scrolls sideways on its own whenever the tabs don't fit (tablets
      included), instead of widening the page. */
@@ -641,7 +601,7 @@ const ld = {
   .work-more p { color:var(--ink-soft); line-height:1.6; }
   .work-more button { min-height:44px; padding:.8rem 1.4rem; border:1px solid var(--line); border-radius:99px; background:var(--surface); color:var(--ink); font:inherit; font-weight:600; cursor:pointer; }
   .count { margin: 0; font-size: 0.875rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
-  .bar-end { display: flex; align-items: center; gap: 1rem; }
+  .bar-end { display: flex; flex: 1; align-items: center; justify-content: space-between; gap: 1rem; }
   /* Once the bar pins, a way out to the contact section rides along with it. */
   .bar-cta {
     align-items: center;

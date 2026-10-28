@@ -7,8 +7,8 @@ slug: combien-coute-un-site-internet
 key: website-cost
 date: 2026-10-28
 status: published
-cover: julienb
-cases: [julienb, ristorante-lola, E-Mconcept]
+cover: planb-global-connect
+cases: [ristorante-lola, E-Mconcept, autoecole]
 next: [domain-hosting, our-process]
 ---
 
@@ -40,7 +40,7 @@ Textes et photos font une grande différence, en qualité comme en temps. Avez-v
 
 ## 5. Le sur-mesure
 
-Un modèle tout fait coûte moins cher au départ, mais votre site ressemble alors à des milliers d'autres. Un site sur mesure part de votre activité et de vos clients. C'est ce que montre le studio de [Julien](/realisations/julien-bourgois/) avec ses « quatre métiers, quatre identités ».
+Un modèle tout fait coûte moins cher au départ, mais votre site ressemble alors à des milliers d'autres. Un site sur mesure part de votre activité et de vos clients. Comparez la pizzeria, l'auto-école et le club de football de [notre vitrine](/#work) : trois activités, trois sites qui ne se ressemblent pas.
 
 ## 6. Ce qui vient après la mise en ligne
 

@@ -1,6 +1,6 @@
 ---
 // One case study, in French or English. Text lives in src/data/cases.ts; the
-// project facts (title, maker, link, screenshot) come from projects.json.
+// project facts (title, link, screenshot) come from projects.json.
 // Drafts are noindex, carry a notice, and are left out of the sitemap.
 import { Font } from "astro:assets";
 import SiteHeader from "./SiteHeader.astro";
@@ -54,7 +54,7 @@ const ld = {
       inLanguage: lang,
       ...(p.url ? { url: p.url } : {}),
       ...(p.image ? { image: abs(p.image) } : {}),
-      creator: { "@id": abs(p.maker === "Julien" ? "/#julien" : "/#antony") },
+      creator: { "@id": abs("/#organization") },
       publisher: { "@id": abs("/#organization") },
       mainEntityOfPage: canonical.href,
     },
@@ -115,7 +115,7 @@ const ld = {
           <p class="eyebrow">{category} · {c.place[lang]}</p>
           <h1>{p.title}</h1>
           <p class="lede">{description}</p>
-          <p class="maker"><i class={`dot ${p.maker === "Julien" ? "julien" : ""}`} aria-hidden="true"></i>{t.caseMadeBy} {p.maker}</p>
+          <p class="maker"><i class="dot" aria-hidden="true"></i>{t.caseMadeBy} The Vitrine</p>
           {p.url && (
             <a class="cta" href={p.url} target="_blank" rel="noopener">
               {t.caseVisit} <span aria-hidden="true">↗</span>
@@ -152,7 +152,7 @@ const ld = {
         <dl>
           <div><dt>{t.caseSector}</dt><dd>{category}</dd></div>
           <div><dt>{t.casePlace}</dt><dd>{c.place[lang]}</dd></div>
-          <div><dt>{t.caseMadeBy}</dt><dd>{p.maker}</dd></div>
+          <div><dt>{t.caseMadeBy}</dt><dd>The Vitrine</dd></div>
           {host && <div><dt>{t.caseSite}</dt><dd><a href={p.url} target="_blank" rel="noopener">{host}</a></dd></div>}
           <div><dt>{t.caseStatus}</dt><dd>{p.inProgress ? t.caseInProgress : t.caseLive}</dd></div>
         </dl>
@@ -259,7 +259,6 @@ const ld = {
   .lede { margin: 1.25rem 0 0; font-size: clamp(1.05rem, 1.5vw, 1.2rem); line-height: 1.6; color: var(--text-lo); max-width: 34rem; }
   .maker { display: flex; align-items: center; gap: 0.5rem; margin: 1.5rem 0 0; font-size: 0.9rem; color: var(--text-lo); }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--lamp); }
-  .dot.julien { background: var(--blue); }
   .cta {
     display: inline-flex;
     align-items: center;

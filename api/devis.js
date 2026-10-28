@@ -147,10 +147,10 @@ function clientEmail(d) {
   const recap = CLIENT_SUMMARY.filter((id) => a[id]).map((id) => [SUMMARY_LABELS[id][d.lang], a[id].local || a[id].value]);
   const T = fr ? {
     subject: "Nous avons bien reçu votre projet — The Vitrine",
-    preview: "Merci ! Antony ou Julien revient vers vous très vite pour en parler.",
+    preview: "Merci ! Nous revenons vers vous très vite pour en parler.",
     label: "Demande reçue",
     h1: first ? `Merci, ${first}.` : "Merci.",
-    intro: "Nous avons bien reçu votre questionnaire et nous l'étudions avec attention. Antony ou Julien revient vers vous très vite, d'abord pour en parler, puis avec un devis clair.",
+    intro: "Nous avons bien reçu votre questionnaire et nous l'étudions avec attention. Nous revenons vers vous très vite, d'abord pour en parler, puis avec un devis clair.",
     stepsTitle: "Et maintenant ?",
     steps: ["Nous étudions votre projet en détail.", "Nous échangeons avec vous pour préciser vos besoins.", "Vous recevez un devis clair, sans surprise."],
     recapTitle: "Votre demande en bref",
@@ -159,10 +159,10 @@ function clientEmail(d) {
     foot: "Vous recevez cet e-mail parce que vous avez rempli le questionnaire projet sur thevitrine.fr.",
   } : {
     subject: "We've received your project — The Vitrine",
-    preview: "Thank you! Antony or Julien will be in touch very soon to talk it through.",
+    preview: "Thank you! We'll be in touch very soon to talk it through.",
     label: "Request received",
     h1: first ? `Thank you, ${first}.` : "Thank you.",
-    intro: "We've received your questionnaire and we're looking it over carefully. Antony or Julien will be in touch very soon, first to talk it through, then with a clear quote.",
+    intro: "We've received your questionnaire and we're looking it over carefully. We'll be in touch very soon, first to talk it through, then with a clear quote.",
     stepsTitle: "What happens next",
     steps: ["We study your project in detail.", "We talk with you to pin down your needs.", "You get a clear quote, with no surprises."],
     recapTitle: "Your request at a glance",

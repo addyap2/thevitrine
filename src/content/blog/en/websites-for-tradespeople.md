@@ -8,7 +8,7 @@ key: tradespeople-website
 date: 2026-10-28
 status: published
 cover: E-Mconcept
-cases: [E-Mconcept, planb-global-connect, julienb]
+cases: [E-Mconcept, planb-global-connect, autoecole]
 next: [local-google, website-cost]
 ---
 
@@ -49,4 +49,4 @@ On the French Riviera, many property owners come from abroad. [Plan B Concept](/
 
 ## In short
 
-A good tradesperson's website doesn't need to be big: your trade and area, your work, your guarantees, and a way to call you straight away. Julien has made sites for tradespeople a speciality of [his studio](/en/work/julien-bourgois/). [Tell us about your business](/en/quote/): we start from how your customers find you today.
+A good tradesperson's website doesn't need to be big: your trade and area, your work, your guarantees, and a way to call you straight away. It's work we know well: [see our sites](/en/#work). [Tell us about your business](/en/quote/): we start from how your customers find you today.

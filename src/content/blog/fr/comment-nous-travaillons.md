@@ -13,7 +13,7 @@ cases: [autoecole, planb-global-connect, so-good-diner]
 next: [website-cost, domain-hosting]
 ---
 
-Faire créer un site peut sembler flou : combien d'échanges, qui écrit les textes, quand voit-on quelque chose ? Voici comment cela se passe avec nous, étape par étape. Vous parlez du début à la fin avec la personne qui construit votre site, Antony ou Julien, sans intermédiaire.
+Faire créer un site peut sembler flou : combien d'échanges, qui écrit les textes, quand voit-on quelque chose ? Voici comment cela se passe avec nous, étape par étape. Du début à la fin, vous parlez directement avec ceux qui construisent votre site, Antony et Julien, sans intermédiaire.
 
 ## 1. Le premier échange
 

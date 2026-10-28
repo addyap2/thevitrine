@@ -7,8 +7,8 @@ slug: how-much-does-a-website-cost
 key: website-cost
 date: 2026-10-28
 status: published
-cover: julienb
-cases: [julienb, ristorante-lola, E-Mconcept]
+cover: planb-global-connect
+cases: [ristorante-lola, E-Mconcept, autoecole]
 next: [domain-hosting, our-process]
 ---
 
@@ -40,7 +40,7 @@ Words and photos make a big difference, in quality and in time. Do you already h
 
 ## 5. Made to measure
 
-A ready-made template costs less at first, but your site then looks like thousands of others. A made-to-measure site starts from your business and your customers. [Julien's studio](/en/work/julien-bourgois/) shows it with its "four trades, four identities".
+A ready-made template costs less at first, but your site then looks like thousands of others. A made-to-measure site starts from your business and your customers. Compare the pizzeria, the driving school and the football club in [our shop window](/en/#work): three businesses, three sites that look nothing alike.
 
 ## 6. What comes after launch
 
