@@ -10,7 +10,7 @@ updated: 2026-10-23
 status: published
 cover: autoecole
 cases: [autoecole, planb-global-connect, so-good-diner]
-next: [ai-built-websites, local-google]
+next: [website-cost, domain-hosting]
 ---
 
 Having a website made can feel vague: how many meetings, who writes the words, when do you get to see something? Here's how it works with us, step by step. From start to finish, you talk to the person building your site, Antony or Julien, with no one in between.

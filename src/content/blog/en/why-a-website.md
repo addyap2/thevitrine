@@ -10,7 +10,7 @@ date: 2026-10-22
 status: published
 cover: tandoor-global
 cases: [autoecole, tandoor-global]
-next: [local-google, our-process]
+next: [local-google, website-cost]
 ---
 
 It's the question we hear most. You've got a Facebook page, an Instagram account and a Google Maps listing with reviews: why add a website?

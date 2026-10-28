@@ -10,7 +10,7 @@ date: 2026-10-22
 status: published
 cover: tandoor-global
 cases: [autoecole, tandoor-global]
-next: [local-google, our-process]
+next: [local-google, website-cost]
 ---
 
 C'est la question que l'on nous pose le plus souvent. Vous avez une page Facebook, un compte Instagram, une fiche Google Maps avec des avis : à quoi bon un site en plus ?
