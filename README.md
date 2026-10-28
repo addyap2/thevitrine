@@ -21,15 +21,25 @@ every site is presented as The Vitrine's work, by Antony and Julien together.
 
 ## Languages
 
-French lives at `/` and English at `/en/`. Visitors choose through the visible
-language switch. Pages never redirect based on browser language or a language
-cookie. The old `/fr/` address redirects permanently to `/`.
+French lives at `/`, English at `/en/` and Italian at `/it/`. Visitors choose
+through the visible FR | EN | IT switch. Pages never redirect based on browser
+language or a language cookie. The old `/fr/` address redirects permanently to `/`.
+
+Italian covers the main pages: home, About (`/it/chi-siamo/`), contact
+(`/it/contatti/`), questionnaire (`/it/preventivo/`), legal notice
+(`/it/note-legali/`) and every case study (`/it/progetti/…`). The blog is
+French and English only; on Italian pages the Blog link is hidden.
 
 All interface text lives in [`src/i18n.ts`](src/i18n.ts). Category
 labels and project descriptions in `overrides.json` are written as
-`{ "en": "...", "fr": "..." }`. When a repo has no override, its GitHub
-description is used in both languages, so give every new project a French
-description in `overrides.json`.
+`{ "en": "...", "fr": "...", "it": "..." }`. When a repo has no override, its
+GitHub description is used in every language, so give every new project
+French and Italian descriptions in `overrides.json`. Case-study text in Italian
+lives in [`src/data/cases-it.ts`](src/data/cases-it.ts); the build log lists any
+case without it. The FAQ, About page, questionnaire and emails carry all three
+languages in their own files.
+
+The Italian text was AI-translated: have a native speaker review it.
 
 ## Polish a project
 

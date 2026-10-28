@@ -1,33 +1,29 @@
 ---
 // The top-right of every header: page links (Contact included), the lit
-// "Lancer votre projet" button for the questionnaire, and the FR | EN toggle. On narrow screens the links fold into a "Menu"
+// "Lancer votre projet" button for the questionnaire, and the FR | EN | IT switch. On narrow screens the links fold into a "Menu"
 // button; the language toggle always stays visible.
-import { strings, homePath, blogPath, contactPath, questionnairePath, aboutPath, type Lang } from "../i18n";
+import { strings, homePath, blogPath, contactPath, questionnairePath, aboutPath, hasBlog, langNames, switchOrder, type Lang } from "../i18n";
 
 interface Props {
   lang: Lang;
-  /** The same page in the other language. */
-  altHref: string;
+  /** The same page in the other languages; a missing one falls back to that language's home page. */
+  alternates?: Partial<Record<Lang, string>>;
   /** Marks the matching link as the current page. */
   current?: "blog" | "contact" | "project" | "about";
 }
-const { lang, altHref, current } = Astro.props;
+const { lang, alternates = {}, current } = Astro.props;
 const t = strings[lang];
-const other: Lang = lang === "fr" ? "en" : "fr";
 const home = homePath[lang];
 const links = [
   { href: `${home}#work`, label: t.navWork },
   { href: `${home}#services`, label: t.navServices },
   { href: aboutPath[lang], label: t.navAbout, current: current === "about" },
   { href: `${home}#faq`, label: t.navFaq },
-  { href: blogPath[lang], label: t.navBlog, current: current === "blog" },
+  ...(hasBlog(lang) ? [{ href: blogPath[lang], label: t.navBlog, current: current === "blog" }] : []),
   { href: contactPath[lang], label: t.navContact, current: current === "contact" },
 ];
 const project = { href: questionnairePath[lang], label: t.heroCta2, current: current === "project" };
-const toggle = {
-  fr: { code: "FR", name: "Français" },
-  en: { code: "EN", name: "English" },
-};
+
 ---
 
 <div class="navbox">
@@ -51,18 +47,18 @@ const toggle = {
     </nav>
   </details>
 
-  <!-- Always FR | EN in that order: the current language glows, the other is a link. -->
+  <!-- Always FR | EN | IT in that order: the current language glows, the others are links. -->
   <div class="langs" role="group" aria-label={t.langLabel}>
     <svg class="globe" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
       <circle cx="8" cy="8" r="6.25" />
       <ellipse cx="8" cy="8" rx="2.6" ry="6.25" />
       <path d="M1.9 6h12.2M1.9 10h12.2" />
     </svg>
-    {(["fr", "en"] as const).map((l) =>
+    {switchOrder.map((l) =>
       l === lang ? (
-        <span class="seg on" lang={l} aria-current="true" title={toggle[l].name}>{toggle[l].code}</span>
+        <span class="seg on" lang={l} aria-current="true" title={langNames[l].name}>{langNames[l].code}</span>
       ) : (
-        <a class="seg lang" href={altHref} hreflang={l} lang={l} aria-label={`${toggle[l].code} — ${t.switchLabel}`} title={toggle[l].name}>{toggle[l].code}</a>
+        <a class="seg lang" href={alternates[l] ?? homePath[l]} hreflang={l} lang={l} aria-label={`${langNames[l].code} — ${langNames[l].switchLabel}`} title={langNames[l].name}>{langNames[l].code}</a>
       ),
     )}
   </div>

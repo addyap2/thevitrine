@@ -1,12 +1,12 @@
 // RSS feed of the published articles in one language: /blog/rss.xml and /en/blog/rss.xml.
-import { strings, blogPath, postPath, type Lang } from "./i18n";
+import { strings, blogPath, postPath, type BlogLang } from "./i18n";
 import { postsFor, isPublished, shareImage } from "./blog";
 
-export const feedPath: Record<Lang, string> = { fr: "/blog/rss.xml", en: "/en/blog/rss.xml" };
+export const feedPath: Record<BlogLang, string> = { fr: "/blog/rss.xml", en: "/en/blog/rss.xml" };
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-export async function feed(lang: Lang, site: URL): Promise<Response> {
+export async function feed(lang: BlogLang, site: URL): Promise<Response> {
   const t = strings[lang];
   const abs = (path: string) => new URL(path, site).href;
   const posts = (await postsFor(lang)).filter(isPublished);

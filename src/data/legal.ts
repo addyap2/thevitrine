@@ -5,7 +5,7 @@
 export interface Publisher {
   name: string;
   /** Legal status, e.g. "Entrepreneur individuel (micro-entreprise)". Required. */
-  status: { fr: string; en: string } | null;
+  status: { fr: string; en: string; it: string } | null;
   /** SIREN or SIRET number. Required; use false if the person isn't a registered business. */
   siret: string | false | null;
   /** Postal address (business address or domiciliation). Required. */
@@ -16,19 +16,19 @@ export interface Publisher {
    *  ({ protected: "…" }, see src/protect.ts) to show behind a reveal button. */
   phone: string | { protected: string } | null;
   /** Optional, e.g. VAT number or RCS/RNE registration. */
-  extra?: { fr: string; en: string } | null;
+  extra?: { fr: string; en: string; it: string } | null;
 }
 
 export const publishers: Publisher[] = [
   {
     name: "Antony Addy",
     // Same details as the legal notice on antonyaddy.com (version of 18 August 2026).
-    status: { fr: "Entrepreneur individuel (auto-entrepreneur)", en: "Sole trader (French auto-entrepreneur)" },
+    status: { fr: "Entrepreneur individuel (auto-entrepreneur)", en: "Sole trader (French auto-entrepreneur)", it: "Imprenditore individuale (auto-entrepreneur francese)" },
     siret: "483 178 893 00028",
     address: "135 rue Henri Vadon, Résidence des Arènes, 83600 Fréjus, France",
     email: "formations@antonyaddy.com",
     phone: { protected: "NjI4OTI4OTQ2MzM=" },
-    extra: { fr: "TVA non applicable, art. 293 B du CGI", en: "VAT not applicable (art. 293 B of the French tax code)" },
+    extra: { fr: "TVA non applicable, art. 293 B du CGI", en: "VAT not applicable (art. 293 B of the French tax code)", it: "IVA non applicabile (art. 293 B del codice tributario francese)" },
   },
   {
     name: "Julien Bourgois",

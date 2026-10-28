@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   if (!originOk(req) || !isJson(req)) return res.status(403).json({ ok: false });
   try {
     const data = await readJson(req, 512);
-    if (!events.has(data?.event) || !["fr", "en"].includes(data?.lang)) return res.status(400).json({ ok: false });
+    if (!events.has(data?.event) || !["fr", "en", "it"].includes(data?.lang)) return res.status(400).json({ ok: false });
     if (await limited("events", clientIp(req), 60, 60000)) return res.status(429).json({ ok: false });
     if (redisConfigured()) {
       const key = `vitrine:events:${new Date().toISOString().slice(0, 10)}`;

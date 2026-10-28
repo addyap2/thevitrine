@@ -1,20 +1,37 @@
-export const langs = ["en", "fr"] as const;
+export const langs = ["en", "fr", "it"] as const;
 export type Lang = (typeof langs)[number];
+/** The blog is written in French and English only. */
+export const blogLangs = ["fr", "en"] as const;
+export type BlogLang = (typeof blogLangs)[number];
+export const hasBlog = (lang: Lang): lang is BlogLang => lang !== "it";
 
-// French is the main language and lives at the root; English is at /en/.
-export const homePath: Record<Lang, string> = { fr: "/", en: "/en/" };
-export const legalPath: Record<Lang, string> = { fr: "/mentions-legales/", en: "/en/legal-notice/" };
+/** How each language is named in the language switch, in that language. */
+export const langNames: Record<Lang, { code: string; name: string; switchLabel: string; locale: string }> = {
+  fr: { code: "FR", name: "Français", switchLabel: "Voir le site en français", locale: "fr_FR" },
+  en: { code: "EN", name: "English", switchLabel: "View the site in English", locale: "en_GB" },
+  it: { code: "IT", name: "Italiano", switchLabel: "Vedi il sito in italiano", locale: "it_IT" },
+};
+/** Order of the language switch. */
+export const switchOrder: Lang[] = ["fr", "en", "it"];
+
+// French is the main language and lives at the root; English is at /en/, Italian at /it/.
+export const homePath: Record<Lang, string> = { fr: "/", en: "/en/", it: "/it/" };
+export const legalPath: Record<Lang, string> = { fr: "/mentions-legales/", en: "/en/legal-notice/", it: "/it/note-legali/" };
 /** The project questionnaire. */
-export const questionnairePath: Record<Lang, string> = { fr: "/devis/", en: "/en/quote/" };
+export const questionnairePath: Record<Lang, string> = { fr: "/devis/", en: "/en/quote/", it: "/it/preventivo/" };
 /** The contact form. */
-export const contactPath: Record<Lang, string> = { fr: "/contact/", en: "/en/contact/" };
+export const contactPath: Record<Lang, string> = { fr: "/contact/", en: "/en/contact/", it: "/it/contatti/" };
 /** The people behind The Vitrine. */
-export const aboutPath: Record<Lang, string> = { fr: "/a-propos/", en: "/en/about/" };
-/** Blog: /blog/ in French, /en/blog/ in English. */
-export const blogPath: Record<Lang, string> = { fr: "/blog/", en: "/en/blog/" };
-export const postPath = (lang: Lang, slug: string) => `${blogPath[lang]}${slug}/`;
-/** Case-study pages: /realisations/<slug>/ in French, /en/work/<slug>/ in English. */
-export const casePath = (lang: Lang, slug: string) => (lang === "fr" ? `/realisations/${slug}/` : `/en/work/${slug}/`);
+export const aboutPath: Record<Lang, string> = { fr: "/a-propos/", en: "/en/about/", it: "/it/chi-siamo/" };
+/** Blog: /blog/ in French, /en/blog/ in English (no Italian blog). */
+export const blogPath: Record<BlogLang, string> = { fr: "/blog/", en: "/en/blog/" };
+export const postPath = (lang: BlogLang, slug: string) => `${blogPath[lang]}${slug}/`;
+/** Case-study pages: /realisations/<slug>/, /en/work/<slug>/, /it/progetti/<slug>/. */
+export const casePath = (lang: Lang, slug: string) =>
+  lang === "fr" ? `/realisations/${slug}/` : lang === "en" ? `/en/work/${slug}/` : `/it/progetti/${slug}/`;
+
+/** Picks this language's text from a { fr, en, it } object. */
+export const tr = <T,>(lang: Lang, text: Record<Lang, T>): T => text[lang];
 
 export const strings = {
   en: {
@@ -36,7 +53,7 @@ export const strings = {
     switchTo: "Français",
     switchLabel: "Voir le site en français",
     empty: "Nothing in the window yet.",
-    ogAlt: "The Vitrine: a lit shop window at dusk showing live websites, with the headline “Your best shop window is online.”",
+    ogAlt: "The Vitrine: a lit shop window at dusk showing live websites, with the headline “Your best shop window.”",
     notFoundTitle: "This window is empty",
     notFoundText: "The page you were looking for isn't here, or it has moved.",
     notFoundCta: "Back to the sites",
@@ -186,7 +203,7 @@ export const strings = {
     switchTo: "English",
     switchLabel: "View the site in English",
     empty: "La vitrine est encore vide.",
-    ogAlt: "The Vitrine : une vitrine éclairée à la tombée de la nuit, avec des sites en ligne et le titre « Votre plus belle vitrine est en ligne. »",
+    ogAlt: "The Vitrine : une vitrine éclairée à la tombée de la nuit, avec des sites en ligne et le titre « Votre plus belle vitrine. »",
     notFoundTitle: "Cette vitrine est vide",
     notFoundText: "La page que vous cherchez n'existe pas, ou elle a changé d'adresse.",
     notFoundCta: "Retour aux sites",
@@ -316,5 +333,155 @@ export const strings = {
     legalDescription: "Qui édite The Vitrine, où le site est hébergé et comment il traite vos données.",
     legalBack: "Retour aux sites",
     legalUpdated: "Dernière mise à jour :",
+  },
+  it: {
+    title: "Siti web su misura · Costa Azzurra e Italia | The Vitrine",
+    description: "Siti veloci e curati per privati, associazioni, istituzioni e aziende, in Costa Azzurra e oltre, in tutte le lingue. Scopri i nostri {n} siti online.",
+    heading: "Siti e app che abbiamo creato con l'IA.",
+    lede: "La vetrina del nostro lavoro. Sono tutti online: clicca e provali.",
+    filterLabel: "Filtra i progetti",
+    everyone: "Tutti",
+    all: "Tutti",
+    more: "Altro",
+    projectOne: "progetto",
+    projectMany: "progetti",
+    inProgress: "In corso",
+    code: "Codice",
+    visit: "Visita il sito",
+    madeBy: "Realizzato da",
+    and: "e",
+    switchTo: "Italiano",
+    switchLabel: "Vedi il sito in italiano",
+    empty: "La vetrina è ancora vuota.",
+    ogAlt: "The Vitrine: una vetrina illuminata al tramonto con siti web online e il titolo «La tua più bella vetrina.»",
+    notFoundTitle: "Questa vetrina è vuota",
+    notFoundText: "La pagina che cerchi non esiste, oppure è stata spostata.",
+    notFoundCta: "Torna ai siti",
+    heroEyebrow: "Siti web su misura · Costa\u00a0Azzurra\u00a0e\u00a0Italia",
+    heroLine1: "La tua più bella",
+    heroAccent: "vetrina",
+    heroLine2: "è online.",
+    heroSub:
+      "Siamo Antony e Julien. Con l'IA progettiamo e realizziamo siti veloci e belli per privati, associazioni, istituzioni e aziende, in tutte le lingue dei tuoi visitatori.",
+    heroCta: "Guarda i {n} siti",
+    heroCta2: "Avvia il tuo progetto",
+    heroProof: "{n} siti online · Costa Azzurra · Regno Unito · Italia",
+    heroPause: "Metti in pausa la presentazione",
+    heroPlay: "Avvia la presentazione",
+    contactHeading: "Vuoi una vetrina tutta tua?",
+    contactLead: "Vuoi una vetrina",
+    contactAccent: "tutta tua",
+    contactTail: "?",
+    contactLede: "Raccontaci la tua attività: ti ricontattiamo con idee e un preventivo chiaro.",
+    contactRole: "Cofondatore di The Vitrine",
+    contactCta: "Contattaci",
+    barCta: "Preventivo",
+    caseTitle: "{title}: caso studio | The Vitrine",
+    caseGlance: "In breve",
+    caseSector: "Settore",
+    casePlace: "Dove",
+    caseSite: "Sito",
+    caseStatus: "Stato",
+    caseLive: "Online",
+    caseInProgress: "In fase di completamento",
+    caseClient: "Il cliente",
+    caseBuilt: "Cosa abbiamo realizzato",
+    caseDesign: "Le scelte di design",
+    caseVisit: "Visita il sito online",
+    caseMadeBy: "Realizzato da",
+    casePrev: "Progetto precedente",
+    caseNext: "Progetto successivo",
+    caseAll: "Tutti i nostri siti",
+    caseLink: "Caso studio",
+    caseDraft: "Bozza non pubblicata: questa pagina resta invisibile ai motori di ricerca fino all'approvazione.",
+    blogName: "Blog",
+    blogTitle: "Blog | The Vitrine",
+    blogHeading: "I siti web, spiegati",
+    blogLede: "Cosa può fare un sito per te, e come lavoriamo: articoli pratici di Antony e Julien.",
+    blogDescription: "Articoli pratici su cosa può fare un sito per te e su come lavoriamo.",
+    blogBy: "Di",
+    blogAnd: "e",
+    blogRead: "Leggi",
+    blogMinutes: "min di lettura",
+    blogEmpty: "I primi articoli arriveranno presto.",
+    blogDraft: "Bozza non pubblicata: questo articolo resta invisibile ai motori di ricerca fino all'approvazione.",
+    blogBadgeDraft: "Bozza",
+    blogAll: "Tutti gli articoli",
+    blogNext: "Da leggere",
+    blogCases: "I siti citati nell'articolo",
+    blogCover: "Il sito {name}, realizzato da The Vitrine",
+    blogCoverLink: "Vedi il caso studio",
+    navLabel: "Menu principale",
+    navMenu: "Menu",
+    navWork: "Progetti",
+    navServices: "Servizi",
+    navFaq: "FAQ",
+    navBlog: "Blog",
+    navContact: "Contatti",
+    langLabel: "Lingua",
+    waLabel: "WhatsApp",
+    waAria: "Scrivi a {name} su WhatsApp",
+    waText: "Ciao {name}, ti ho trovato su The Vitrine e vorrei parlare di un sito web.",
+    showPhone: "Mostra il numero",
+    phoneNoJs: "Attiva JavaScript per vedere il numero, oppure scrivi a",
+    quoteCta: "Descrivi il tuo progetto",
+    quoteNote: "Sei brevi passaggi, pochi minuti: ti rispondiamo con un preventivo chiaro.",
+    cfTitle: "Contatti: scrivici | The Vitrine",
+    cfDescription: "Una domanda, un'idea, un progetto? Scrivi ad Antony e Julien, oppure contattali su WhatsApp.",
+    cfEyebrow: "Contatti",
+    cfH1: "Scrivici",
+    cfLead: "Una domanda, un'idea, un progetto? Lasciaci un messaggio: ti rispondiamo al più presto.",
+    cfName: "Il tuo nome",
+    cfEmail: "E-mail",
+    cfPhone: "Telefono (facoltativo)",
+    cfMessage: "Il tuo messaggio",
+    cfConsent: "Accetto che il mio messaggio venga inviato ad Antony e Julien perché possano rispondermi. Non viene mai venduto né condiviso.",
+    cfSend: "Invia il messaggio",
+    cfSending: "Invio in corso…",
+    cfErrRequired: "Inserisci nome, e-mail e messaggio.",
+    cfErrEmail: "Questo indirizzo e-mail non sembra corretto.",
+    cfErrConsent: "Spunta la casella così possiamo risponderti.",
+    cfErrSend: "Invio non riuscito. Riprova, oppure contattaci su WhatsApp.",
+    cfDoneH: "Grazie, il tuo messaggio è partito.",
+    cfDoneP: "Ti rispondiamo al più presto.",
+    cfSentTo: "Una conferma è in arrivo a",
+    cfAgain: "Scrivi un altro messaggio",
+    cfProjectTitle: "Pensi a un sito?",
+    cfProjectText: "Il nostro questionario in sei passaggi ci aiuta a prepararti un preventivo chiaro.",
+    cfDirect: "Oppure direttamente",
+    cfPrivacy: "Il tuo messaggio viene inviato via e-mail ad Antony e Julien e non viene salvato su questo sito.",
+    msgCta: "Invia un messaggio",
+    heroContact: "Una domanda?",
+    heroContactLink: "Scrivici",
+    navAbout: "Chi siamo",
+    aboutTitle: "Chi siamo: Antony Addy e Julien Bourgois | The Vitrine",
+    aboutDescription: "Antony Addy e Julien Bourgois, i due fondatori di The Vitrine: chi sono, come lavorano insieme e i siti che creano.",
+    aboutEyebrow: "Chi siamo",
+    aboutH1: "Antony e Julien: un'unica vetrina",
+    aboutLead: "The Vitrine sono Antony Addy e Julien Bourgois. Insieme realizziamo siti veloci e curati per privati, associazioni, istituzioni e aziende di ogni dimensione, nelle lingue del loro pubblico. Due percorsi complementari, un'unica squadra e un contatto diretto dalla prima chiamata alla messa online.",
+    aboutCount: "{n} siti creati insieme",
+    aboutSeeWork: "Guarda i nostri progetti",
+    aboutShared: "Cosa ci unisce",
+    aboutNext: "Hai un progetto in mente?",
+    legalLink: "Note legali",
+    shotAlt: "Home page del sito {title} ({host})",
+    portfolioName: "Siti realizzati da The Vitrine",
+    serviceName: "Progettazione e realizzazione di siti web",
+    servicesHeading: "Siti su misura, qualunque sia il tuo progetto",
+    faqHeading: "Domande frequenti",
+    servicesLede: "Progettiamo e realizziamo siti su misura: veloci, perfetti su ogni telefono, facili da trovare e nelle lingue dei tuoi visitatori, in Costa Azzurra e oltre.",
+    servicesWhoTitle: "Per chi",
+    servicesWho: "Privati, associazioni, istituzioni e aziende di ogni dimensione: da ristoranti, negozi e artigiani a professionisti del benessere, club sportivi ed enti di formazione.",
+    servicesWhatTitle: "Cosa realizziamo",
+    servicesWhat: "Siti vetrina, menu e prenotazioni online, siti in più lingue, piattaforme di apprendimento online e strumenti su misura.",
+    servicesWhereTitle: "Dove",
+    servicesWhere: "A Fréjus, Saint-Raphaël e in tutto il Var e le Alpi Marittime, e a distanza ovunque: i nostri siti sono online anche nel Regno Unito e in Italia.",
+    servicesHowTitle: "Come lavoriamo",
+    servicesHow: "Parli direttamente con Antony e Julien, le persone che creano il tuo sito. L'IA ci aiuta a progettare e costruire più velocemente; ogni dettaglio viene controllato e rifinito a mano.",
+    servicesPrice: "Conta {timescale} per un sito vetrina, a partire da {price} €.",
+    legalTitle: "Note legali",
+    legalDescription: "Chi pubblica The Vitrine, dove è ospitato il sito e come tratta i tuoi dati.",
+    legalBack: "Torna ai siti",
+    legalUpdated: "Ultimo aggiornamento:",
   },
 } satisfies Record<Lang, Record<string, string>>;

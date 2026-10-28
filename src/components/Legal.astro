@@ -8,22 +8,22 @@ import { Font } from "astro:assets";
 import SiteHeader from "./SiteHeader.astro";
 import "../styles/motion.css";
 import "../styles/tokens.css";
-import { strings, homePath, legalPath, type Lang } from "../i18n";
+import { strings, homePath, legalPath, langs, langNames, type Lang } from "../i18n";
 import { publishers, director, contactEmail, updated, host, missingFields } from "../data/legal";
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = strings[lang];
-const other: Lang = lang === "fr" ? "en" : "fr";
 
 const missing = missingFields();
 if (missing.length) {
   console.warn(`[legal] Notice incomplete, placeholders shown. Fill in src/data/legal.ts: ${missing.join(", ")}`);
 }
-const todo = lang === "fr" ? "à compléter" : "to be completed";
+const L = (frText: string, enText: string, itText: string) => (lang === "fr" ? frText : lang === "en" ? enText : itText);
+const todo = L("à compléter", "to be completed", "da completare");
 const sep = lang === "fr" ? "\u00a0: " : ": ";
 
-const date = new Date(updated).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-GB", { day: "numeric", month: "long", year: "numeric" });
+const date = new Date(updated).toLocaleDateString(L("fr-FR", "en-GB", "it-IT"), { day: "numeric", month: "long", year: "numeric" });
 const canonical = new URL(legalPath[lang], Astro.site);
 const abs = (path: string) => new URL(path, Astro.site).href;
 const ogImage = abs(`/og/${lang}.jpg`);
@@ -61,8 +61,7 @@ const fr = lang === "fr";
     <title>{t.legalTitle} · The Vitrine</title>
     <meta name="description" content={t.legalDescription} />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang="fr" href={new URL(legalPath.fr, Astro.site)} />
-    <link rel="alternate" hreflang="en" href={new URL(legalPath.en, Astro.site)} />
+    {langs.map((l) => <link rel="alternate" hreflang={l} href={new URL(legalPath[l], Astro.site)} />)}
     <link rel="alternate" hreflang="x-default" href={new URL(legalPath.fr, Astro.site)} />
     <meta name="theme-color" content="#081227" />
     <meta property="og:type" content="website" />
@@ -70,7 +69,7 @@ const fr = lang === "fr";
     <meta property="og:title" content={`${t.legalTitle} · The Vitrine`} />
     <meta property="og:description" content={t.legalDescription} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content={fr ? "fr_FR" : "en_GB"} />
+    <meta property="og:locale" content={langNames[lang].locale} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -86,7 +85,7 @@ const fr = lang === "fr";
     <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />
   </head>
   <body>
-    <SiteHeader lang={lang} altHref={legalPath[other]} />
+    <SiteHeader lang={lang} alternates={legalPath} />
 
     <main id="main-content" tabindex="-1" class="wrap">
       <p class="back"><a href={homePath[lang]}><span aria-hidden="true">←</span> {t.legalBack}</a></p>
@@ -94,101 +93,79 @@ const fr = lang === "fr";
       <p class="updated">{t.legalUpdated} {date}</p>
 
       <section aria-labelledby="publisher">
-        <h2 id="publisher">{fr ? "Éditeurs du site" : "Publishers"}</h2>
+        <h2 id="publisher">{L("Éditeurs du site", "Publishers", "Editori del sito")}</h2>
         <p>
-          {fr
-            ? "The Vitrine est un site commun, édité conjointement par :"
-            : "The Vitrine is a joint site, published by:"}
+          {L("The Vitrine est un site commun, édité conjointement par :", "The Vitrine is a joint site, published by:", "The Vitrine è un sito comune, pubblicato congiuntamente da:")}
         </p>
         <div class="people">
           {publishers.map((p) => (
             <dl class="person">
               <dt class="name">{p.name}</dt>
-              <dd>{p.status ? p.status[lang] : <span class="todo">{fr ? "Statut" : "Status"}{sep}{todo}</span>}</dd>
+              <dd>{p.status ? p.status[lang] : <span class="todo">{L("Statut", "Status", "Forma giuridica")}{sep}{todo}</span>}</dd>
               {p.siret === null ? <dd><span class="todo">SIRET{sep}{todo}</span></dd> : p.siret && <dd>SIRET {p.siret}</dd>}
               {p.extra && <dd>{p.extra[lang]}</dd>}
-              <dd>{p.address ?? <span class="todo">{fr ? "Adresse" : "Address"}{sep}{todo}</span>}</dd>
-              <dd>{p.email ? <a href={`mailto:${p.email}`}>{p.email}</a> : <span class="todo">{fr ? "E-mail" : "Email"}{sep}{todo}</span>}</dd>
+              <dd>{p.address ?? <span class="todo">{L("Adresse", "Address", "Indirizzo")}{sep}{todo}</span>}</dd>
+              <dd>{p.email ? <a href={`mailto:${p.email}`}>{p.email}</a> : <span class="todo">{L("E-mail", "Email", "E-mail")}{sep}{todo}</span>}</dd>
               <dd>{p.phone ? (typeof p.phone === "string" ? <a href={`tel:${p.phone.replace(/\s/g, "")}`}>{p.phone}</a> : (
                 <span class="phone-protected">
                   <button type="button" class="show-phone" data-phone={p.phone.protected}>{t.showPhone}</button>
                   <noscript>{t.phoneNoJs} {p.email}</noscript>
                 </span>
-              )) : <span class="todo">{fr ? "Téléphone" : "Phone"}{sep}{todo}</span>}</dd>
+              )) : <span class="todo">{L("Téléphone", "Phone", "Telefono")}{sep}{todo}</span>}</dd>
             </dl>
           ))}
         </div>
         <p>
-          {fr ? "Directeur de la publication : " : "Publication director: "}<strong>{director}</strong>
+          {L("Directeur de la publication : ", "Publication director: ", "Direttore della pubblicazione: ")}<strong>{director}</strong>
         </p>
       </section>
 
       <section aria-labelledby="host">
-        <h2 id="host">{fr ? "Hébergement" : "Hosting"}</h2>
+        <h2 id="host">{L("Hébergement", "Hosting", "Hosting")}</h2>
         <p>
           {host.name}<br />
-          {fr ? host.address.replace("United States", "États-Unis") : host.address}<br />
+          {L(host.address.replace("United States", "États-Unis"), host.address, host.address.replace("United States", "Stati Uniti"))}<br />
           <a href={host.url} rel="noopener" target="_blank">vercel.com</a>
         </p>
       </section>
 
       <section aria-labelledby="ip">
-        <h2 id="ip">{fr ? "Propriété intellectuelle" : "Intellectual property"}</h2>
+        <h2 id="ip">{L("Propriété intellectuelle", "Intellectual property", "Proprietà intellettuale")}</h2>
         <p>
-          {fr
-            ? "Les textes, la mise en page et les éléments graphiques de ce site appartiennent à Antony Addy et Julien Bourgois. Toute reproduction sans autorisation est interdite."
-            : "The text, layout and graphics of this site belong to Antony Addy and Julien Bourgois. They may not be reproduced without permission."}
+          {L("Les textes, la mise en page et les éléments graphiques de ce site appartiennent à Antony Addy et Julien Bourgois. Toute reproduction sans autorisation est interdite.", "The text, layout and graphics of this site belong to Antony Addy and Julien Bourgois. They may not be reproduced without permission.", "I testi, l'impaginazione e gli elementi grafici di questo sito appartengono ad Antony Addy e Julien Bourgois. Ne è vietata la riproduzione senza autorizzazione.")}
         </p>
         <p>
-          {fr
-            ? "Les captures d'écran présentent des sites que nous avons réalisés. Leurs contenus, noms et marques restent la propriété de leurs titulaires respectifs. Pour demander le retrait d'une capture, écrivez-nous à "
-            : "The screenshots show sites we have built. Their content, names and trademarks remain the property of their respective owners. To ask for a screenshot to be removed, write to "}
+          {L("Les captures d'écran présentent des sites que nous avons réalisés. Leurs contenus, noms et marques restent la propriété de leurs titulaires respectifs. Pour demander le retrait d'une capture, écrivez-nous à ", "The screenshots show sites we have built. Their content, names and trademarks remain the property of their respective owners. To ask for a screenshot to be removed, write to ", "Le schermate mostrano siti che abbiamo realizzato. I loro contenuti, nomi e marchi restano di proprietà dei rispettivi titolari. Per chiedere la rimozione di una schermata, scrivici a ")}
           <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
         </p>
       </section>
 
       <section aria-labelledby="privacy">
-        <h2 id="privacy">{fr ? "Données personnelles et cookies" : "Personal data and cookies"}</h2>
+        <h2 id="privacy">{L("Données personnelles et cookies", "Personal data and cookies", "Dati personali e cookie")}</h2>
         <p>
-          {fr
-            ? "Ce site ne propose aucun compte et ne contient aucun traceur publicitaire. Les polices de caractères sont servies depuis ce site."
-            : "This site has no accounts or advertising trackers. Fonts are served from this site."}
+          {L("Ce site ne propose aucun compte et ne contient aucun traceur publicitaire. Les polices de caractères sont servies depuis ce site.", "This site has no accounts or advertising trackers. Fonts are served from this site.", "Questo sito non prevede account e non contiene tracker pubblicitari. I caratteri tipografici sono serviti da questo sito.")}
         </p>
         <p>
-          {fr
-            ? "Questionnaire projet et formulaire de contact : les informations que vous y saisissez (nom, e-mail, téléphone, entreprise, message ou description de votre projet) sont envoyées par e-mail à Antony Addy et Julien Bourgois, uniquement pour préparer votre devis et vous recontacter, sur la base de votre consentement. Elles ne sont pas enregistrées sur ce site. L'envoi passe par le service Resend (Resend, Inc., États-Unis), et une copie de confirmation vous est adressée lorsque l'envoi aboutit. Vos réponses restent dans nos boîtes e-mail le temps nécessaire au suivi de votre demande, puis sont supprimées au plus tard trois ans après notre dernier échange. Un brouillon reste uniquement dans votre navigateur pendant 7 jours maximum, ou jusqu'à l'envoi ou sa suppression."
-            : "Project questionnaire and contact form: what you enter (name, email, phone, business, message or project details) is emailed to Antony Addy and Julien Bourgois, only to prepare your quote and get back to you, based on your consent. They aren't stored on this site. Sending goes through the Resend service (Resend, Inc., United States), and a confirmation copy is sent to you when sending succeeds. Your answers stay in our inboxes for as long as your request needs following up, and are deleted at the latest three years after our last exchange. A draft stays only in your browser for up to 7 days, or until you send or delete it."}
+          {L("Questionnaire projet et formulaire de contact : les informations que vous y saisissez (nom, e-mail, téléphone, entreprise, message ou description de votre projet) sont envoyées par e-mail à Antony Addy et Julien Bourgois, uniquement pour préparer votre devis et vous recontacter, sur la base de votre consentement. Elles ne sont pas enregistrées sur ce site. L'envoi passe par le service Resend (Resend, Inc., États-Unis), et une copie de confirmation vous est adressée lorsque l'envoi aboutit. Vos réponses restent dans nos boîtes e-mail le temps nécessaire au suivi de votre demande, puis sont supprimées au plus tard trois ans après notre dernier échange. Un brouillon reste uniquement dans votre navigateur pendant 7 jours maximum, ou jusqu'à l'envoi ou sa suppression.", "Project questionnaire and contact form: what you enter (name, email, phone, business, message or project details) is emailed to Antony Addy and Julien Bourgois, only to prepare your quote and get back to you, based on your consent. They aren't stored on this site. Sending goes through the Resend service (Resend, Inc., United States), and a confirmation copy is sent to you when sending succeeds. Your answers stay in our inboxes for as long as your request needs following up, and are deleted at the latest three years after our last exchange. A draft stays only in your browser for up to 7 days, or until you send or delete it.", "Questionario di progetto e modulo di contatto: le informazioni che inserisci (nome, e-mail, telefono, azienda, messaggio o descrizione del progetto) vengono inviate via e-mail ad Antony Addy e Julien Bourgois, solo per preparare il preventivo e ricontattarti, sulla base del tuo consenso. Non vengono salvate su questo sito. L'invio avviene tramite il servizio Resend (Resend, Inc., Stati Uniti) e ti viene inviata una copia di conferma quando l'invio va a buon fine. Le tue risposte restano nelle nostre caselle e-mail per il tempo necessario a seguire la richiesta, poi vengono cancellate al più tardi tre anni dopo il nostro ultimo scambio. Una bozza resta solo nel tuo browser per un massimo di 7 giorni, oppure fino all'invio o alla sua cancellazione.")}
         </p>
         <p>
-          {fr
-            ? "La langue se choisit avec les liens Français / English, sans cookie de préférence. Aucun cookie publicitaire n'est utilisé."
-            : "Choose your language using the Français / English links, without a preference cookie. No advertising cookies are used."}
+          {L("La langue se choisit avec les liens FR / EN / IT, sans cookie de préférence. Aucun cookie publicitaire n'est utilisé.", "Choose your language using the FR / EN / IT links, without a preference cookie. No advertising cookies are used.", "La lingua si sceglie con i link FR / EN / IT, senza cookie di preferenza. Non viene usato alcun cookie pubblicitario.")}
         </p>
         <p>
-          {fr
-            ? "Comme tout hébergeur, Vercel traite des données techniques (adresse IP, navigateur, pages demandées) pour acheminer le site et le protéger. Les liens « Prendre contact » mènent vers nos sites respectifs, qui ont leur propre politique de confidentialité."
-            : "Like any host, Vercel processes technical data (IP address, browser, pages requested) to deliver the site and keep it secure. The “Get in touch” links lead to our own sites, which have their own privacy policies."}
+          {L("Comme tout hébergeur, Vercel traite des données techniques (adresse IP, navigateur, pages demandées) pour acheminer le site et le protéger. Les boutons WhatsApp ouvrent le service WhatsApp, qui a sa propre politique de confidentialité.", "Like any host, Vercel processes technical data (IP address, browser, pages requested) to deliver the site and keep it secure. The WhatsApp buttons open the WhatsApp service, which has its own privacy policy.", "Come ogni hosting, Vercel tratta dati tecnici (indirizzo IP, browser, pagine richieste) per distribuire il sito e proteggerlo. I pulsanti WhatsApp aprono il servizio WhatsApp, che ha la propria informativa sulla privacy.")}
         </p>
         <p>
-          {fr
-            ? "Conformément au RGPD, vous pouvez demander l'accès, la rectification ou l'effacement de vos données en écrivant à "
-            : "Under the GDPR, you can ask to access, correct or erase your data by writing to "}
+          {L("Conformément au RGPD, vous pouvez demander l'accès, la rectification ou l'effacement de vos données en écrivant à ", "Under the GDPR, you can ask to access, correct or erase your data by writing to ", "Ai sensi del GDPR, puoi chiedere l'accesso, la rettifica o la cancellazione dei tuoi dati scrivendo a ")}
           <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
-          {fr
-            ? " Vous pouvez aussi adresser une réclamation à la CNIL (cnil.fr)."
-            : " You can also complain to the French data protection authority, the CNIL (cnil.fr)."}
+          {L(" Vous pouvez aussi adresser une réclamation à la CNIL (cnil.fr).", " You can also complain to the French data protection authority, the CNIL (cnil.fr).", " Puoi anche presentare un reclamo all'autorità francese per la protezione dei dati, la CNIL (cnil.fr).")}
         </p>
-        <p>{fr
-          ? "Vercel Web Analytics mesure les pages consultées sans cookies publicitaires. Les paramètres d'URL sont retirés avant l'envoi. Nous comptons également les clics vers le contact, le questionnaire et WhatsApp, ainsi que le début et l'envoi des formulaires, sans nom, e-mail ou contenu saisi. Les compteurs agrégés expirent après 90 jours. Les identifiants techniques utilisés pour limiter les abus sont hachés et expirent sous 24 heures via Upstash Redis, hébergé dans l'Union européenne."
-          : "Vercel Web Analytics measures page views without advertising cookies. URL parameters are removed before sending. We also count contact, questionnaire and WhatsApp clicks, and form starts and submissions, without names, emails or entered text. Aggregate counters expire after 90 days. Technical identifiers used to limit abuse are hashed and expire within 24 hours using Upstash Redis, hosted in the European Union."}</p>
+        <p>{L("Vercel Web Analytics mesure les pages consultées sans cookies publicitaires. Les paramètres d'URL sont retirés avant l'envoi. Nous comptons également les clics vers le contact, le questionnaire et WhatsApp, ainsi que le début et l'envoi des formulaires, sans nom, e-mail ou contenu saisi. Les compteurs agrégés expirent après 90 jours. Les identifiants techniques utilisés pour limiter les abus sont hachés et expirent sous 24 heures via Upstash Redis, hébergé dans l'Union européenne.", "Vercel Web Analytics measures page views without advertising cookies. URL parameters are removed before sending. We also count contact, questionnaire and WhatsApp clicks, and form starts and submissions, without names, emails or entered text. Aggregate counters expire after 90 days. Technical identifiers used to limit abuse are hashed and expire within 24 hours using Upstash Redis, hosted in the European Union.", "Vercel Web Analytics misura le pagine visitate senza cookie pubblicitari. I parametri degli URL vengono rimossi prima dell'invio. Contiamo anche i clic verso i contatti, il questionario e WhatsApp, oltre all'inizio e all'invio dei moduli, senza nomi, e-mail o testi inseriti. I contatori aggregati scadono dopo 90 giorni. Gli identificativi tecnici usati per limitare gli abusi sono cifrati con hash e scadono entro 24 ore tramite Upstash Redis, ospitato nell'Unione europea.")}</p>
       </section>
 
       <section aria-labelledby="links">
-        <h2 id="links">{fr ? "Liens externes" : "External links"}</h2>
+        <h2 id="links">{L("Liens externes", "External links", "Link esterni")}</h2>
         <p>
-          {fr
-            ? "Ce site renvoie vers des sites que nous avons réalisés, mais que nous ne gérons pas forcément. Nous ne sommes pas responsables de leur contenu actuel."
-            : "This site links to sites we have built but don't necessarily run. We are not responsible for their current content."}
+          {L("Ce site renvoie vers des sites que nous avons réalisés, mais que nous ne gérons pas forcément. Nous ne sommes pas responsables de leur contenu actuel.", "This site links to sites we have built but don't necessarily run. We are not responsible for their current content.", "Questo sito rimanda a siti che abbiamo realizzato, ma che non gestiamo necessariamente. Non siamo responsabili del loro contenuto attuale.")}
         </p>
       </section>
     </main>

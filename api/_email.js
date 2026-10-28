@@ -126,20 +126,31 @@ export const buttons = (...cells) =>
 export const eyebrow = (text, color = C.accent) =>
   `<div style="font-family:${SANS};font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${color};margin:0 0 10px">${text}</div>`;
 
+/** The site's languages: French (default), English and Italian. */
+export const pickLang = (l) => (l === "en" || l === "it" ? l : "fr");
+export const HOME = { fr: "/", en: "/en/", it: "/it/" };
+export const QUOTE = { fr: "/devis/", en: "/en/quote/", it: "/it/preventivo/" };
+const LEGAL = { fr: "/mentions-legales/", en: "/en/legal-notice/", it: "/it/note-legali/" };
+const LEGAL_LABEL = { fr: "Mentions légales", en: "Legal notice", it: "Note legali" };
+export const SIGN_OFF = { fr: "À très vite,", en: "Speak soon,", it: "A presto," };
+/** The visitor's language, named in French for the team's emails. */
+export const LANG_FR = { fr: "français", en: "anglais", it: "italien" };
+
 /** Footer row: a short line and links back to the site. */
 export function footer(lang, line) {
-  const fr = lang !== "en";
+  const l = pickLang(lang);
   return `<tr><td class="px" bgcolor="${C.paper}" style="padding:20px 36px;background:${C.paper};border-top:1px solid ${C.line};font-family:${SANS};font-size:12px;line-height:1.7;color:${C.muted}">` +
     (line ? `${line}<br>` : "") +
-    `<a href="${SITE}${fr ? "/" : "/en/"}" style="color:${C.night};font-weight:600;text-decoration:none">thevitrine.fr</a>` +
-    ` &nbsp;·&nbsp; <a href="${SITE}${fr ? "/mentions-legales/" : "/en/legal-notice/"}" style="color:${C.muted};text-decoration:underline">${fr ? "Mentions légales" : "Legal notice"}</a>` +
+    `<a href="${SITE}${HOME[l]}" style="color:${C.night};font-weight:600;text-decoration:none">thevitrine.fr</a>` +
+    ` &nbsp;·&nbsp; <a href="${SITE}${LEGAL[l]}" style="color:${C.muted};text-decoration:underline">${LEGAL_LABEL[l]}</a>` +
   `</td></tr>`;
 }
 
 /** The sign-off both client emails share. */
 export function signature(lang) {
-  const fr = lang !== "en";
-  return `<p style="font-family:${SANS};font-size:15px;color:${C.soft};margin:0 0 6px">${fr ? "À très vite," : "Speak soon,"}</p>` +
+  const l = pickLang(lang);
+  const tagline = { fr: " · sites web sur mesure", en: " · made-to-measure websites", it: " · siti web su misura" }[l];
+  return `<p style="font-family:${SANS};font-size:15px;color:${C.soft};margin:0 0 6px">${SIGN_OFF[l]}</p>` +
     `<div style="font-family:${SERIF};font-size:19px;color:${C.night}">Antony Addy &amp; Julien Bourgois</div>` +
-    `<div style="font-family:${SANS};font-size:13px;color:${C.muted};margin-top:3px">The Vitrine${fr ? " · sites web sur mesure" : " · made-to-measure websites"}</div>`;
+    `<div style="font-family:${SANS};font-size:13px;color:${C.muted};margin-top:3px">The Vitrine${tagline}</div>`;
 }

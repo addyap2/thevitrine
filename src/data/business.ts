@@ -8,7 +8,7 @@ export const priceFrom: number | null = null;
 
 /** Typical time from first call to launch (e.g. "2 à 3 semaines"). Left empty on
  *  purpose: the timescale is set per project, in the quote. */
-export const timescale: { fr: string; en: string } | null = null;
+export const timescale: { fr: string; en: string; it: string } | null = null;
 
 /** WhatsApp numbers, encoded (see src/protect.ts): decoded only when a visitor taps the button. */
 export const whatsapp = {

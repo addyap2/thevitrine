@@ -9,14 +9,14 @@ import "../styles/tokens.css";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
 import { cases, caseSlug } from "../data/cases";
-import { strings, homePath, legalPath, casePath, questionnairePath, type Lang } from "../i18n";
+import { strings, homePath, legalPath, casePath, questionnairePath, langs, langNames, type Lang } from "../i18n";
 import { srcset, src800 } from "../img";
 
 interface Props { lang: Lang; project: string }
 const { lang, project: slug } = Astro.props;
 const t = strings[lang];
-const other: Lang = lang === "fr" ? "en" : "fr";
 const fr = lang === "fr";
+const L = (frText: string, enText: string, itText: string) => (lang === "fr" ? frText : lang === "en" ? enText : itText);
 
 // Projects that have a case study, in homepage order, for previous/next links.
 const withCases = projects.filter((p) => cases[p.slug]);
@@ -30,10 +30,10 @@ const mobileImage = ["ristorante-lola", "filton-athletic-fc", "student-mark-trac
 const urlSlug = caseSlug(p.slug);
 const canonical = new URL(casePath(lang, urlSlug), Astro.site);
 const abs = (path: string) => new URL(path, Astro.site).href;
-const category = categories.find((k) => k.id === p.category)?.label[lang] ?? t.more;
+const category = (categories.find((k) => k.id === p.category)?.label as Record<Lang, string> | undefined)?.[lang] ?? t.more;
 const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
-const description = p.description[lang as "en" | "fr"];
-const metaDescription = c.seoDescription?.[lang as "en" | "fr"] ?? description;
+const description = (p.description as Record<Lang, string>)[lang];
+const metaDescription = c.seoDescription?.[lang] ?? description;
 const title = t.caseTitle.replace("{title}", p.title);
 const draft = c.status === "draft";
 
@@ -75,8 +75,7 @@ const ld = {
     <meta name="description" content={metaDescription} />
     {draft && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang="fr" href={new URL(casePath("fr", urlSlug), Astro.site)} />
-    <link rel="alternate" hreflang="en" href={new URL(casePath("en", urlSlug), Astro.site)} />
+    {langs.map((l) => <link rel="alternate" hreflang={l} href={new URL(casePath(l, urlSlug), Astro.site)} />)}
     <link rel="alternate" hreflang="x-default" href={new URL(casePath("fr", urlSlug), Astro.site)} />
     <meta name="theme-color" content="#081227" />
     <meta property="og:type" content="article" />
@@ -84,7 +83,7 @@ const ld = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={metaDescription} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content={fr ? "fr_FR" : "en_GB"} />
+    <meta property="og:locale" content={langNames[lang].locale} />
     {p.image && <meta property="og:image" content={abs(p.image)} />}
     {p.image && <meta property="og:image:width" content="1280" />}
     {p.image && <meta property="og:image:height" content="800" />}
@@ -101,13 +100,13 @@ const ld = {
   <body>
     {draft && <p class="draft" role="note">{t.caseDraft}</p>}
 
-    <SiteHeader lang={lang} altHref={casePath(other, urlSlug)} />
+    <SiteHeader lang={lang} alternates={{ fr: casePath("fr", urlSlug), en: casePath("en", urlSlug), it: casePath("it", urlSlug) }} />
     <header class="hero">
     
 
       <div class="wrap hero-grid">
         <div class="copy">
-          <nav aria-label={fr ? "Fil d'Ariane" : "Breadcrumb"} class="crumbs">
+          <nav aria-label={L("Fil d'Ariane", "Breadcrumb", "Percorso")} class="crumbs">
             <a href={`${homePath[lang]}#work`}>{t.caseAll}</a>
             <span aria-hidden="true">/</span>
             <span aria-current="page">{p.title}</span>
@@ -170,11 +169,11 @@ const ld = {
         <p>{c.design[lang]}</p>
       </section>
       {mobileImage && <section class="mobile-proof" aria-labelledby="mobile-proof" data-reveal>
-        <div><h2 id="mobile-proof">{fr ? "Le site sur mobile" : "The site on mobile"}</h2>
-          <p>{p.slug === "student-mark-tracker" ? (fr ? "L'accès au tableau de bord commence par une connexion : e-mail et mot de passe, ou compte Google. Les données de suivi ne sont pas affichées publiquement." : "Dashboard access starts with sign-in: email and password, or a Google account. Tracking data is not shown publicly.") : fr ? "Une capture du site réel sur un écran de 390 px : la hiérarchie, le texte et les actions restent visibles dans leur contexte d'utilisation." : "A capture of the real site on a 390 px screen: hierarchy, text and actions shown in their actual context of use."}</p>
-          <p>{fr ? "Cette présentation décrit les fonctionnalités visibles. Nous ne publions pas de chiffres de fréquentation ou de conversion sans données vérifiées." : "This walkthrough describes visible features. We do not publish traffic or conversion figures without verified data."}</p>
+        <div><h2 id="mobile-proof">{L("Le site sur mobile", "The site on mobile", "Il sito su mobile")}</h2>
+          <p>{p.slug === "student-mark-tracker" ? L("L'accès au tableau de bord commence par une connexion : e-mail et mot de passe, ou compte Google. Les données de suivi ne sont pas affichées publiquement.", "Dashboard access starts with sign-in: email and password, or a Google account. Tracking data is not shown publicly.", "L'accesso alla dashboard richiede il login: e-mail e password, oppure un account Google. I dati di monitoraggio non sono mostrati pubblicamente.") : L("Une capture du site réel sur un écran de 390 px : la hiérarchie, le texte et les actions restent visibles dans leur contexte d'utilisation.", "A capture of the real site on a 390 px screen: hierarchy, text and actions shown in their actual context of use.", "Una schermata del sito reale su uno schermo da 390 px: gerarchia, testi e azioni mostrati nel loro contesto d'uso reale.")}</p>
+          <p>{L("Cette présentation décrit les fonctionnalités visibles. Nous ne publions pas de chiffres de fréquentation ou de conversion sans données vérifiées.", "This walkthrough describes visible features. We do not publish traffic or conversion figures without verified data.", "Questa presentazione descrive le funzionalità visibili. Non pubblichiamo dati di traffico o di conversione senza dati verificati.")}</p>
         </div>
-        <figure><img src={mobileImage} alt={p.slug === "student-mark-tracker" ? (fr ? "Student Mark Tracker : écran de connexion sur mobile" : "Student Mark Tracker: mobile sign-in screen") : (fr ? `${p.title} : page d'accueil sur mobile` : `${p.title}: home page on mobile`)} width="390" height="844" loading="lazy" decoding="async" /><figcaption>{fr ? "Capture du site · 22 octobre 2026" : "Site capture · 22 October 2026"}</figcaption></figure>
+        <figure><img src={mobileImage} alt={p.slug === "student-mark-tracker" ? L("Student Mark Tracker : écran de connexion sur mobile", "Student Mark Tracker: mobile sign-in screen", "Student Mark Tracker: schermata di accesso su mobile") : L(`${p.title} : page d'accueil sur mobile`, `${p.title}: home page on mobile`, `${p.title}: home page su mobile`)} width="390" height="844" loading="lazy" decoding="async" /><figcaption>{L("Capture du site · 22 octobre 2026", "Site capture · 22 October 2026", "Schermata del sito · 22 ottobre 2026")}</figcaption></figure>
       </section>}
       {p.url && (
         <p class="visit" data-reveal>
@@ -182,7 +181,7 @@ const ld = {
         </p>
       )}
 
-      <nav class="pager" aria-label={fr ? "Autres projets" : "More projects"}>
+      <nav class="pager" aria-label={L("Autres projets", "More projects", "Altri progetti")}>
         <a href={casePath(lang, caseSlug(prev.slug))} rel="prev">
           <span class="dir"><span aria-hidden="true">←</span> {t.casePrev}</span>
           <span class="name">{prev.title}</span>

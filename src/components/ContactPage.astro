@@ -4,7 +4,7 @@
 // protection as the questionnaire. Beside the form: the questionnaire, and
 // both makers' WhatsApp buttons (numbers decoded only on tap, src/protect.ts).
 import SubPage from "./SubPage.astro";
-import { strings, contactPath, questionnairePath, homePath, type Lang } from "../i18n";
+import { strings, contactPath, questionnairePath, homePath, tr, type Lang } from "../i18n";
 import { whatsapp } from "../data/business";
 import { pageLd } from "../ld";
 
@@ -29,7 +29,7 @@ const people = [
 
     <div class="grid">
       <div class="card form-card">
-        <p id="cf-fallback">{lang === "fr" ? "Si le formulaire ne s'affiche pas, écrivez-nous :" : "If the form does not appear, email us:"} <a href="mailto:antony@antonyaddy.com">antony@antonyaddy.com</a></p>
+        <p id="cf-fallback">{tr(lang, { fr: "Si le formulaire ne s'affiche pas, écrivez-nous :", en: "If the form does not appear, email us:", it: "Se il modulo non compare, scrivici:" })} <a href="mailto:antony@antonyaddy.com">antony@antonyaddy.com</a></p>
       <form hidden id="cf-form" novalidate>
           <div class="row2">
             <div class="field">
@@ -65,10 +65,10 @@ const people = [
           <div class="done-badge" aria-hidden="true"><svg viewBox="0 0 52 52"><path d="M15 27.5 22.5 35 37.5 18.5" /></svg></div>
           <h2 id="cf-done-title">{t.cfDoneH}</h2>
           <p>{t.cfDoneP}</p>
-          <p id="cf-confirmation-warning" hidden>{lang === "fr" ? "Votre demande a bien été transmise. L'e-mail de confirmation n'a pas pu être envoyé ; inutile de renvoyer le formulaire." : "Your request has reached us. The confirmation email could not be sent; there is no need to submit again."}</p>
+          <p id="cf-confirmation-warning" hidden>{tr(lang, { fr: "Votre demande a bien été transmise. L'e-mail de confirmation n'a pas pu être envoyé ; inutile de renvoyer le formulaire.", en: "Your request has reached us. The confirmation email could not be sent; there is no need to submit again.", it: "La tua richiesta ci è arrivata. Non è stato possibile inviare l'e-mail di conferma; non serve inviare di nuovo il modulo." })}</p>
           <p class="sent">{t.cfSentTo} <strong id="cf-sent-to"></strong>.</p>
           <div class="actions">
-            <a class="btn primary" href={`${homePath[lang]}#work`}>{lang === "fr" ? "Voir nos réalisations" : "See our work"}</a>
+            <a class="btn primary" href={`${homePath[lang]}#work`}>{tr(lang, { fr: "Voir nos réalisations", en: "See our work", it: "Guarda i nostri progetti" })}</a>
             <button type="button" class="btn ghost" id="cf-again">{t.cfAgain}</button>
           </div>
         </section>
@@ -101,7 +101,8 @@ const people = [
   import { strings, type Lang } from "../i18n";
   import { decodeNumber } from "../protect";
 
-  const lang = (document.getElementById("contact-main")!.dataset.lang === "en" ? "en" : "fr") as Lang;
+  const raw = document.getElementById("contact-main")!.dataset.lang;
+  const lang = (raw === "en" || raw === "it" ? raw : "fr") as Lang;
   const t = strings[lang];
   let submissionId = crypto.randomUUID();
   const form = document.getElementById("cf-form") as HTMLFormElement;

@@ -7,7 +7,10 @@
 // status "published": indexed, in the sitemap, and the card's title links to it.
 // All published on 22 October 2026, at Antony's request.
 
-type Text = { fr: string; en: string };
+import { casesIt } from "./cases-it";
+
+// Italian lives in src/data/cases-it.ts and is merged in below.
+type Text = { fr: string; en: string; it?: string };
 export interface CaseStudy {
   status: "draft" | "published";
   /** Town and area (or the field, when there's no single place), shown above the title. */
@@ -15,7 +18,7 @@ export interface CaseStudy {
   /** Who the client is. */
   client: Text;
   /** What the site does, one feature per line. */
-  built: { fr: string[]; en: string[] };
+  built: { fr: string[]; en: string[]; it?: string[] };
   /** Visible design decisions. */
   design: Text;
   /** Shorter search description (under 160 characters) when the card's text is too long. */
@@ -734,6 +737,19 @@ export const cases: Record<string, CaseStudy> = {
 };
 
 // Published URLs are permanent even when a project changes its display title.
+// Merge the Italian text; a case without it falls back to English and is listed.
+const missingIt: string[] = [];
+for (const [slug, c] of Object.entries(cases)) {
+  const it = casesIt[slug];
+  if (!it) missingIt.push(slug);
+  c.place.it = it?.place ?? c.place.en;
+  c.client.it = it?.client ?? c.client.en;
+  c.built.it = it?.built ?? c.built.en;
+  c.design.it = it?.design ?? c.design.en;
+  if (it?.seoDescription) c.seoDescription = { ...c.seoDescription, it: it.seoDescription };
+}
+if (missingIt.length) console.warn(`[cases] No Italian text yet in src/data/cases-it.ts: ${missingIt.join(", ")}`);
+
 const publishedSlugs: Record<string, string> = {
   "ristorante-lola": "ristorante-da-lola",
   "wall-street": "wall-street-frejus",

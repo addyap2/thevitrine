@@ -12,7 +12,7 @@ import { updated as legalUpdated } from "../data/legal";
 export const GET: APIRoute = async ({ site }) => {
   const abs = (path: string) => new URL(path, site).href;
   const day = (d: string) => d.slice(0, 10);
-  const pages: { paths: Record<Lang, string>; lastmod: string; xDefault: Lang }[] = [
+  const pages: { paths: Partial<Record<Lang, string>>; lastmod: string; xDefault: Lang }[] = [
     { paths: homePath, lastmod: contentDates.home, xDefault: "fr" },
     { paths: legalPath, lastmod: legalUpdated, xDefault: "fr" },
     { paths: questionnairePath, lastmod: contentDates.questionnaire, xDefault: "fr" },
@@ -22,7 +22,7 @@ export const GET: APIRoute = async ({ site }) => {
     ...projects
       .filter((p) => cases[p.slug]?.status === "published")
       .map((p) => ({
-        paths: { fr: casePath("fr", caseSlug(p.slug)), en: casePath("en", caseSlug(p.slug)) },
+        paths: { fr: casePath("fr", caseSlug(p.slug)), en: casePath("en", caseSlug(p.slug)), it: casePath("it", caseSlug(p.slug)) },
         lastmod: contentDates.cases,
         xDefault: "fr" as Lang,
       })),
@@ -42,11 +42,13 @@ export const GET: APIRoute = async ({ site }) => {
       pages.push({ paths: { fr: postPath("fr", f.data.slug), en: postPath("en", e.data.slug) }, lastmod: (f.data.updated ?? f.data.date).toISOString().slice(0, 10), xDefault: "fr" });
     }
   }
+  // Each page lists every language it exists in (the blog has no Italian).
   const urls = pages.flatMap(({ paths, lastmod, xDefault }) => {
+    const present = langs.filter((l) => paths[l]);
     const alternates =
-      langs.map((l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${abs(paths[l])}"/>`).join("") +
-      `<xhtml:link rel="alternate" hreflang="x-default" href="${abs(paths[xDefault])}"/>`;
-    return langs.map((l) => `<url><loc>${abs(paths[l])}</loc><lastmod>${lastmod}</lastmod>${alternates}</url>`);
+      present.map((l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${abs(paths[l]!)}"/>`).join("") +
+      `<xhtml:link rel="alternate" hreflang="x-default" href="${abs(paths[xDefault]!)}"/>`;
+    return present.map((l) => `<url><loc>${abs(paths[l]!)}</loc><lastmod>${lastmod}</lastmod>${alternates}</url>`);
   });
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">

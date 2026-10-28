@@ -6,7 +6,7 @@
     return { ...event, url: url.href };
   } });
   document.cookie = "lang=; path=/; max-age=0; SameSite=Lax";
-  const lang = document.documentElement.lang === "en" ? "en" : "fr";
+  const lang = ["en", "it"].includes(document.documentElement.lang) ? document.documentElement.lang : "fr";
   const record = (event: string) => {
     if (navigator.doNotTrack === "1") return;
     fetch("/api/event/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event, lang }), keepalive: true }).catch(() => {});

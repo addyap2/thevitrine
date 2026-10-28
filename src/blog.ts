@@ -1,6 +1,6 @@
 // Blog helpers: posts per language, their translation, and reading time.
 import { getCollection, type CollectionEntry } from "astro:content";
-import type { Lang } from "./i18n";
+import type { BlogLang as Lang } from "./i18n";
 import projects from "./data/projects.json";
 
 export type Post = CollectionEntry<"blog">;

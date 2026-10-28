@@ -9,7 +9,7 @@
 import { checkToken, countConversion, limited, clientIp, isJson, greetingName } from "./_guard.js";
 import {
   C, SERIF, SANS, SITE, esc, clip, oneLine, isEmail, originOk, readJson, recipients, sender, send, submissionKey, phoneDigits,
-  documentHtml, header, button, buttons, eyebrow, footer, signature,
+  documentHtml, header, button, buttons, eyebrow, footer, signature, pickLang, HOME, SIGN_OFF, LANG_FR,
 } from "./_email.js";
 
 const MAX_BODY = 48 * 1024;      // bytes
@@ -22,10 +22,10 @@ const MIN_FILL_MS = 4000;        // faster than this is a bot
 const TEAM_SUMMARY = ["kind", "budget", "launch", "deadline", "goal", "features", "langs", "pages"];
 const CLIENT_SUMMARY = ["kind", "goal", "budget", "launch"];
 const SUMMARY_LABELS = {
-  kind: { fr: "Projet", en: "Project" }, budget: { fr: "Budget", en: "Budget" },
-  launch: { fr: "Mise en ligne souhaitée", en: "Hoped-for launch" }, deadline: { fr: "Échéance", en: "Deadline" },
-  goal: { fr: "Objectifs", en: "Goals" }, features: { fr: "Fonctionnalités", en: "Features" },
-  langs: { fr: "Langues", en: "Languages" }, pages: { fr: "Pages", en: "Pages" },
+  kind: { fr: "Projet", en: "Project", it: "Progetto" }, budget: { fr: "Budget", en: "Budget", it: "Budget" },
+  launch: { fr: "Mise en ligne souhaitée", en: "Hoped-for launch", it: "Messa online desiderata" }, deadline: { fr: "Échéance", en: "Deadline", it: "Scadenza" },
+  goal: { fr: "Objectifs", en: "Goals", it: "Obiettivi" }, features: { fr: "Fonctionnalités", en: "Features", it: "Funzionalità" },
+  langs: { fr: "Langues", en: "Languages", it: "Lingue" }, pages: { fr: "Pages", en: "Pages", it: "Pagine" },
 };
 
 function clean(body) {
@@ -42,7 +42,7 @@ function clean(body) {
     }).filter((it) => it.label),
   })).filter((s) => s.title && s.items.length);
   return {
-    lang: body.lang === "en" ? "en" : "fr",
+    lang: pickLang(body.lang),
     name: oneLine(body.name, 120),
     email: oneLine(body.email, 254),
     phone: oneLine(body.phone, 60),
@@ -74,7 +74,7 @@ function ownerEmail(d) {
   const pct = asked ? Math.round((answered / asked) * 100) : 0;
   const a = byId(d);
   const digits = phoneDigits(d.phone);
-  const replySubject = encodeURIComponent(d.lang === "en" ? "Your website project — The Vitrine" : "Votre projet de site — The Vitrine");
+  const replySubject = encodeURIComponent({ fr: "Votre projet de site — The Vitrine", en: "Your website project — The Vitrine", it: "Il tuo progetto di sito — The Vitrine" }[d.lang]);
   const first = greetingName(d.name) || d.name;
 
   const summary = TEAM_SUMMARY.filter((id) => a[id]).map((id) => [SUMMARY_LABELS[id].fr, a[id].value]);
@@ -97,7 +97,7 @@ function ownerEmail(d) {
   const body =
     header("Demande de devis") +
     `<tr><td class="px" style="padding:30px 36px 6px 36px">` +
-      eyebrow("Nouvelle demande · questionnaire en " + (d.lang === "en" ? "anglais" : "français")) +
+      eyebrow("Nouvelle demande · questionnaire en " + LANG_FR[d.lang]) +
       `<h1 class="h1" style="font-family:${SERIF};font-weight:400;font-size:30px;line-height:1.15;color:${C.night};margin:0 0 6px">${esc(d.name)}</h1>` +
       (d.company ? `<div style="font-family:${SERIF};font-style:italic;font-size:18px;color:${C.soft};margin:0 0 14px">${esc(d.company)}</div>` : "") +
       `<p style="font-family:${SANS};font-size:14px;line-height:1.6;color:${C.soft};margin:0 0 18px">` +
@@ -141,11 +141,11 @@ function ownerEmail(d) {
 }
 
 function clientEmail(d) {
-  const fr = d.lang !== "en";
   const first = esc(greetingName(d.name));
   const a = byId(d);
   const recap = CLIENT_SUMMARY.filter((id) => a[id]).map((id) => [SUMMARY_LABELS[id][d.lang], a[id].local || a[id].value]);
-  const T = fr ? {
+  const T = {
+    fr: {
     subject: "Nous avons bien reçu votre projet — The Vitrine",
     preview: "Merci ! Nous revenons vers vous très vite pour en parler.",
     label: "Demande reçue",
@@ -157,7 +157,9 @@ function clientEmail(d) {
     note: "Une précision à ajouter ? Répondez simplement à cet e-mail : il arrive à Antony et Julien.",
     work: "Voir nos réalisations", blog: "Lire nos conseils",
     foot: "Vous recevez cet e-mail parce que vous avez rempli le questionnaire projet sur thevitrine.fr.",
-  } : {
+    second: ["/blog/", "Lire nos conseils"],
+    },
+    en: {
     subject: "We've received your project — The Vitrine",
     preview: "Thank you! We'll be in touch very soon to talk it through.",
     label: "Request received",
@@ -169,7 +171,23 @@ function clientEmail(d) {
     note: "Want to add anything? Just reply to this email: it reaches both Antony and Julien.",
     work: "See our work", blog: "Read our articles",
     foot: "You're receiving this email because you filled in the project questionnaire on thevitrine.fr.",
-  };
+    second: ["/en/blog/", "Read our articles"],
+    },
+    it: {
+      subject: "Abbiamo ricevuto il tuo progetto — The Vitrine",
+      preview: "Grazie! Ti ricontattiamo al più presto per parlarne.",
+      label: "Richiesta ricevuta",
+      h1: first ? `Grazie, ${first}.` : "Grazie.",
+      intro: "Abbiamo ricevuto il tuo questionario e lo stiamo esaminando con attenzione. Ti ricontattiamo al più presto, prima per parlarne, poi con un preventivo chiaro.",
+      stepsTitle: "E adesso?",
+      steps: ["Esaminiamo il tuo progetto nel dettaglio.", "Ci confrontiamo con te per definire le tue esigenze.", "Ricevi un preventivo chiaro, senza sorprese."],
+      recapTitle: "La tua richiesta in breve",
+      note: "Vuoi aggiungere qualcosa? Rispondi semplicemente a questa e-mail: arriva ad Antony e Julien.",
+      work: "Guarda i nostri progetti", blog: "Domande frequenti",
+      foot: "Ricevi questa e-mail perché hai compilato il questionario di progetto su thevitrine.fr.",
+      second: ["/it/#faq", "Domande frequenti"],
+    },
+  }[d.lang];
 
   const stepRows = T.steps.map((s, i) =>
     `<tr><td width="40" valign="top" style="padding:0 0 12px 0">` +
@@ -192,7 +210,7 @@ function clientEmail(d) {
     (recap.length ? `<tr><td class="px" style="padding:24px 36px 0 36px">` + eyebrow(T.recapTitle, C.accent) + factGrid(recap) + `</td></tr>` : "") +
     `<tr><td class="px" style="padding:12px 36px 0 36px">` +
       `<p style="font-family:${SANS};font-size:14px;line-height:1.6;color:${C.soft};margin:0 0 22px">${T.note}</p>` +
-      buttons(button(`${SITE}${fr ? "/" : "/en/"}#work`, T.work), button(`${SITE}${fr ? "/blog/" : "/en/blog/"}`, T.blog, "ghost")) +
+      buttons(button(`${SITE}${HOME[d.lang]}#work`, T.work), button(`${SITE}${T.second[0]}`, T.second[1], "ghost")) +
     `</td></tr>` +
     `<tr><td class="px" style="padding:30px 36px 32px 36px">${signature(d.lang)}</td></tr>` +
     footer(d.lang, T.foot);
@@ -200,7 +218,7 @@ function clientEmail(d) {
   const text = [
     T.h1.replace(/&#39;/g, "'"), "", T.intro, "", T.stepsTitle, ...T.steps.map((s, i) => `${i + 1}. ${s}`),
     ...(recap.length ? ["", T.recapTitle, ...recap.map(([l, v]) => `- ${l} : ${v}`)] : []),
-    "", T.note, "", fr ? "À très vite," : "Speak soon,", "Antony Addy & Julien Bourgois", "The Vitrine", "", SITE + (fr ? "/" : "/en/"),
+    "", T.note, "", SIGN_OFF[d.lang], "Antony Addy & Julien Bourgois", "The Vitrine", "", SITE + HOME[d.lang],
   ].join("\n");
 
   return { subject: T.subject, html: documentHtml({ lang: d.lang, title: T.subject, preview: T.preview, body }), text };

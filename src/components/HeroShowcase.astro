@@ -6,43 +6,44 @@ interface Project { slug: string; title: string; url: string | null; maker: stri
 interface Props { lang: Lang; projects: Project[]; total: number }
 const { lang, projects, total } = Astro.props;
 const fr = lang === "fr", t = strings[lang];
+const L = (frText: string, enText: string, itText: string) => (lang === "fr" ? frText : lang === "en" ? enText : itText);
 const opening = ["ristorante-lola", "filton-athletic-fc", "planb-global-connect", "wall-street"];
 const heroProjects = projects.filter(p => p.slug !== "jan-stenborg").map(p => p.slug === "tandoor-global" ? projects.find(site => site.slug === "jan-stenborg") : p).filter((p): p is Project => !!p);
 const selected = [...opening.map(id => heroProjects.find(p => p.slug === id)), ...heroProjects.filter(p => !opening.includes(p.slug))].filter((p): p is Project => !!p?.image && !!p.url && p.slug !== "addy-sap-connect");
-const words = fr ? ["Votre plus belle", "vitrine."] : ["Your best", "shop window."];
+const words = L("Votre plus belle|vitrine.", "Your best|shop window.", "La tua più bella|vetrina.").split("|");
 ---
-<SiteHeader lang={lang} altHref={homePath[fr ? "en" : "fr"]} />
+<SiteHeader lang={lang} alternates={homePath} />
 <header class="showcase" data-showcase data-language={lang} data-view="desktop" data-paused="false" aria-labelledby="showcase-title">
-  <div class="ambience" aria-hidden="true"><span class="halo"></span><span class="coordinate b">{fr ? "THE VITRINE — ATELIER WEB" : "THE VITRINE — WEB ATELIER"}</span></div>
+  <div class="ambience" aria-hidden="true"><span class="halo"></span><span class="coordinate b">{L("THE VITRINE — ATELIER WEB", "THE VITRINE — WEB ATELIER", "THE VITRINE — ATELIER WEB")}</span></div>
   <div class="intro">
-    <p class="eyebrow arrival"><span class="signal" aria-hidden="true"></span>{fr ? "Création de sites web · Fréjus, Var & Côte d'Azur" : "Websites · French Riviera & United Kingdom"}</p>
+    <p class="eyebrow arrival"><span class="signal" aria-hidden="true"></span>{L("Création de sites web · Fréjus, Var & Côte d'Azur", "Websites · French Riviera & United Kingdom", "Siti web su misura · Costa Azzurra e Italia")}</p>
     <h1 id="showcase-title"><span class="word-line"><span>{words[0]}</span></span> <span class="word-line accent"><em>{words[1]}</em></span></h1>
     <div class="intro-bottom">
-      <p class="lede arrival">{fr ? "Nous sommes Antony et Julien. Votre projet mérite de se distinguer : nous créons des sites sur mesure, avec l'IA, du caractère et beaucoup d'attention." : "We're Antony and Julien. Your project deserves to stand out: we build bespoke websites with AI, character and a great deal of care."}</p>
-      <div class="actions arrival"><a class="project-cta" href={questionnairePath[lang]}>{t.heroCta2}<span aria-hidden="true">↗</span></a><a class="work-cta" href="#work">{fr ? "Explorer nos réalisations" : "Explore our work"}<span aria-hidden="true">↓</span></a></div>
+      <p class="lede arrival">{L("Nous sommes Antony et Julien. Votre projet mérite de se distinguer : nous créons des sites sur mesure, avec l'IA, du caractère et beaucoup d'attention.", "We're Antony and Julien. Your project deserves to stand out: we build bespoke websites with AI, character and a great deal of care.", "Siamo Antony e Julien. Il tuo progetto merita di distinguersi: creiamo siti su misura, con l'IA, carattere e tanta cura.")}</p>
+      <div class="actions arrival"><a class="project-cta" href={questionnairePath[lang]}>{t.heroCta2}<span aria-hidden="true">↗</span></a><a class="work-cta" href="#work">{L("Explorer nos réalisations", "Explore our work", "Esplora i nostri progetti")}<span aria-hidden="true">↓</span></a></div>
     </div>
   </div>
   <div class="exhibition" data-exhibition>
-    <div class="exhibit-top"><p><span class="signal" aria-hidden="true"></span>{fr ? "Du réel. Pas une maquette." : "Real websites. Not mockups."}</p><span class="collection">{fr ? "RÉALISATIONS" : "OUR WORK"} / <span data-project-count>01</span> / {String(selected.length).padStart(2,"0")}</span></div>
+    <div class="exhibit-top"><p><span class="signal" aria-hidden="true"></span>{L("Du réel. Pas une maquette.", "Real websites. Not mockups.", "Siti reali. Non prototipi.")}</p><span class="collection">{L("RÉALISATIONS", "OUR WORK", "PROGETTI")} / <span data-project-count>01</span> / {String(selected.length).padStart(2,"0")}</span></div>
     <div class="portal" data-portal>
       <div class="architecture" aria-hidden="true"><i class="rail left"></i><i class="rail right"></i><i class="lintel"></i><i class="base"></i><span class="cross top">+</span><span class="cross bottom">+</span><div class="orbit"></div></div>
       <div class="depth" data-depth>
         {selected.map((p,i) => <div class="project-scene" data-scene data-index={i} aria-hidden={i ? "true" : undefined} inert={i > 0}>
-          <a class="desktop-device" href={p.url!} target="_blank" rel="noopener" aria-label={`${p.title} — ${fr ? "visiter le site" : "visit website"}`}>
+          <a class="desktop-device" href={p.url!} target="_blank" rel="noopener" aria-label={`${p.title} — ${L("visiter le site", "visit website", "visita il sito")}`}>
             <div class="device-chrome" aria-hidden="true"><span class="traffic"><i></i><i></i><i></i></span><span>{new URL(p.url!).hostname.replace(/^www\./, "")}</span><span>↗</span></div>
             <img src={i === 0 ? src800(p.image!) : undefined} srcset={i === 0 ? srcset(p.image!) : undefined} data-src={src800(p.image!)} data-srcset={srcset(p.image!)} sizes="(min-width: 1100px) 760px, (min-width: 640px) 85vw, 92vw" width="1280" height="800" alt={t.shotAlt.replace("{title}",p.title).replace("{host}",new URL(p.url!).host)} fetchpriority={i === 0 ? "high" : undefined} loading={i ? "lazy" : "eager"} />
           </a>
           <a class="mobile-device" href={p.url!} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><span class="speaker"></span><img src={i === 0 ? screenshotSrc(`/shots/mobile/${p.slug}.webp`) : undefined} data-src={screenshotSrc(`/shots/mobile/${p.slug}.webp`)} width="390" height="844" alt="" loading={i ? "lazy" : "eager"} /><span class="home-indicator"></span></a>
         </div>)}
       </div>
-      <div class="view-controls" role="group" aria-label={fr ? "Présentation du site" : "Website presentation"}><button type="button" data-view-button="desktop" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="11" rx="2"/><path d="M7 18h6M10 14v4"/></svg>{fr ? "Grand écran" : "Desktop"}</button><button type="button" data-view-button="mobile" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="1" width="10" height="18" rx="2"/><path d="M9 16h2"/></svg>Mobile</button></div>
+      <div class="view-controls" role="group" aria-label={L("Présentation du site", "Website presentation", "Presentazione del sito")}><button type="button" data-view-button="desktop" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="11" rx="2"/><path d="M7 18h6M10 14v4"/></svg>{L("Grand écran", "Desktop", "Desktop")}</button><button type="button" data-view-button="mobile" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="1" width="10" height="18" rx="2"/><path d="M9 16h2"/></svg>Mobile</button></div>
     </div>
     <div class="exhibit-bottom">
-      <div class="project-title"><span class="small-label">{fr ? "À L'AFFICHE" : "IN THE WINDOW"}</span><strong class="sr-only" data-title>{selected[0]?.title}</strong><select data-project-picker aria-label={fr ? "Choisir une réalisation" : "Choose a project"}>{selected.map((p,i)=><option value={i}>{p.title}</option>)}</select><span class="project-maker">The Vitrine / {fr ? "Conception & développement" : "Design & development"}</span></div>
-      <div class="project-controls"><button type="button" data-previous aria-label={fr ? "Projet précédent" : "Previous project"}>←</button><button type="button" data-pause aria-pressed="false" aria-label={t.heroPause} data-pause-label={t.heroPause} data-play-label={t.heroPlay}><span data-pause-icon aria-hidden="true">Ⅱ</span></button><button type="button" data-next aria-label={fr ? "Projet suivant" : "Next project"}>→</button></div>
+      <div class="project-title"><span class="small-label">{L("À L'AFFICHE", "IN THE WINDOW", "IN VETRINA")}</span><strong class="sr-only" data-title>{selected[0]?.title}</strong><select data-project-picker aria-label={L("Choisir une réalisation", "Choose a project", "Scegli un progetto")}>{selected.map((p,i)=><option value={i}>{p.title}</option>)}</select><span class="project-maker">The Vitrine / {L("Conception & développement", "Design & development", "Progettazione e sviluppo")}</span></div>
+      <div class="project-controls"><button type="button" data-previous aria-label={L("Projet précédent", "Previous project", "Progetto precedente")}>←</button><button type="button" data-pause aria-pressed="false" aria-label={t.heroPause} data-pause-label={t.heroPause} data-play-label={t.heroPlay}><span data-pause-icon aria-hidden="true">Ⅱ</span></button><button type="button" data-next aria-label={L("Projet suivant", "Next project", "Progetto successivo")}>→</button></div>
     </div>
   </div>
-  <div class="signature"><p>{fr ? "Particuliers · Associations · Institutions · Entreprises" : "Individuals · Associations · Institutions · Businesses"}</p><a href="#work"><span class="signature-number">{total}</span> {fr ? "projets à découvrir" : "projects to explore"}<span aria-hidden="true">↘</span></a><p>{fr ? "Sans frontières. Dans vos langues." : "Without borders. In your languages."}</p></div>
+  <div class="signature"><p>{L("Particuliers · Associations · Institutions · Entreprises", "Individuals · Associations · Institutions · Businesses", "Privati · Associazioni · Istituzioni · Aziende")}</p><a href="#work"><span class="signature-number">{total}</span> {L("projets à découvrir", "projects to explore", "progetti da scoprire")}<span aria-hidden="true">↘</span></a><p>{L("Sans frontières. Dans vos langues.", "Without borders. In your languages.", "Senza confini. Nelle tue lingue.")}</p></div>
   <span class="sr-only" data-announcement role="status"></span>
   <script type="application/json" data-projects set:html={JSON.stringify(selected.map(p => ({title:p.title}))).replace(/</g,"\\u003c")} />
 </header>
@@ -114,9 +115,10 @@ const words = fr ? ["Votre plus belle", "vitrine."] : ["Your best", "shop window
       setLoading(false);
       if(!ready) {
         desiredIndex = index; picker.value = String(index); setPaused(true);
-        root.querySelector("[data-announcement]")!.textContent = document.documentElement.lang === "fr"
-          ? "L'aperçu n'a pas pu être chargé. Le projet précédent reste affiché. Réessayez ou choisissez un autre projet."
-          : "The preview could not load. The previous project is still displayed. Try again or choose another project.";
+        root.querySelector("[data-announcement]")!.textContent = ({
+          fr: "L'aperçu n'a pas pu être chargé. Le projet précédent reste affiché. Réessayez ou choisissez un autre projet.",
+          it: "Impossibile caricare l'anteprima. Resta visualizzato il progetto precedente. Riprova o scegli un altro progetto.",
+        } as Record<string, string>)[document.documentElement.lang] ?? "The preview could not load. The previous project is still displayed. Try again or choose another project.";
         return;
       }
       // Hover, focus or Pause during a pending automatic change cancels that change.

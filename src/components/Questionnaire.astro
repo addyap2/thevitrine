@@ -5,7 +5,7 @@
 import SubPage from "./SubPage.astro";
 import { UI } from "../devis";
 import { pageLd } from "../ld";
-import { homePath, questionnairePath, blogPath, type Lang } from "../i18n";
+import { homePath, questionnairePath, blogPath, tr, hasBlog, type Lang } from "../i18n";
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -13,7 +13,7 @@ const u = UI[lang];
 ---
 
 <SubPage lang={lang} title={u.title} description={u.description} paths={questionnairePath} current="project"
-  ld={pageLd({ site: Astro.site!, lang, path: questionnairePath[lang], name: lang === "fr" ? "Questionnaire projet" : "Project questionnaire", description: u.description })}>
+  ld={pageLd({ site: Astro.site!, lang, path: questionnairePath[lang], name: tr(lang, { fr: "Questionnaire projet", en: "Project questionnaire", it: "Questionario di progetto" }), description: u.description })}>
   <main class="dv" id="devis-main" tabindex="-1" data-lang={lang}>
     <div class="dv-wrap">
       <div class="dv-intro">
@@ -30,7 +30,7 @@ const u = UI[lang];
       <ol class="dv-progress" id="dv-progress" aria-label={u.steps}></ol>
       <p class="dv-restart-row"><button type="button" class="dv-restart" id="dv-restart" hidden>{u.restart}</button></p>
 
-      <p id="dv-fallback">{lang === "fr" ? "Si le formulaire ne s'affiche pas, écrivez-nous :" : "If the form does not appear, email us:"} <a href="mailto:antony@antonyaddy.com">antony@antonyaddy.com</a></p>
+      <p id="dv-fallback">{tr(lang, { fr: "Si le formulaire ne s'affiche pas, écrivez-nous :", en: "If the form does not appear, email us:", it: "Se il modulo non compare, scrivici:" })} <a href="mailto:antony@antonyaddy.com">antony@antonyaddy.com</a></p>
       <form hidden id="dv-form" class="dv-form" novalidate>
         <div id="dv-steps"></div>
 
@@ -57,7 +57,7 @@ const u = UI[lang];
         <p class="eyebrow">{u.doneEyebrow}</p>
         <h2 id="dv-done-title">{u.doneH}</h2>
         <p class="done-lead">{u.doneP}</p>
-        <p id="dv-confirmation-warning" hidden>{lang === "fr" ? "Votre demande a bien été transmise. L'e-mail de confirmation n'a pas pu être envoyé ; inutile de renvoyer le formulaire." : "Your request has reached us. The confirmation email could not be sent; there is no need to submit again."}</p>
+        <p id="dv-confirmation-warning" hidden>{tr(lang, { fr: "Votre demande a bien été transmise. L'e-mail de confirmation n'a pas pu être envoyé ; inutile de renvoyer le formulaire.", en: "Your request has reached us. The confirmation email could not be sent; there is no need to submit again.", it: "La tua richiesta ci è arrivata. Non è stato possibile inviare l'e-mail di conferma; non serve inviare di nuovo il modulo." })}</p>
           <p class="done-sent">{u.doneSentTo} <strong id="dv-sent-to"></strong>.</p>
         <div class="done-steps">
           <p class="done-steps-title">{u.doneStepsTitle}</p>
@@ -65,12 +65,12 @@ const u = UI[lang];
         </div>
         <div class="done-actions">
           <a class="btn primary" href={`${homePath[lang]}#work`}>{u.doneWork}</a>
-          <a class="btn ghost" href={blogPath[lang]}>{u.doneBlog}</a>
+          {hasBlog(lang) && <a class="btn ghost" href={blogPath[lang]}>{u.doneBlog}</a>}
         </div>
       </section>
 
       <p class="dv-alt">{u.alt} <a href={`${homePath[lang]}#contact`}>{u.altLink}</a>.</p>
-      <p class="dv-privacy">{lang === "fr" ? "Votre brouillon reste dans ce navigateur pendant 7 jours. Le bouton « Recommencer » permet de l'effacer." : "Your draft stays in this browser for 7 days. Use “Start again” to delete it."}</p>
+      <p class="dv-privacy">{tr(lang, { fr: "Votre brouillon reste dans ce navigateur pendant 7 jours. Le bouton « Recommencer » permet de l'effacer.", en: "Your draft stays in this browser for 7 days. Use “Start again” to delete it.", it: "La tua bozza resta in questo browser per 7 giorni. Usa «Ricomincia» per cancellarla." })}</p>
       <p class="dv-privacy">{u.privacy}</p>
     </div>
   </main>
@@ -80,7 +80,7 @@ const u = UI[lang];
   import { SCHEMA, UI, type Field, type Lang } from "../devis";
 
   const root = document.getElementById("devis-main")!;
-  const lang = (root.dataset.lang === "en" ? "en" : "fr") as Lang;
+  const lang = (root.dataset.lang === "en" || root.dataset.lang === "it" ? root.dataset.lang : "fr") as Lang;
   const u = (key: keyof (typeof UI)["fr"]) => UI[lang][key];
   const LS_DRAFT = "vitrine-devis-draft";
   let current = 0;

@@ -4,7 +4,7 @@ import ClassicHero from "./Hero.astro";
 import ShowcaseHero from "./HeroShowcase.astro";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
-import { strings, homePath, legalPath, blogPath, questionnairePath, contactPath, langs, type Lang } from "../i18n";
+import { strings, homePath, legalPath, blogPath, questionnairePath, contactPath, langs, langNames, tr, hasBlog as langHasBlog, type Lang } from "../i18n";
 import { feedPath } from "../rss";
 import { postsFor, isPublished } from "../blog";
 import { spans } from "../wide";
@@ -24,10 +24,10 @@ const t = strings[lang];
 
 // One section per category, in the order overrides.json lists them; anything
 // uncategorised (a freshly tagged repo) lands in "More" until it gets one.
-const sections = [...categories, { id: "more", label: { en: strings.en.more, fr: strings.fr.more } }]
+const sections = [...categories, { id: "more", label: { en: strings.en.more, fr: strings.fr.more, it: strings.it.more } }]
   .map((c) => ({
     id: c.id,
-    label: c.label[lang],
+    label: (c.label as Record<Lang, string>)[lang],
     projects: projects.filter((p) =>
       c.id === "more" ? !categories.some((k) => k.id === p.category) : p.category === c.id,
     ),
@@ -46,13 +46,13 @@ const missing = missingBusinessFields();
 if (missing.length) console.warn(`[business] Placeholders left empty in src/data/business.ts: ${missing.join(", ")}`);
 const priceLine =
   priceFrom !== null && timescale
-    ? t.servicesPrice.replace("{timescale}", timescale[lang]).replace("{price}", priceFrom.toLocaleString(lang === "fr" ? "fr-FR" : "en-GB"))
+    ? t.servicesPrice.replace("{timescale}", timescale[lang]).replace("{price}", priceFrom.toLocaleString(tr(lang, { fr: "fr-FR", en: "en-GB", it: "it-IT" })))
     : null;
 // FAQ: only questions with an answer are shown (the rest are placeholders).
 const faqShown = faq.filter((f) => f.a !== null).map((f) => ({ id: f.id, q: f.q[lang], a: f.a![lang] }));
 const faqMissing = missingFaqAnswers();
 // The blog is linked from the homepage once it has at least one published article.
-const hasBlog = (await postsFor(lang)).some(isPublished);
+const hasBlog = langHasBlog(lang) && (await postsFor(lang)).some(isPublished);
 if (faqMissing.length) console.warn(`[faq] Questions hidden until answered in src/data/faq.ts: ${faqMissing.join(", ")}`);
 const services = [
   [t.servicesWhoTitle, t.servicesWho],
@@ -81,7 +81,7 @@ const ld = {
       logo: { "@type": "ImageObject", url: abs("/icon-512.png"), width: 512, height: 512 },
       image: ogImage.href,
       description,
-      knowsLanguage: ["fr", "en"],
+      knowsLanguage: ["fr", "en", "it"],
       areaServed,
       founder: [{ "@id": id.antony }, { "@id": id.julien }],
       ...(profiles.length ? { sameAs: profiles } : {}),
@@ -156,8 +156,8 @@ const ld = {
     <meta property="og:title" content={t.title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content={lang === "fr" ? "fr_FR" : "en_GB"} />
-    <meta property="og:locale:alternate" content={lang === "fr" ? "en_GB" : "fr_FR"} />
+    <meta property="og:locale" content={langNames[lang].locale} />
+    {langs.filter((l) => l !== lang).map((l) => <meta property="og:locale:alternate" content={langNames[l].locale} />)}
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -167,7 +167,7 @@ const ld = {
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <link rel="alternate" type="application/rss+xml" title={`${t.blogHeading} · The Vitrine`} href={feedPath[lang]} />
+    {langHasBlog(lang) && <link rel="alternate" type="application/rss+xml" title={`${t.blogHeading} · The Vitrine`} href={feedPath[lang]} />}
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
     <Font cssVariable="--font-fraunces" preload={[{ style: "normal", subset: "latin" }]} />
     <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />
@@ -185,7 +185,7 @@ const ld = {
           <nav class="filters" aria-label={t.filterLabel}>
             <div class="filters-top">
               <div class="bar-end">
-                <p class="count" aria-live="polite" data-one={t.projectOne} data-many={t.projectMany}>
+                <p class="count" aria-live="polite" data-one={t.projectOne} data-many={t.projectMany} data-selected={tr(lang, { fr: "projets sélectionnés", en: "selected projects", it: "progetti selezionati" })}>
                   <span id="count">{projects.length}</span> <span id="count-word">{plural(projects.length)}</span>
                 </p>
                 <a class="bar-cta" href={questionnairePath[lang]}><span class="long">{t.heroCta2}</span><span class="short">{t.barCta}</span> <span aria-hidden="true">↓</span></a>
@@ -200,8 +200,8 @@ const ld = {
             )}
           </nav>
           <div class="empty" id="filter-empty" hidden role="status">
-            <p>{lang === "fr" ? "Aucune réalisation ne correspond à ces filtres." : "No projects match these filters."}</p>
-            <button type="button" id="filter-reset">{lang === "fr" ? "Voir toutes les réalisations" : "Show all projects"}</button>
+            <p>{tr(lang, { fr: "Aucune réalisation ne correspond à ces filtres.", en: "No projects match these filters.", it: "Nessun progetto corrisponde a questi filtri." })}</p>
+            <button type="button" id="filter-reset">{tr(lang, { fr: "Voir toutes les réalisations", en: "Show all projects", it: "Mostra tutti i progetti" })}</button>
           </div>
           {sections.map((s, si) => (
             <section class="category" data-category={s.id} aria-labelledby={`cat-${s.id}`}>
@@ -215,7 +215,7 @@ const ld = {
               </div>
             </section>
           ))}
-          <div class="work-more" hidden id="work-more"><p>{lang === "fr" ? "Une sélection de nos réalisations. Explorez tout le portfolio ou choisissez une catégorie." : "A selection of our work. Explore the full portfolio or choose a category."}</p><button type="button" id="work-expand">{lang === "fr" ? `Voir les ${projects.length} réalisations` : `See all ${projects.length} projects`}</button></div>
+          <div class="work-more" hidden id="work-more"><p>{tr(lang, { fr: "Une sélection de nos réalisations. Explorez tout le portfolio ou choisissez une catégorie.", en: "A selection of our work. Explore the full portfolio or choose a category.", it: "Una selezione dei nostri progetti. Esplora tutto il portfolio o scegli una categoria." })}</p><button type="button" id="work-expand">{tr(lang, { fr: `Voir les ${projects.length} réalisations`, en: `See all ${projects.length} projects`, it: `Vedi tutti i ${projects.length} progetti` })}</button></div>
         </>
       )}
       </div>
@@ -286,7 +286,7 @@ const ld = {
       <p class="small" data-reveal>
         <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
         <span class="footer-links">
-          {hasBlog && <a href={blogPath[lang]}>{t.blogName}</a>}
+          {hasBlog && langHasBlog(lang) && <a href={blogPath[lang]}>{t.blogName}</a>}
           <a href={legalPath[lang]}>{t.legalLink}</a>
         </span>
       </p>
@@ -366,7 +366,7 @@ const ld = {
           void count.offsetWidth;
           count.classList.add("tick");
         }
-        if (countWord && countBox) countWord.textContent = !expanded ? (root.lang === "fr" ? "projets sélectionnés" : "selected projects") : (shown === 1 ? countBox.dataset.one : countBox.dataset.many) ?? "";
+        if (countWord && countBox) countWord.textContent = !expanded ? countBox.dataset.selected : (shown === 1 ? countBox.dataset.one : countBox.dataset.many) ?? "";
       };
 
       const css = (name: string) => getComputedStyle(root).getPropertyValue(name).trim();

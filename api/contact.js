@@ -5,7 +5,7 @@
 import { checkToken, countConversion, limited, clientIp, isJson, greetingName, countLinks } from "./_guard.js";
 import {
   C, SERIF, SANS, SITE, esc, clip, oneLine, isEmail, originOk, readJson, recipients, sender, send, submissionKey, phoneDigits,
-  documentHtml, header, button, buttons, eyebrow, footer, signature,
+  documentHtml, header, button, buttons, eyebrow, footer, signature, pickLang, HOME, QUOTE, SIGN_OFF, LANG_FR,
 } from "./_email.js";
 
 const MAX_BODY = 16 * 1024;      // bytes
@@ -15,7 +15,7 @@ const MAX_LINKS = 5;             // more links than this in a message is spam
 
 function clean(body) {
   return {
-    lang: body.lang === "en" ? "en" : "fr",
+    lang: pickLang(body.lang),
     name: oneLine(body.name, 120),
     email: oneLine(body.email, 254),
     phone: oneLine(body.phone, 60),
@@ -32,11 +32,11 @@ const quote = (text) =>
 function ownerEmail(d) {
   const digits = phoneDigits(d.phone);
   const first = greetingName(d.name) || d.name;
-  const replySubject = encodeURIComponent(d.lang === "en" ? "Your message — The Vitrine" : "Votre message — The Vitrine");
+  const replySubject = encodeURIComponent({ fr: "Votre message — The Vitrine", en: "Your message — The Vitrine", it: "Il tuo messaggio — The Vitrine" }[d.lang]);
   const body =
     header("Nouveau message") +
     `<tr><td class="px" style="padding:30px 36px 6px 36px">` +
-      eyebrow("Formulaire de contact · en " + (d.lang === "en" ? "anglais" : "français")) +
+      eyebrow("Formulaire de contact · en " + LANG_FR[d.lang]) +
       `<h1 class="h1" style="font-family:${SERIF};font-weight:400;font-size:30px;line-height:1.15;color:${C.night};margin:0 0 10px">${esc(d.name)}</h1>` +
       `<p style="font-family:${SANS};font-size:14px;line-height:1.6;color:${C.soft};margin:0 0 18px">` +
         `<a href="mailto:${esc(d.email)}" style="color:${C.night};font-weight:600;text-decoration:none">${esc(d.email)}</a>` +
@@ -63,9 +63,9 @@ function ownerEmail(d) {
 }
 
 function clientEmail(d) {
-  const fr = d.lang !== "en";
   const first = esc(greetingName(d.name));
-  const T = fr ? {
+  const T = {
+    fr: {
     subject: "Nous avons bien reçu votre message — The Vitrine",
     preview: "Merci ! Nous vous répondons très vite.",
     label: "Message reçu",
@@ -75,7 +75,8 @@ function clientEmail(d) {
     project: "Un projet de site ? Notre questionnaire nous aide à vous préparer un devis clair.",
     quote: "Décrire votre projet", work: "Voir nos réalisations",
     foot: "Vous recevez cet e-mail parce que vous nous avez écrit depuis thevitrine.fr.",
-  } : {
+    },
+    en: {
     subject: "We've received your message — The Vitrine",
     preview: "Thank you! We'll reply very soon.",
     label: "Message received",
@@ -85,7 +86,19 @@ function clientEmail(d) {
     project: "Planning a website? Our questionnaire helps us prepare a clear quote for you.",
     quote: "Describe your project", work: "See our work",
     foot: "You're receiving this email because you wrote to us from thevitrine.fr.",
-  };
+    },
+    it: {
+      subject: "Abbiamo ricevuto il tuo messaggio — The Vitrine",
+      preview: "Grazie! Ti rispondiamo al più presto.",
+      label: "Messaggio ricevuto",
+      h1: first ? `Grazie, ${first}.` : "Grazie.",
+      intro: "Abbiamo ricevuto il tuo messaggio. Ti rispondiamo al più presto.",
+      copy: "Il tuo messaggio",
+      project: "Pensi a un sito? Il nostro questionario ci aiuta a prepararti un preventivo chiaro.",
+      quote: "Descrivi il tuo progetto", work: "Guarda i nostri progetti",
+      foot: "Ricevi questa e-mail perché ci hai scritto da thevitrine.fr.",
+    },
+  }[d.lang];
   const body =
     header(T.label) +
     `<tr><td class="px" style="padding:34px 36px 4px 36px">` +
@@ -96,11 +109,11 @@ function clientEmail(d) {
     `<tr><td class="px" style="padding:0 36px">` + eyebrow(T.copy, C.night) + quote(d.message) + `</td></tr>` +
     `<tr><td class="px" style="padding:24px 36px 0 36px">` +
       `<p style="font-family:${SANS};font-size:14px;line-height:1.6;color:${C.soft};margin:0 0 18px">${T.project}</p>` +
-      buttons(button(`${SITE}${fr ? "/devis/" : "/en/quote/"}`, T.quote), button(`${SITE}${fr ? "/" : "/en/"}#work`, T.work, "ghost")) +
+      buttons(button(`${SITE}${QUOTE[d.lang]}`, T.quote), button(`${SITE}${HOME[d.lang]}#work`, T.work, "ghost")) +
     `</td></tr>` +
     `<tr><td class="px" style="padding:30px 36px 32px 36px">${signature(d.lang)}</td></tr>` +
     footer(d.lang, T.foot);
-  const text = [T.h1.replace(/&#39;/g, "'"), "", T.intro, "", `${T.copy} :`, d.message, "", fr ? "À très vite," : "Speak soon,", "Antony Addy & Julien Bourgois", "The Vitrine", SITE].join("\n");
+  const text = [T.h1.replace(/&#39;/g, "'"), "", T.intro, "", `${T.copy} :`, d.message, "", SIGN_OFF[d.lang], "Antony Addy & Julien Bourgois", "The Vitrine", SITE].join("\n");
   return { subject: T.subject, html: documentHtml({ lang: d.lang, title: T.subject, preview: T.preview, body }), text };
 }
 

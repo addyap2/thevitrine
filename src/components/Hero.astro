@@ -31,7 +31,7 @@ const host = (url: string) => new URL(url).host.replace(/^www\./, "");
 const slotOf = (i: number) => (i < 3 ? String(i) : "hidden");
 ---
 
-<SiteHeader lang={lang} altHref={homePath[other]} />
+<SiteHeader lang={lang} alternates={homePath} />
 <header class="hero">
   <div class="sky" aria-hidden="true"></div>
   <div class="beam" aria-hidden="true"></div>
