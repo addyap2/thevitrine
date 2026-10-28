@@ -700,6 +700,37 @@ export const cases: Record<string, CaseStudy> = {
       en: "A plain, practical tool designed for everyday use. Because it holds learners' data, only the sign-in page is public. The tool is still being developed.",
     },
   },
+  "jan-stenborg": {
+    status: "published",
+    seoDescription: { fr: "Le site en suédois et en anglais du romancier Jan Stenborg : sa trilogie viking, ses dédicaces et son parcours, avec des liens pour lire ou écouter ses livres.", en: "The Swedish and English site of novelist Jan Stenborg: his Viking-age trilogy, book signings and story, with links to read or listen to his books." },
+    place: { fr: "Stockholm (Suède) et Côte d'Azur", en: "Stockholm (Sweden) and the French Riviera" },
+    client: {
+      fr: "Jan Stenborg est un romancier suédois indépendant, né à Stockholm en 1955 et installé sur la Côte d'Azur. Il écrit des romans d'aventure historiques à l'époque viking : la trilogie d'Erik de Birka, avec Stridslarm (2017), Jagad (2021) et Kungablod, qui la conclut. Avant d'écrire, il avait fondé Stonecastle, une entreprise de pedalboards et d'accessoires pour guitare vendus dans une dizaine de pays.",
+      en: "Jan Stenborg is an independent Swedish novelist, born in Stockholm in 1955 and now living on the French Riviera. He writes historical adventure novels set in the Viking age: the trilogy of Erik of Birka, with Stridslarm (2017), Jagad (2021) and Kungablod, which completes it. Before writing, he founded Stonecastle, a company making pedalboards and guitar accessories sold in around ten countries.",
+    },
+    built: {
+      fr: [
+        "Un site en suédois et en anglais, avec un bouton pour changer de langue sur chaque page.",
+        "Un accueil consacré au nouveau roman, Kungablod, avec la prochaine séance de dédicaces.",
+        "La trilogie présentée livre par livre : année, éditeur, nombre de pages, résumé, extraits du sommaire et liens pour acheter ou écouter (Adlibris, Bokus, Storytel), avec un extrait audio gratuit.",
+        "Les événements, avec ajout au calendrier, plan, partage et affiche à télécharger.",
+        "Le parcours de Jan, un blog et une FAQ.",
+        "Le contact par e-mail et le lien vers Facebook.",
+      ],
+      en: [
+        "A site in Swedish and English, with a language switch on every page.",
+        "A home page devoted to the new novel, Kungablod, with the next book signing.",
+        "The trilogy presented book by book: year, publisher, page count, synopsis, highlights from the contents and links to buy or listen (Adlibris, Bokus, Storytel), with a free audio sample.",
+        "Events, with add-to-calendar, map, sharing and a downloadable poster.",
+        "Jan's story, a blog and an FAQ.",
+        "Contact by email and a link to Facebook.",
+      ],
+    },
+    design: {
+      fr: "Un univers sombre et doré, dans l'esprit des couvertures : la nouvelle couverture est présentée comme un objet encadré, et les grandes parties du site sont numérotées en chiffres romains, comme les chapitres d'un livre. Le ton est celui d'une saga, sans jamais cacher l'essentiel : le prochain rendez-vous et où trouver les livres.",
+      en: "A dark, gold world in the spirit of the covers: the new cover is shown as a framed object, and the site's main sections are numbered in Roman numerals, like the chapters of a book. The tone is that of a saga, without ever hiding what matters: the next event and where to find the books.",
+    },
+  },
 };
 
 // Published URLs are permanent even when a project changes its display title.
@@ -727,7 +758,8 @@ const publishedSlugs: Record<string, string> = {
   "addys-english-pro": "antony-addy",
   "addy-genai-training": "formation-ia-generative",
   "addy-sap-connect": "sap-mm-training",
-  "student-mark-tracker": "student-mark-tracker"
+  "student-mark-tracker": "student-mark-tracker",
+  "jan-stenborg": "jan-stenborg"
 };
 export const caseSlug = (projectId: string) => {
   const slug = publishedSlugs[projectId];
