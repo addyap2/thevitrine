@@ -4,12 +4,14 @@ import ClassicHero from "./Hero.astro";
 import ShowcaseHero from "./HeroShowcase.astro";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
-import { strings, homePath, legalPath, blogPath, questionnairePath, contactPath, langs, langNames, tr, hasBlog as langHasBlog, type Lang } from "../i18n";
+import { strings, homePath, legalPath, blogPath, postPath, casePath, questionnairePath, contactPath, langs, langNames, tr, hasBlog as langHasBlog, type Lang } from "../i18n";
 import { feedPath } from "../rss";
 import { postsFor, isPublished } from "../blog";
 import { spans } from "../wide";
 import { priceFrom, timescale, profiles, whatsapp, missingBusinessFields } from "../data/business";
 import { faq, missingFaqAnswers } from "../data/faq";
+import { offers, offerPath } from "../data/offers";
+import { caseSlug } from "../data/cases";
 import "../styles/motion.css";
 import { Font } from "astro:assets";
 
@@ -54,6 +56,28 @@ const faqMissing = missingFaqAnswers();
 // The blog is linked from the homepage once it has at least one published article.
 const hasBlog = langHasBlog(lang) && (await postsFor(lang)).some(isPublished);
 if (faqMissing.length) console.warn(`[faq] Questions hidden until answered in src/data/faq.ts: ${faqMissing.join(", ")}`);
+// Service and area pages (src/data/offers.ts), linked from the services section.
+const serviceOffers = offers.filter((o) => o.kind === "service");
+const zoneOffers = offers.filter((o) => o.kind === "zone");
+// "Votre métier, votre site": one card per kind of client, each pointing to a
+// live example and, in French and English, to the matching blog article.
+const posts = langHasBlog(lang) ? (await postsFor(lang)).filter(isPublished) : [];
+const audiences = [
+  { title: { fr: "Restaurants & bars", en: "Restaurants & bars", it: "Ristoranti & bar" }, line: { fr: "Carte, horaires, réservation : tout ce qui fait venir.", en: "Menu, hours, booking: everything that brings people in.", it: "Menu, orari, prenotazioni: tutto ciò che fa venire." }, example: "wall-street", blog: "restaurant-website" },
+  { title: { fr: "Artisans & bâtiment", en: "Tradespeople & builders", it: "Artigiani & edilizia" }, line: { fr: "Vos chantiers en photos, et le devis en un geste.", en: "Your work in photos, and a quote in one tap.", it: "I tuoi lavori in foto, e il preventivo in un gesto." }, example: "E-Mconcept", blog: "tradespeople-website" },
+  { title: { fr: "Bien-être & santé", en: "Wellbeing & health", it: "Benessere & salute" }, line: { fr: "Rassurer avant la première séance, réserver sans attendre.", en: "Reassure before the first session, book without waiting.", it: "Rassicurare prima della prima seduta, prenotare senza attese." }, example: "stephanie", blog: "wellbeing-website" },
+  { title: { fr: "Clubs & associations", en: "Clubs & associations", it: "Club & associazioni" }, line: { fr: "Le prochain match, la prochaine soirée, l'adhésion.", en: "The next match, the next event, membership.", it: "La prossima partita, la prossima serata, l'iscrizione." }, example: "filton-athletic-fc", blog: "club-website" },
+  { title: { fr: "Formateurs", en: "Trainers", it: "Formatori" }, line: { fr: "Des parcours clairs, et des outils pour vos stagiaires.", en: "Clear paths, and tools for your learners.", it: "Percorsi chiari, e strumenti per i tuoi allievi." }, example: "addy-genai-training", blog: "training-website" },
+  { title: { fr: "Auteurs", en: "Authors", it: "Autori" }, line: { fr: "Vos livres, vos dédicaces, vos lecteurs.", en: "Your books, your signings, your readers.", it: "I tuoi libri, le tue firme copie, i tuoi lettori." }, example: "jan-stenborg", blog: null },
+].map((a) => {
+  const project = projects.find((p) => p.slug === a.example)!;
+  const post = a.blog ? posts.find((p) => p.data.key === a.blog) : undefined;
+  return {
+    title: a.title[lang], line: a.line[lang],
+    example: { title: project.title, href: casePath(lang, caseSlug(project.slug)) },
+    post: post ? postPath(lang as "fr" | "en", post.data.slug) : null,
+  };
+});
 const services = [
   [t.servicesWhoTitle, t.servicesWho],
   [t.servicesWhatTitle, t.servicesWhat],
@@ -232,6 +256,30 @@ const ld = {
           ))}
         </div>
         {priceLine && <p class="services-price" data-reveal>{priceLine}</p>}
+        <nav class="offer-links" aria-label={tr(lang, { fr: "Prestations et zones", en: "Services and areas", it: "Servizi e zone" })} data-reveal>
+          <div>
+            <h3>{tr(lang, { fr: "Nos prestations", en: "Our services", it: "I nostri servizi" })}</h3>
+            <ul>{serviceOffers.map((o) => <li><a href={offerPath(lang, o)}>{o.nav[lang]}</a></li>)}</ul>
+          </div>
+          <div>
+            <h3>{tr(lang, { fr: "Où nous intervenons", en: "Where we work", it: "Dove lavoriamo" })}</h3>
+            <ul>{zoneOffers.map((o) => <li><a href={offerPath(lang, o)}>{o.nav[lang]}</a></li>)}</ul>
+          </div>
+        </nav>
+      </section>
+
+      <section class="audiences" id="pour-qui" aria-labelledby="audiences-title">
+        <h2 id="audiences-title" data-reveal="heading">{tr(lang, { fr: "Votre métier, votre site", en: "Your trade, your website", it: "Il tuo mestiere, il tuo sito" })}</h2>
+        <div class="audience-grid">
+          {audiences.map((a) => (
+            <div class="audience" data-reveal>
+              <h3>{a.title}</h3>
+              <p>{a.line}</p>
+              <a class="audience-example" href={a.example.href}>{a.example.title} <span aria-hidden="true">→</span></a>
+              {a.post && <a class="audience-post" href={a.post}>{tr(lang, { fr: "Nos conseils", en: "Our advice", it: "I nostri consigli" })}</a>}
+            </div>
+          ))}
+        </div>
       </section>
 
       <section class="faq" id="faq" aria-labelledby="faq-title">
@@ -683,7 +731,7 @@ const ld = {
   .empty { padding: 3rem 0; color: var(--ink-soft); }
   /* What we do: plain, scannable facts between the work and the contact. */
   .services { margin-top: 6rem; padding-top: 3rem; border-top: 1px solid var(--line); }
-  .services h2 {
+  .services h2, .audiences h2 {
     font-family: var(--display);
     font-weight: 500;
     font-size: clamp(1.8rem, 4vw, 2.6rem);
@@ -769,6 +817,21 @@ const ld = {
     .qa::details-content { transition: none; }
   }
   .services-price { margin: 2.5rem 0 0; font-family: var(--display); font-size: 1.3rem; color: var(--ink); }
+  .offer-links { display: grid; gap: 1.5rem 3rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); max-width: 56rem; margin-top: 3rem; }
+  .offer-links h3 { margin: 0 0 0.8rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .offer-links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .offer-links a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 1rem; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); color: var(--ink); font-size: 0.92rem; text-decoration: none; transition: border-color var(--dur-micro) var(--ease-hover), color var(--dur-micro) var(--ease-hover); }
+  .offer-links a:hover { border-color: var(--accent); color: var(--accent); }
+  .audiences { margin-top: 6rem; padding-top: 3rem; border-top: 1px solid var(--line); }
+  .audience-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); margin-top: 2rem; }
+  @media (min-width: 900px) { .audience-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .audience { display: flex; flex-direction: column; gap: 0.5rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+  .audience h3 { margin: 0; font-family: var(--display); font-weight: 500; font-size: 1.35rem; letter-spacing: -0.01em; }
+  .audience p { margin: 0 0 0.6rem; color: var(--ink-soft); line-height: 1.55; }
+  .audience-example { margin-top: auto; font-weight: 600; color: var(--brand); text-decoration: none; }
+  .audience-example:hover { color: var(--accent); }
+  .audience-post { font-size: 0.88rem; color: var(--ink-soft); text-underline-offset: 3px; }
+  .audience-post:hover { color: var(--accent); }
   /* Contact: you step back out into the night you came in from. It mirrors the
      hero (sky, lamp gradient, glass), so the visit has a beginning and an end. */
   .contact {

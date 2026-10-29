@@ -5,6 +5,7 @@ import type { APIRoute } from "astro";
 import { homePath, legalPath, casePath, blogPath, postPath, questionnairePath, contactPath, aboutPath, langs, type Lang } from "../i18n";
 import { postsFor, isPublished } from "../blog";
 import { cases, caseSlug } from "../data/cases";
+import { offers, offerPath } from "../data/offers";
 import { contentDates } from "../data/contentDates";
 import projects from "../data/projects.json";
 import { updated as legalUpdated } from "../data/legal";
@@ -18,6 +19,8 @@ export const GET: APIRoute = async ({ site }) => {
     { paths: questionnairePath, lastmod: contentDates.questionnaire, xDefault: "fr" },
     { paths: contactPath, lastmod: contentDates.contact, xDefault: "fr" },
     { paths: aboutPath, lastmod: contentDates.about, xDefault: "fr" },
+    // Service and area pages.
+    ...offers.map((o) => ({ paths: { fr: offerPath("fr", o), en: offerPath("en", o), it: offerPath("it", o) }, lastmod: contentDates.offers, xDefault: "fr" as Lang })),
     // Case studies count only once published (drafts are noindex).
     ...projects
       .filter((p) => cases[p.slug]?.status === "published")

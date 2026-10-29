@@ -15,7 +15,7 @@
     if (!(e.target instanceof Element)) return;
     const a = e.target.closest<HTMLAnchorElement>("a[href]");
     if (!a) return;
-    if (a.hasAttribute("data-wa")) record("whatsapp_click");
+    if (a.hasAttribute("data-wa") || a.hasAttribute("data-qwa")) record("whatsapp_click");
     else if (/^\/(devis|en\/quote)\/?$/.test(new URL(a.href).pathname)) record("quote_click");
     else if (/^\/(contact|en\/contact)\/?$/.test(new URL(a.href).pathname)) record("contact_click");
   });

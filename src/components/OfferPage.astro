@@ -1,0 +1,182 @@
+---
+// One service or area page (src/data/offers.ts), in one language: heading,
+// what we do, a few words, example sites, the matching FAQ answers and links
+// to the other pages.
+import SubPage from "./SubPage.astro";
+import projects from "../data/projects.json";
+import { offers, offerPath, type Offer } from "../data/offers";
+import { faq } from "../data/faq";
+import { caseSlug } from "../data/cases";
+import { strings, homePath, questionnairePath, contactPath, casePath, postPath, hasBlog, tr, type Lang } from "../i18n";
+import { postsFor, isPublished } from "../blog";
+import { srcset, src800 } from "../img";
+
+interface Props { lang: Lang; offer: Offer }
+const { lang, offer } = Astro.props;
+const t = strings[lang];
+const L = (fr: string, en: string, it: string) => tr(lang, { fr, en, it });
+const abs = (path: string) => new URL(path, Astro.site).href;
+const paths = { fr: offerPath("fr", offer), en: offerPath("en", offer), it: offerPath("it", offer) };
+const examples = offer.cases.map((slug) => projects.find((p) => p.slug === slug)).filter((p) => !!p) as typeof projects;
+const answers = offer.faq
+  .map((id) => faq.find((f) => f.id === id))
+  .filter((f) => f && f.a)
+  .map((f) => ({ q: f!.q[lang], a: f!.a![lang] }));
+const article = offer.blog && hasBlog(lang)
+  ? (await postsFor(lang)).find((p) => p.data.key === offer.blog && isPublished(p))
+  : undefined;
+const services = offers.filter((o) => o.kind === "service");
+const zones = offers.filter((o) => o.kind === "zone");
+const kindLabel = offer.kind === "service" ? L("Prestation", "Service", "Servizio") : L("Zone d'intervention", "Where we work", "Zona servita");
+
+const ld = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Service",
+      "@id": `${abs(paths[lang])}#service`,
+      name: offer.title[lang],
+      description: offer.description[lang],
+      url: abs(paths[lang]),
+      inLanguage: lang,
+      provider: { "@id": abs("/#organization") },
+      ...(offer.kind === "zone" ? { areaServed: offer.nav[lang] } : { serviceType: offer.nav[lang] }),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "The Vitrine", item: abs(homePath[lang]) },
+        { "@type": "ListItem", position: 2, name: offer.nav[lang], item: abs(paths[lang]) },
+      ],
+    },
+    ...(answers.length
+      ? [{ "@type": "FAQPage", "@id": `${abs(paths[lang])}#faq`, inLanguage: lang, mainEntity: answers.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }]
+      : []),
+  ],
+};
+---
+
+<SubPage lang={lang} title={`${offer.seoTitle[lang]} | The Vitrine`} description={offer.description[lang]} paths={paths} ld={ld}>
+  <main id="main-content" tabindex="-1" class="wrap offer">
+    <nav class="crumbs" aria-label={L("Fil d'Ariane", "Breadcrumb", "Percorso")}>
+      <a href={homePath[lang]}>The Vitrine</a> <span aria-hidden="true">/</span> <span aria-current="page">{offer.nav[lang]}</span>
+    </nav>
+
+    <header class="head">
+      <p class="eyebrow">{kindLabel}</p>
+      <h1>{offer.title[lang]}</h1>
+      <p class="lede">{offer.intro[lang]}</p>
+      <div class="ctas">
+        <a class="btn primary" href={questionnairePath[lang]}>{t.heroCta2} <span aria-hidden="true">↗</span></a>
+        <a class="btn ghost" href={contactPath[lang]}>{t.msgCta}</a>
+      </div>
+    </header>
+
+    <section class="points" aria-labelledby="points-title">
+      <h2 id="points-title">{L("Ce que nous faisons", "What we do", "Cosa facciamo")}</h2>
+      <ul>{offer.points[lang].map((p) => <li>{p}</li>)}</ul>
+    </section>
+
+    {offer.sections.map((s) => (
+      <section class="text">
+        <h2>{s.h[lang]}</h2>
+        <p>{s.p[lang]}</p>
+      </section>
+    ))}
+
+    {article && (
+      <p class="read">
+        {L("À lire aussi", "Read also", "Da leggere")} : <a href={postPath(lang as "fr" | "en", article.data.slug)}>{article.data.title}</a>
+      </p>
+    )}
+
+    {examples.length > 0 && (
+      <section class="examples" aria-labelledby="examples-title">
+        <h2 id="examples-title">{L("Des sites en ligne", "Live sites", "Siti online")}</h2>
+        <ul>
+          {examples.map((p) => (
+            <li>
+              <a href={casePath(lang, caseSlug(p.slug))}>
+                {p.image && <img src={src800(p.image)} srcset={srcset(p.image)} sizes="(min-width: 900px) 280px, (min-width: 640px) 45vw, calc(100vw - 2rem)" alt="" width="1280" height="800" loading="lazy" decoding="async" />}
+                <span class="name">{p.title}</span>
+                <span class="desc">{(p.description as Record<Lang, string>)[lang]}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {answers.length > 0 && (
+      <section class="faq" aria-labelledby="faq-title">
+        <h2 id="faq-title">{t.faqHeading}</h2>
+        {answers.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </section>
+    )}
+
+    <nav class="more" aria-label={L("Prestations et zones", "Services and areas", "Servizi e zone")}>
+      <div>
+        <h2>{L("Nos prestations", "Our services", "I nostri servizi")}</h2>
+        <ul>{services.map((o) => <li><a href={offerPath(lang, o)} aria-current={o.key === offer.key ? "page" : undefined}>{o.nav[lang]}</a></li>)}</ul>
+      </div>
+      <div>
+        <h2>{L("Où nous intervenons", "Where we work", "Dove lavoriamo")}</h2>
+        <ul>{zones.map((o) => <li><a href={offerPath(lang, o)} aria-current={o.key === offer.key ? "page" : undefined}>{o.nav[lang]}</a></li>)}</ul>
+      </div>
+    </nav>
+  </main>
+</SubPage>
+
+<style>
+  .offer { max-width: 60rem; padding-top: 3rem; padding-bottom: 5rem; }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 2rem; }
+  .crumbs a { color: var(--ink-soft); text-decoration: none; }
+  .crumbs a:hover { color: var(--accent); }
+  .eyebrow { margin: 0 0 0.75rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(2.3rem, 5.5vw, 3.6rem); line-height: 1.04; letter-spacing: -0.03em; margin: 0; max-width: 18ch; text-wrap: balance; }
+  .lede { margin: 1.25rem 0 0; max-width: 40rem; font-size: 1.2rem; line-height: 1.6; color: var(--ink-soft); text-wrap: pretty; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+  .btn { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 48px; padding: 0 1.3rem; border-radius: 99px; font-weight: 600; text-decoration: none; transition: transform var(--dur-short) var(--ease-hover), border-color var(--dur-micro) var(--ease-hover); }
+  .btn.primary { color: #1a0f04; background: linear-gradient(180deg, var(--lamp-hot), var(--lamp)); box-shadow: 0 10px 24px -12px rgb(255 178 102 / 0.9), inset 0 1px 0 rgb(255 255 255 / 0.6); }
+  .btn.ghost { color: var(--ink); border: 1px solid var(--line); }
+  .btn.ghost:hover { border-color: var(--ink-soft); }
+  @media (hover: hover) { .btn.primary:hover { transform: translateY(-2px); } }
+
+  section { margin-top: 3.5rem; }
+  h2 { font-family: var(--font-fraunces); font-weight: 500; font-size: 1.7rem; letter-spacing: -0.015em; margin: 0 0 1rem; }
+  .points { padding: 2rem; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+  .points ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem 2.5rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
+  .points li { display: flex; gap: 0.7rem; line-height: 1.5; }
+  .points li::before { content: ""; flex: none; width: 7px; height: 7px; margin-top: 0.55em; border-radius: 50%; background: var(--accent); }
+  .text p { margin: 0; max-width: 42rem; font-size: 1.1rem; line-height: 1.7; color: var(--ink); text-wrap: pretty; }
+  .read { margin: 2rem 0 0; font-size: 1rem; color: var(--ink-soft); }
+  .read a { color: var(--brand); text-underline-offset: 3px; }
+
+  .examples ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); }
+  .examples a { display: flex; flex-direction: column; height: 100%; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink); text-decoration: none; transition: border-color var(--dur-micro) var(--ease-hover), transform var(--dur-short) var(--ease-hover); }
+  .examples img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-bottom: 1px solid var(--line); }
+  .examples .name { padding: 0.9rem 1.1rem 0; font-family: var(--font-fraunces); font-size: 1.15rem; }
+  .examples .desc { padding: 0.4rem 1.1rem 1.1rem; font-size: 0.9rem; line-height: 1.5; color: var(--ink-soft); }
+  @media (hover: hover) { .examples a:hover { border-color: var(--accent); transform: translateY(-2px); } }
+
+  .faq details { border-top: 1px solid var(--line); }
+  .faq details:last-child { border-bottom: 1px solid var(--line); }
+  .faq summary { cursor: pointer; padding: 1.1rem 0; font-weight: 600; list-style: none; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; float: right; color: var(--accent); font-weight: 400; }
+  .faq details[open] summary::after { content: "–"; }
+  .faq details p { margin: 0 0 1.2rem; max-width: 44rem; line-height: 1.65; color: var(--ink-soft); }
+
+  .more { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+  .more h2 { font-size: 1.2rem; }
+  .more ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+  .more a { color: var(--ink); text-decoration: none; }
+  .more a:hover { color: var(--accent); }
+  .more a[aria-current="page"] { color: var(--accent); font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) { .btn.primary:hover, .examples a:hover { transform: none; } }
+</style>
