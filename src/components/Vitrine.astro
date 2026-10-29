@@ -163,6 +163,17 @@ const ld = {
       // Reveals only hide content once we know scripts run. Arriving through a
       // page transition (the language switch) skips the hero's intro.
       document.documentElement.classList.add("js");
+      // A refresh starts again at the top (the hero), not at the last section
+      // visited or the #section a menu link left in the address. Links from
+      // other pages (/#work, /#faq…) still land on their section.
+      try {
+        var nav = performance.getEntriesByType("navigation")[0];
+        if (nav && nav.type === "reload") {
+          history.scrollRestoration = "manual";
+          if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+          addEventListener("load", function () { scrollTo(0, 0); });
+        }
+      } catch (e) {}
       // Safety net: if the main script never runs (blocked or failed to load),
       // show everything rather than leave content hidden.
       setTimeout(function () { if (!window.__vitrine) document.documentElement.classList.add("reveal-all"); }, 3000);
