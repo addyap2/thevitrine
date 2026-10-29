@@ -10,17 +10,18 @@ const L = (frText: string, enText: string, itText: string) => (lang === "fr" ? f
 const opening = ["ristorante-lola", "filton-athletic-fc", "planb-global-connect", "wall-street"];
 const heroProjects = projects.filter(p => p.slug !== "jan-stenborg").map(p => p.slug === "tandoor-global" ? projects.find(site => site.slug === "jan-stenborg") : p).filter((p): p is Project => !!p);
 const selected = [...opening.map(id => heroProjects.find(p => p.slug === id)), ...heroProjects.filter(p => !opening.includes(p.slug))].filter((p): p is Project => !!p?.image && !!p.url && p.slug !== "addy-sap-connect");
-const words = L("Votre plus belle|vitrine.", "Your best|shop window.", "La tua più bella|vetrina.").split("|");
+const words = L("Transformez vos visiteurs|en clients.", "Turn visitors|into customers.", "Trasforma i visitatori|in clienti.").split("|");
 ---
 <SiteHeader lang={lang} alternates={homePath} />
 <header class="showcase" data-showcase data-language={lang} data-view="desktop" data-paused="false" aria-labelledby="showcase-title">
   <div class="ambience" aria-hidden="true"><span class="halo"></span><span class="coordinate b">{L("THE VITRINE — ATELIER WEB", "THE VITRINE — WEB ATELIER", "THE VITRINE — ATELIER WEB")}</span></div>
   <div class="intro">
-    <p class="eyebrow arrival"><span class="signal" aria-hidden="true"></span>{L("Création de sites web · Fréjus, Var & Côte d'Azur", "Websites · French Riviera & United Kingdom", "Siti web su misura · Costa Azzurra e Italia")}</p>
+    <p class="eyebrow arrival"><span class="signal" aria-hidden="true"></span>{L("Sites web qui apportent des clients · Fréjus, Var & Côte d'Azur", "Websites that win customers · French Riviera & UK", "Siti web che portano clienti · Costa Azzurra e Italia")}</p>
     <h1 id="showcase-title"><span class="word-line"><span>{words[0]}</span></span> <span class="word-line accent"><em>{words[1]}</em></span></h1>
     <div class="intro-bottom">
-      <p class="lede arrival">{L("Nous sommes Antony et Julien. Votre projet mérite de se distinguer : nous créons des sites sur mesure, avec l'IA, du caractère et beaucoup d'attention.", "We're Antony and Julien. Your project deserves to stand out: we build bespoke websites with AI, character and a great deal of care.", "Siamo Antony e Julien. Il tuo progetto merita di distinguersi: creiamo siti su misura, con l'IA, carattere e tanta cura.")}</p>
-      <div class="actions arrival"><a class="project-cta" href={questionnairePath[lang]}>{t.heroCta2}<span aria-hidden="true">↗</span></a><a class="work-cta" href="#work">{L("Explorer nos réalisations", "Explore our work", "Esplora i nostri progetti")}<span aria-hidden="true">↓</span></a></div>
+      <p class="lede arrival">{L("Un site rapide et sur mesure : vos clients vous trouvent sur Google, comprennent votre offre en quelques secondes et vous contactent.", "A fast, made-to-measure website: customers find you on Google, understand your offer in seconds and get in touch.", "Un sito veloce e su misura: i clienti ti trovano su Google, capiscono la tua offerta in pochi secondi e ti contattano.")}</p>
+      <div class="actions arrival"><a class="project-cta" href={questionnairePath[lang]}>{t.heroCta2}<span aria-hidden="true">↗</span></a><a class="work-cta" href="#work">{L(`Voir les ${total} sites en ligne`, `See ${total} live sites`, `Guarda i ${total} siti online`)}<span aria-hidden="true">↓</span></a></div>
+      <ul class="assurances arrival">{[L("Premier échange gratuit", "Free first call", "Primo contatto gratuito"), L("Devis clair, sans engagement", "Clear quote, no obligation", "Preventivo chiaro, senza impegno")].map((a) => <li>{a}</li>)}</ul>
     </div>
   </div>
   <div class="exhibition" data-exhibition>
@@ -43,7 +44,7 @@ const words = L("Votre plus belle|vitrine.", "Your best|shop window.", "La tua p
       <div class="project-controls"><button type="button" data-previous aria-label={L("Projet précédent", "Previous project", "Progetto precedente")}>←</button><button type="button" data-pause aria-pressed="false" aria-label={t.heroPause} data-pause-label={t.heroPause} data-play-label={t.heroPlay}><span data-pause-icon aria-hidden="true">Ⅱ</span></button><button type="button" data-next aria-label={L("Projet suivant", "Next project", "Progetto successivo")}>→</button></div>
     </div>
   </div>
-  <div class="signature"><p>{L("Particuliers · Associations · Institutions · Entreprises", "Individuals · Associations · Institutions · Businesses", "Privati · Associazioni · Istituzioni · Aziende")}</p><a href="#work"><span class="signature-number">{total}</span> {L("projets à découvrir", "projects to explore", "progetti da scoprire")}<span aria-hidden="true">↘</span></a><p>{L("Sans frontières. Dans vos langues.", "Without borders. In your languages.", "Senza confini. Nelle tue lingue.")}</p></div>
+  <div class="signature"><p>{L("Sur mesure · Mobile · Google · Multilingue", "Bespoke · Mobile · Google · Multilingual", "Su misura · Mobile · Google · Multilingue")}</p><a href="#work"><span class="signature-number">{total}</span> {L("sites déjà en ligne", "websites already live", "siti già online")}<span aria-hidden="true">↘</span></a><p>{L("Contact direct. Devis clair.", "Direct contact. Clear quote.", "Contatto diretto. Preventivo chiaro.")}</p></div>
   <span class="sr-only" data-announcement role="status"></span>
   <script type="application/json" data-projects set:html={JSON.stringify(selected.map(p => ({title:p.title}))).replace(/</g,"\\u003c")} />
 </header>
@@ -175,7 +176,7 @@ const words = L("Votre plus belle|vitrine.", "Your best|shop window.", "La tua p
   .intro > * { pointer-events:auto; }
   .eyebrow {display:flex;gap:.7rem;align-items:center;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 1.8rem;}
   .signal {display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;box-shadow:0 0 12px #ffc27d88;flex:none;}
-  h1 {font-family:var(--font-fraunces);font-weight:500;font-size:clamp(3.7rem,8.3vw,7.5rem);line-height:.95;letter-spacing:-.065em;margin:0;position:relative;}
+  h1 {font-family:var(--font-fraunces);font-weight:500;font-size:clamp(3.4rem,7vw,6rem);line-height:.95;letter-spacing:-.065em;margin:0;position:relative;}
   .word-line {display:block;overflow:hidden;padding-bottom:.12em;margin-bottom:-.12em;}.word-line>span,.word-line>em {display:inline-block;animation:word-arrives 1.05s var(--arrive) both;animation-delay:.08s;}
   .word-line.accent {font-size:1.2em;letter-spacing:-.07em;color:var(--gold);}.word-line>em {font-weight:500;animation-delay:.2s;}
   [data-language="en"] .word-line.accent { font-size: 1em; }
@@ -214,4 +215,10 @@ const words = L("Votre plus belle|vitrine.", "Your best|shop window.", "La tua p
 
 <style>
 @media(max-width:639px){.small-label,.project-maker{font-size:.7rem}.exhibit .small-label{letter-spacing:.1em}}
+.assurances{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;margin:1.3rem 0 0;padding:0;list-style:none;font-size:.8rem;color:#c9d2e6}
+.intro-bottom .assurances{animation-delay:.8s}
+.assurances li{display:inline-flex;align-items:center;gap:.4rem}
+.assurances li::before{content:"";width:.95rem;height:.95rem;flex:none;border-radius:50%;background:rgb(255 194 125 / .16) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.4 6.7 11 12 5.4' fill='none' stroke='%23ffc27d' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/70% no-repeat}
+/* Desktop: the headline wraps within the space left of the showcase, never under it. */
+@media(min-width:1000px){.intro h1{max-width:min(450px,calc(42vw - 4.5rem))}}
 </style>
