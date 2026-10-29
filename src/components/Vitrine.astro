@@ -4,7 +4,7 @@ import ClassicHero from "./Hero.astro";
 import ShowcaseHero from "./HeroShowcase.astro";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
-import { strings, homePath, legalPath, blogPath, postPath, casePath, questionnairePath, contactPath, langs, langNames, tr, hasBlog as langHasBlog, type Lang } from "../i18n";
+import { strings, homePath, legalPath, blogPath, postPath, casePath, auditPath, questionnairePath, contactPath, langs, langNames, tr, hasBlog as langHasBlog, type Lang } from "../i18n";
 import { feedPath } from "../rss";
 import { postsFor, isPublished } from "../blog";
 import { spans } from "../wide";
@@ -264,6 +264,10 @@ const ld = {
           <div>
             <h3>{tr(lang, { fr: "Où nous intervenons", en: "Where we work", it: "Dove lavoriamo" })}</h3>
             <ul>{zoneOffers.map((o) => <li><a href={offerPath(lang, o)}>{o.nav[lang]}</a></li>)}</ul>
+          </div>
+          <div>
+            <h3>{tr(lang, { fr: "Outil gratuit", en: "Free tool", it: "Strumento gratuito" })}</h3>
+            <ul><li><a class="audit-pill" href={auditPath[lang]}>{tr(lang, { fr: "Audit express de votre site", en: "Quick website check", it: "Check-up rapido del sito" })} <span aria-hidden="true">→</span></a></li></ul>
           </div>
         </nav>
       </section>
@@ -822,6 +826,8 @@ const ld = {
   .offer-links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .offer-links a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 1rem; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); color: var(--ink); font-size: 0.92rem; text-decoration: none; transition: border-color var(--dur-micro) var(--ease-hover), color var(--dur-micro) var(--ease-hover); }
   .offer-links a:hover { border-color: var(--accent); color: var(--accent); }
+  .offer-links .audit-pill { gap: 0.4rem; border-color: transparent; background: #081227; color: #f6f2ea; font-weight: 600; }
+  .offer-links .audit-pill:hover { background: #10234d; color: #ffc27d; }
   .audiences { margin-top: 6rem; padding-top: 3rem; border-top: 1px solid var(--line); }
   .audience-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); margin-top: 2rem; }
   @media (min-width: 900px) { .audience-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

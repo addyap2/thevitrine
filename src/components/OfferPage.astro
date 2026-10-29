@@ -7,7 +7,7 @@ import projects from "../data/projects.json";
 import { offers, offerPath, type Offer } from "../data/offers";
 import { faq } from "../data/faq";
 import { caseSlug } from "../data/cases";
-import { strings, homePath, questionnairePath, contactPath, casePath, postPath, hasBlog, tr, type Lang } from "../i18n";
+import { strings, homePath, questionnairePath, contactPath, casePath, postPath, auditPath, hasBlog, tr, type Lang } from "../i18n";
 import { postsFor, isPublished } from "../blog";
 import { srcset, src800 } from "../img";
 
@@ -71,6 +71,14 @@ const ld = {
         <a class="btn ghost" href={contactPath[lang]}>{t.msgCta}</a>
       </div>
     </header>
+
+    {offer.key === "redesign" && (
+      <a class="audit-callout" href={auditPath[lang]}>
+        <span class="tag">{L("Gratuit", "Free", "Gratuito")}</span>
+        <span>{L("Faites l'audit express de votre site : le bilan en quelques secondes.", "Run the quick check on your site: the results in seconds.", "Fai il check-up rapido del tuo sito: il risultato in pochi secondi.")}</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    )}
 
     <section class="points" aria-labelledby="points-title">
       <h2 id="points-title">{L("Ce que nous faisons", "What we do", "Cosa facciamo")}</h2>
@@ -147,6 +155,10 @@ const ld = {
   .btn.ghost:hover { border-color: var(--ink-soft); }
   @media (hover: hover) { .btn.primary:hover { transform: translateY(-2px); } }
 
+  .audit-callout { display: flex; align-items: center; gap: 0.9rem; margin-top: 2.5rem; padding: 1.1rem 1.4rem; border-radius: 16px; background: #081227; color: #f6f2ea; text-decoration: none; font-weight: 500; line-height: 1.45; }
+  .audit-callout .tag { flex: none; padding: 0.25rem 0.65rem; border-radius: 99px; background: #ffc27d; color: #1a0f04; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .audit-callout span:last-child { margin-left: auto; color: #ffc27d; font-size: 1.2rem; }
+  .audit-callout:hover span:last-child { transform: translateX(3px); }
   section { margin-top: 3.5rem; }
   h2 { font-family: var(--font-fraunces); font-weight: 500; font-size: 1.7rem; letter-spacing: -0.015em; margin: 0 0 1rem; }
   .points { padding: 2rem; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }

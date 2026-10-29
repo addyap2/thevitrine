@@ -53,4 +53,4 @@ A redesign doesn't mean starting from nothing. We keep:
 - **what works**: your best text, your photos, your reviews;
 - **your place on Google**: when page addresses change, we set up redirects so old links lead to the new pages.
 
-Recognise your site in two or three of these signs? [Send us its address](/en/quote/): we'll tell you what we'd change, and why.
+Recognise your site in two or three of these signs? [Send us its address](/en/quote/): we'll tell you what we'd change, and why. Or start with our [free quick website check](/en/website-check/), in seconds.

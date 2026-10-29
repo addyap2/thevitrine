@@ -2,7 +2,7 @@
 // its content last changed: home pages follow the most recently updated
 // project, legal pages follow src/data/legal.ts, case studies their project.
 import type { APIRoute } from "astro";
-import { homePath, legalPath, casePath, blogPath, postPath, questionnairePath, contactPath, aboutPath, langs, type Lang } from "../i18n";
+import { auditPath, homePath, legalPath, casePath, blogPath, postPath, questionnairePath, contactPath, aboutPath, langs, type Lang } from "../i18n";
 import { postsFor, isPublished } from "../blog";
 import { cases, caseSlug } from "../data/cases";
 import { offers, offerPath } from "../data/offers";
@@ -19,6 +19,7 @@ export const GET: APIRoute = async ({ site }) => {
     { paths: questionnairePath, lastmod: contentDates.questionnaire, xDefault: "fr" },
     { paths: contactPath, lastmod: contentDates.contact, xDefault: "fr" },
     { paths: aboutPath, lastmod: contentDates.about, xDefault: "fr" },
+    { paths: auditPath, lastmod: contentDates.offers, xDefault: "fr" },
     // Service and area pages.
     ...offers.map((o) => ({ paths: { fr: offerPath("fr", o), en: offerPath("en", o), it: offerPath("it", o) }, lastmod: contentDates.offers, xDefault: "fr" as Lang })),
     // Case studies count only once published (drafts are noindex).

@@ -1,0 +1,212 @@
+---
+// The "Audit express": the visitor names their site and, if they like, answers
+// four questions. api/audit.js checks the home page; the script below turns
+// the checks and answers into a score, a verdict and a list, then offers a
+// redesign quote with the questionnaire pre-filled (sessionStorage, not URL).
+import SubPage from "./SubPage.astro";
+import { auditPath, homePath, questionnairePath, tr, type Lang } from "../i18n";
+import { UIA, QUESTIONS, CHECKS } from "../audit";
+import { offers, offerPath } from "../data/offers";
+import { pageLd } from "../ld";
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const u = UIA[lang];
+const redesign = offers.find((o) => o.key === "redesign")!;
+// Everything the script needs, in this language only.
+const words = {
+  lang,
+  ui: u,
+  checks: Object.fromEntries(Object.entries(CHECKS).map(([id, c]) => [id, { label: c.label[lang], good: c.good?.[lang], warn: c.warn?.[lang], bad: c.bad?.[lang] }])),
+  questions: QUESTIONS.map((q) => ({ id: q.id, q: q.q[lang], options: q.options.map((o) => ({ v: o.v, status: o.status })), result: { good: q.result.good?.[lang], warn: q.result.warn?.[lang], bad: q.result.bad?.[lang] } })),
+};
+---
+
+<SubPage lang={lang} title={u.title} description={u.description} paths={auditPath}
+  ld={pageLd({ site: Astro.site!, lang, path: auditPath[lang], name: u.h1, description: u.description })}>
+  <main id="main-content" tabindex="-1" class="wrap audit">
+    <nav class="crumbs" aria-label={tr(lang, { fr: "Fil d'Ariane", en: "Breadcrumb", it: "Percorso" })}>
+      <a href={homePath[lang]}>The Vitrine</a> <span aria-hidden="true">/</span> <span aria-current="page">{u.h1}</span>
+    </nav>
+    <p class="eyebrow">{u.eyebrow}</p>
+    <h1>{u.h1}</h1>
+    <p class="lede">{u.lead}</p>
+
+    <form id="audit-form" class="card" novalidate>
+      <label class="url">
+        <span>{u.urlLabel}</span>
+        <input name="url" type="text" inputmode="url" autocomplete="url" placeholder={u.urlPlaceholder} required maxlength="300" spellcheck="false" autocapitalize="off" />
+      </label>
+      <fieldset class="questions">
+        <legend>{u.questions}</legend>
+        {QUESTIONS.map((q) => (
+          <div class="q" role="radiogroup" aria-label={q.q[lang]}>
+            <p>{q.q[lang]}</p>
+            <div class="opts">
+              {q.options.map((o) => (
+                <label><input type="radio" name={q.id} value={o.v} /><span>{o.label[lang]}</span></label>
+              ))}
+            </div>
+          </div>
+        ))}
+      </fieldset>
+      <p class="error" id="audit-error" role="alert" hidden></p>
+      <button class="btn primary" type="submit" id="audit-run">{u.run} <span aria-hidden="true">→</span></button>
+    </form>
+
+    <section id="audit-result" class="result" hidden aria-live="polite" tabindex="-1">
+      <div class="score">
+        <div class="ring"><strong id="audit-score"></strong><span>/100</span></div>
+        <div>
+          <h2 id="audit-verdict"></h2>
+          <p id="audit-verdict-sub"></p>
+        </div>
+      </div>
+      <ul id="audit-list" class="list"></ul>
+      <p class="checked" id="audit-checked"></p>
+      <div class="ctas">
+        <a class="btn primary" id="audit-cta" href={questionnairePath[lang]}>{u.cta} <span aria-hidden="true">↗</span></a>
+        <a class="btn ghost" href={offerPath(lang, redesign)}>{u.ctaAlt}</a>
+        <button class="again" type="button" id="audit-again">{u.again}</button>
+      </div>
+    </section>
+    <script type="application/json" id="audit-words" set:html={JSON.stringify(words).replace(/</g, "\\u003c")} />
+  </main>
+</SubPage>
+
+<script>
+  import { AUDIT_HANDOFF } from "../audit";
+  type Status = "good" | "warn" | "bad";
+  const W = JSON.parse(document.getElementById("audit-words")!.textContent!);
+  const form = document.getElementById("audit-form") as HTMLFormElement;
+  const run = document.getElementById("audit-run") as HTMLButtonElement;
+  const errorEl = document.getElementById("audit-error")!;
+  const result = document.getElementById("audit-result")!;
+  const list = document.getElementById("audit-list")!;
+  const runLabel = run.innerHTML;
+  const weight: Record<Status, number> = { good: 1, warn: 0.5, bad: 0 };
+
+  const showError = (msg: string) => { errorEl.textContent = msg; errorEl.hidden = !msg; };
+  const item = (label: string, text: string, status: Status) => {
+    const li = document.createElement("li");
+    li.className = status;
+    const dot = document.createElement("span"); dot.className = "dot"; dot.setAttribute("aria-hidden", "true");
+    const body = document.createElement("div");
+    const strong = document.createElement("strong"); strong.textContent = label;
+    const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = W.ui.status[status];
+    const p = document.createElement("p"); p.textContent = text;
+    strong.append(" ", tag); body.append(strong, p); li.append(dot, body);
+    return li;
+  };
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    showError("");
+    const url = (form.elements.namedItem("url") as HTMLInputElement).value.trim();
+    if (!url) { showError(W.ui.errors.url); (form.elements.namedItem("url") as HTMLInputElement).focus(); return; }
+    run.disabled = true; run.textContent = W.ui.running;
+    let data: any = null;
+    try {
+      const r = await fetch("/api/audit/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url }) });
+      data = await r.json().catch(() => null);
+      if (!data || !data.ok) { showError(W.ui.errors[data?.error] || W.ui.errors.generic); return; }
+    } catch { showError(W.ui.errors.generic); return; }
+    finally { run.disabled = false; run.innerHTML = runLabel; }
+
+    // Checks, then the visitor's answers (only those given).
+    list.replaceChildren();
+    const statuses: Status[] = [];
+    const issues: string[] = [];
+    const sorted = [...data.checks].sort((a: any, b: any) => weight[a.status as Status] - weight[b.status as Status]);
+    for (const c of sorted) {
+      const words = W.checks[c.id]; if (!words) continue;
+      const status = c.status as Status;
+      const text = String(words[status] || "").replace("{v}", String(c.value ?? ""));
+      list.append(item(words.label, text, status));
+      statuses.push(status);
+      if (status !== "good") issues.push(words.label);
+    }
+    for (const q of W.questions) {
+      const picked = (form.elements.namedItem(q.id) as RadioNodeList).value;
+      if (!picked) continue;
+      let status: Status = q.options.find((o: any) => o.v === picked)?.status || "good";
+      if (q.id === "languages" && picked === "yes" && data.languages > 1) status = "good";
+      const text = q.result[status]; if (!text) continue;
+      list.append(item(W.ui.yourAnswers, text, status));
+      statuses.push(status);
+      if (status !== "good") issues.push(text);
+    }
+    const score = Math.round((statuses.reduce((s, x) => s + weight[x], 0) / Math.max(1, statuses.length)) * 100);
+    const band = score >= 85 ? "high" : score >= 55 ? "mid" : "low";
+    document.getElementById("audit-score")!.textContent = String(score);
+    result.dataset.band = band;
+    document.getElementById("audit-verdict")!.textContent = W.ui.verdict[band];
+    document.getElementById("audit-verdict-sub")!.textContent = W.ui.verdictSub[band];
+    document.getElementById("audit-checked")!.textContent = W.ui.checked.replace("{host}", data.host);
+    if (navigator.doNotTrack !== "1") fetch("/api/event/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event: "audit_run", lang: W.lang }), keepalive: true }).catch(() => {});
+    // Hand the findings to the questionnaire: a redesign of this site.
+    try { sessionStorage.setItem(AUDIT_HANDOFF, JSON.stringify({ url: data.host, issues: issues.slice(0, 8), at: Date.now() })); } catch {}
+    form.hidden = true; result.hidden = false; result.focus();
+    result.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  });
+
+  document.getElementById("audit-again")!.addEventListener("click", () => {
+    result.hidden = true; form.hidden = false; form.reset();
+    (form.elements.namedItem("url") as HTMLInputElement).focus();
+  });
+</script>
+
+<style>
+  .audit { max-width: 46rem; padding-top: 3rem; padding-bottom: 5rem; }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 2rem; }
+  .crumbs a { color: var(--ink-soft); text-decoration: none; }
+  .eyebrow { margin: 0 0 0.75rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(2.3rem, 5.5vw, 3.4rem); line-height: 1.04; letter-spacing: -0.03em; margin: 0; text-wrap: balance; }
+  .lede { margin: 1.1rem 0 0; font-size: 1.15rem; line-height: 1.6; color: var(--ink-soft); }
+  .card[hidden], .result[hidden] { display: none; }
+  .card { margin-top: 2rem; padding: 1.75rem; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); display: grid; gap: 1.5rem; }
+  .url { display: grid; gap: 0.5rem; font-weight: 600; }
+  .url input { min-height: 52px; padding: 0 1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: inherit; font-weight: 400; font-size: 1.05rem; }
+  .url input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .questions { border: 0; margin: 0; padding: 0; display: grid; gap: 1rem; }
+  .questions legend { padding: 0; margin-bottom: 0.4rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+  .q p { margin: 0 0 0.45rem; line-height: 1.45; }
+  .opts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .opts label { position: relative; }
+  .opts input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .opts span { display: inline-flex; align-items: center; min-height: 40px; padding: 0 1rem; border: 1px solid var(--line); border-radius: 99px; font-size: 0.92rem; cursor: pointer; }
+  .opts input:checked + span { border-color: var(--accent); background: rgb(196 85 52 / 0.08); color: var(--accent); font-weight: 600; }
+  .opts input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .error { margin: 0; color: #b42318; font-weight: 600; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 52px; padding: 0 1.4rem; border: 0; border-radius: 99px; font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
+  .btn.primary { color: #1a0f04; background: linear-gradient(180deg, var(--lamp-hot), var(--lamp)); box-shadow: 0 10px 24px -12px rgb(255 178 102 / 0.9), inset 0 1px 0 rgb(255 255 255 / 0.6); justify-self: start; }
+  .btn.primary:disabled { opacity: 0.7; cursor: progress; }
+  .btn.ghost { color: var(--ink); border: 1px solid var(--line); background: transparent; }
+
+  .result { margin-top: 2rem; }
+  .result:focus { outline: none; }
+  .score { display: flex; align-items: center; gap: 1.5rem; padding: 1.75rem; border-radius: 18px; background: #081227; color: #f6f2ea; }
+  .ring { display: grid; place-items: center; flex: none; width: 7rem; height: 7rem; border-radius: 50%; border: 3px solid #ffc27d; text-align: center; line-height: 1; }
+  .ring strong { font-family: var(--font-fraunces); font-size: 2.6rem; font-weight: 500; }
+  .ring span { font-size: 0.8rem; color: #aeb9d0; }
+  .result[data-band="mid"] .ring { border-color: #f2b34b; }
+  .result[data-band="low"] .ring { border-color: #ff8a65; }
+  .score h2 { margin: 0; font-family: var(--font-fraunces); font-weight: 500; font-size: clamp(1.5rem, 3.5vw, 2rem); line-height: 1.15; }
+  .score p { margin: 0.4rem 0 0; color: #c9d2e6; line-height: 1.5; }
+  .list { list-style: none; margin: 1.5rem 0 0; padding: 0; border-top: 1px solid var(--line); }
+  .list :global(li) { display: flex; gap: 0.85rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+  .list :global(.dot) { flex: none; width: 10px; height: 10px; margin-top: 0.45em; border-radius: 50%; }
+  .list :global(.good .dot) { background: #2f9e62; }
+  .list :global(.warn .dot) { background: #e0a030; }
+  .list :global(.bad .dot) { background: #d14b3a; }
+  .list :global(strong) { font-weight: 600; }
+  .list :global(.tag) { margin-left: 0.4rem; padding: 0.1rem 0.5rem; border-radius: 99px; font-size: 0.72rem; font-weight: 600; background: var(--muted-bg, #ede8e0); color: var(--ink-soft); }
+  .list :global(.bad .tag) { background: rgb(209 75 58 / 0.12); color: #a8372a; }
+  .list :global(.warn .tag) { background: rgb(224 160 48 / 0.16); color: #8a5a0c; }
+  .list :global(.good .tag) { background: rgb(47 158 98 / 0.12); color: #21704a; }
+  .list :global(p) { margin: 0.25rem 0 0; color: var(--ink-soft); line-height: 1.5; }
+  .checked { margin: 1rem 0 0; font-size: 0.85rem; color: var(--ink-soft); }
+  .ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: 1.75rem; }
+  .again { border: 0; background: none; padding: 0.5rem; font: inherit; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  @media (max-width: 480px) { .card { padding: 1.25rem; } .score { flex-direction: column; align-items: flex-start; } }
+</style>

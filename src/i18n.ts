@@ -23,6 +23,8 @@ export const questionnairePath: Record<Lang, string> = { fr: "/devis/", en: "/en
 export const contactPath: Record<Lang, string> = { fr: "/contact/", en: "/en/contact/", it: "/it/contatti/" };
 /** The people behind The Vitrine. */
 export const aboutPath: Record<Lang, string> = { fr: "/a-propos/", en: "/en/about/", it: "/it/chi-siamo/" };
+/** The free "Audit express" tool. */
+export const auditPath: Record<Lang, string> = { fr: "/audit-express/", en: "/en/website-check/", it: "/it/check-up-sito/" };
 /** Blog: /blog/ in French, /en/blog/ in English (no Italian blog). */
 export const blogPath: Record<BlogLang, string> = { fr: "/blog/", en: "/en/blog/" };
 export const postPath = (lang: BlogLang, slug: string) => `${blogPath[lang]}${slug}/`;

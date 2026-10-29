@@ -2,7 +2,7 @@
 import { limited, clientIp, redisConfigured, redis } from "./_guard.js";
 import { originOk, readJson } from "./_email.js";
 import { isJson } from "./_guard.js";
-const events = new Set(["whatsapp_click", "quote_click", "contact_click", "contact_started", "quote_started"]);
+const events = new Set(["whatsapp_click", "quote_click", "contact_click", "contact_started", "quote_started", "audit_run"]);
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") { res.setHeader("Allow", "POST"); return res.status(405).json({ ok: false }); }

@@ -78,6 +78,7 @@ const u = UI[lang];
 
 <script>
   import { SCHEMA, UI, type Field, type Lang } from "../devis";
+  import { AUDIT_HANDOFF } from "../audit";
 
   const root = document.getElementById("devis-main")!;
   const lang = (root.dataset.lang === "en" || root.dataset.lang === "it" ? root.dataset.lang : "fr") as Lang;
@@ -359,6 +360,19 @@ const u = UI[lang];
   // ---------- wire up ----------
   build();
   loadDraft();
+  // Arriving from the Audit express: start a redesign request for that site.
+  try {
+    const h = JSON.parse(sessionStorage.getItem(AUDIT_HANDOFF) || "null");
+    if (h && typeof h.url === "string" && Date.now() - Number(h.at) < 3600 * 1000) {
+      const kind = form.querySelector<HTMLInputElement>('[name="kind"][value="redesign"]');
+      if (kind && !valuesOf("kind").length) kind.checked = true;
+      const cur = form.querySelector<HTMLInputElement>('[name="current"]');
+      const issues = Array.isArray(h.issues) ? h.issues.filter((x: unknown) => typeof x === "string").slice(0, 8) : [];
+      if (cur && !cur.value) cur.value = `${h.url.slice(0, 120)}${issues.length ? " · Audit express : " + issues.join(" ; ") : ""}`.slice(0, 600);
+      applyConditions();
+      sessionStorage.removeItem(AUDIT_HANDOFF);
+    }
+  } catch {}
   applyConditions();
   go(current, false);
   getToken().catch(() => {});

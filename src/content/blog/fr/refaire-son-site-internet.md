@@ -53,4 +53,4 @@ Une refonte ne veut pas dire repartir de rien. On garde :
 - **ce qui fonctionne** : vos meilleurs textes, vos photos, vos avis ;
 - **votre place sur Google** : quand les adresses des pages changent, on met en place des redirections pour que les anciens liens mènent aux nouvelles pages.
 
-Vous reconnaissez votre site dans deux ou trois de ces signes ? [Envoyez-nous son adresse](/devis/) : nous vous disons ce que nous changerions, et pourquoi.
+Vous reconnaissez votre site dans deux ou trois de ces signes ? [Envoyez-nous son adresse](/devis/) : nous vous disons ce que nous changerions, et pourquoi. Ou faites d'abord notre [audit express gratuit](/audit-express/), en quelques secondes.
