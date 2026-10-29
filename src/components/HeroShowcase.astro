@@ -1,7 +1,6 @@
 ---
 import SiteHeader from "./SiteHeader.astro";
-import { strings, homePath, questionnairePath, casePath, type Lang } from "../i18n";
-import { caseSlug } from "../data/cases";
+import { strings, homePath, questionnairePath, type Lang } from "../i18n";
 import { srcset, src800, screenshotSrc } from "../img";
 interface Project { slug: string; title: string; url: string | null; maker: string; image: string | null }
 interface Props { lang: Lang; projects: Project[]; total: number }
@@ -11,20 +10,17 @@ const L = (frText: string, enText: string, itText: string) => (lang === "fr" ? f
 const opening = ["ristorante-lola", "filton-athletic-fc", "planb-global-connect", "wall-street"];
 const heroProjects = projects.filter(p => p.slug !== "jan-stenborg").map(p => p.slug === "tandoor-global" ? projects.find(site => site.slug === "jan-stenborg") : p).filter((p): p is Project => !!p);
 const selected = [...opening.map(id => heroProjects.find(p => p.slug === id)), ...heroProjects.filter(p => !opening.includes(p.slug))].filter((p): p is Project => !!p?.image && !!p.url && p.slug !== "addy-sap-connect");
-const trusted = ["ristorante-lola", "wall-street", "autoecole", "E-Mconcept", "stephanie", "filton-athletic-fc", "planb-global-connect", "jan-stenborg"].map((slug) => projects.find((p) => p.slug === slug)).filter((p): p is Project => !!p);
 const words = L("Transformez vos visiteurs|en clients.", "Turn visitors|into customers.", "Trasforma i visitatori|in clienti.").split("|");
 ---
 <SiteHeader lang={lang} alternates={homePath} />
 <header class="showcase" data-showcase data-language={lang} data-view="desktop" data-paused="false" aria-labelledby="showcase-title">
   <div class="ambience" aria-hidden="true"><span class="halo"></span><span class="coordinate b">{L("THE VITRINE — ATELIER WEB", "THE VITRINE — WEB ATELIER", "THE VITRINE — ATELIER WEB")}</span></div>
   <div class="intro">
-    <p class="eyebrow arrival"><span class="signal" aria-hidden="true"></span>{L("Sites web qui apportent des clients · Fréjus, Var & Côte d'Azur", "Websites that win customers · French Riviera & UK", "Siti web che portano clienti · Costa Azzurra e Italia")}</p>
+    <p class="eyebrow arrival"><span class="signal" aria-hidden="true"></span>{L("Sites web sur mesure · Fréjus & Côte d'Azur", "Bespoke websites · French Riviera & UK", "Siti web su misura · Costa Azzurra e Italia")}</p>
     <h1 id="showcase-title"><span class="word-line"><span>{words[0]}</span></span> <span class="word-line accent"><em>{words[1]}</em></span></h1>
     <div class="intro-bottom">
-      <p class="lede arrival">{L("Un site rapide et sur mesure : vos clients vous trouvent sur Google, comprennent votre offre en quelques secondes et vous contactent.", "A fast, made-to-measure website: customers find you on Google, understand your offer in seconds and get in touch.", "Un sito veloce e su misura: i clienti ti trovano su Google, capiscono la tua offerta in pochi secondi e ti contattano.")}</p>
-      <ul class="benefits arrival">{[L("Trouvé sur Google", "Found on Google", "Trovato su Google"), L("Parfait sur mobile", "Perfect on mobile", "Perfetto sul telefono"), L("Dans la langue de vos clients", "In your customers' language", "Nella lingua dei tuoi clienti")].map((b) => <li>{b}</li>)}</ul>
-      <div class="actions arrival"><a class="project-cta" href={questionnairePath[lang]}>{t.heroCta2}<span aria-hidden="true">↗</span></a><a class="work-cta" href="#work">{L(`Voir les ${total} sites en ligne`, `See ${total} live sites`, `Guarda i ${total} siti online`)}<span aria-hidden="true">↓</span></a></div>
-      <p class="cta-note arrival">{L("Premier échange gratuit · Devis sans engagement", "Free first call · No-obligation quote", "Primo contatto gratuito · Preventivo senza impegno")}</p>
+      <p class="lede arrival">{L("Des sites rapides et sur mesure, pensés pour vendre. On vous trouve, on vous choisit, on vous appelle.", "Fast, made-to-measure websites built to sell. Customers find you, choose you and call you.", "Siti veloci e su misura, pensati per vendere. I clienti ti trovano, ti scelgono e ti chiamano.")}</p>
+      <div class="actions arrival"><a class="project-cta" href={questionnairePath[lang]}>{t.heroCta2}<span aria-hidden="true">↗</span></a><a class="work-cta" href="#work">{L("Voir nos sites", "See our sites", "Guarda i nostri siti")}<span aria-hidden="true">↓</span></a></div>
     </div>
   </div>
   <div class="exhibition" data-exhibition>
@@ -47,17 +43,10 @@ const words = L("Transformez vos visiteurs|en clients.", "Turn visitors|into cus
       <div class="project-controls"><button type="button" data-previous aria-label={L("Projet précédent", "Previous project", "Progetto precedente")}>←</button><button type="button" data-pause aria-pressed="false" aria-label={t.heroPause} data-pause-label={t.heroPause} data-play-label={t.heroPlay}><span data-pause-icon aria-hidden="true">Ⅱ</span></button><button type="button" data-next aria-label={L("Projet suivant", "Next project", "Progetto successivo")}>→</button></div>
     </div>
   </div>
-  <div class="proof">
-    <dl class="stats">
-      <div><dt>{total}</dt><dd>{L("sites en ligne", "live websites", "siti online")}</dd></div>
-      <div><dt>3</dt><dd>{L("pays : France, Royaume-Uni, Italie", "countries: France, UK, Italy", "paesi: Francia, Regno Unito, Italia")}</dd></div>
-      <div><dt>9</dt><dd>{L("langues sur un même site", "languages on a single site", "lingue su un unico sito")}</dd></div>
-    </dl>
-    <div class="trust">
-      <p>{L("Ils nous font confiance", "They trust us", "Si fidano di noi")}</p>
-      <ul>{trusted.map((p) => <li><a href={casePath(lang, caseSlug(p.slug))}>{p.title}</a></li>)}</ul>
-    </div>
-  </div>
+  <p class="statement">
+    <span>{L("Votre activité mérite mieux qu'un site.", "Your business deserves more than a website.", "La tua attività merita più di un sito.")}</span>
+    <em>{L("Elle mérite une vitrine.", "It deserves a shop window.", "Merita una vetrina.")}</em>
+  </p>
   <span class="sr-only" data-announcement role="status"></span>
   <script type="application/json" data-projects set:html={JSON.stringify(selected.map(p => ({title:p.title}))).replace(/</g,"\\u003c")} />
 </header>
@@ -224,28 +213,13 @@ const words = L("Transformez vos visiteurs|en clients.", "Turn visitors|into cus
   @media(max-width:639px){.coordinate{display:none}.showcase{padding-top:1.5rem}.eyebrow{font-size:.59rem;letter-spacing:.11em;margin-bottom:1.5rem}h1{font-size:clamp(3.1rem,12vw,4.7rem)}.word-line.accent{font-size:1.12em}.intro-bottom{margin-top:1.2rem;max-width:none}.lede{font-size:.9rem;max-width:39ch}.actions{gap:.9rem}.actions a{font-size:.75rem;gap:1rem}.exhibition{margin-top:1.4rem}.exhibit-top{font-size:.55rem}.collection{font-size:.5rem}.portal{--portal-height:clamp(240px,64vw,370px);margin-top:1rem}.desktop-device{top:8%;width:88%;left:1%}.mobile-device{top:22%;right:1%;width:min(25%,calc(var(--portal-height)*.32))}.view-controls{left:1%;bottom:0}.view-controls button{padding:.5rem .7rem;min-height:32px}.exhibit-bottom{padding-inline:1%}.project-title select{font-size:1.1rem}.project-controls button{width:36px;height:36px}}
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.depth{transform:none}.halo{animation:none}.desktop-device{transform:none}.mobile-device{transform:none}[data-view="mobile"] .desktop-device{transform:none;opacity:.4}[data-view="mobile"] .mobile-device{transform:none}}
   @media(scripting:none){.view-controls,.project-controls{display:none}.project-scene[aria-hidden="true"]{display:none}}
+.statement{display:flex;flex-direction:column;gap:.15rem;max-width:1280px;margin:2.7rem auto 0;border-top:1px solid #a8bad32b;padding:2rem 0 .6rem;font-family:var(--font-fraunces);font-weight:500;font-size:clamp(1.7rem,3.4vw,2.9rem);line-height:1.08;letter-spacing:-.03em;color:var(--cream)}
+.statement em{color:var(--gold);font-style:italic}
+@media(max-width:639px){.statement{margin-top:1.4rem;padding-top:1.4rem}}
 </style>
 
 <style>
 @media(max-width:639px){.small-label,.project-maker{font-size:.7rem}.exhibit .small-label{letter-spacing:.1em}}
 /* Desktop: the headline wraps within the space left of the showcase, never under it. */
 @media(min-width:1000px){.intro h1{max-width:min(450px,calc(42vw - 4.5rem))}}
-.benefits{display:flex;flex-direction:column;gap:.45rem;margin:1.1rem 0 1.5rem;padding:0;list-style:none;font-size:.9rem;color:var(--cream)}
-.benefits li{display:flex;align-items:center;gap:.55rem}
-.benefits li::before{content:"";width:1.1rem;height:1.1rem;flex:none;border-radius:50%;background:rgb(255 194 125 / .18) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.4 6.7 11 12 5.4' fill='none' stroke='%23ffc27d' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/70% no-repeat}
-.cta-note{margin:.8rem 0 0;font-size:.75rem;color:#aeb9d0;letter-spacing:.01em}
-.intro-bottom .benefits{animation-delay:.58s}.intro-bottom .cta-note{animation-delay:.75s}
-.proof{display:grid;grid-template-columns:auto minmax(0,1fr);gap:1.5rem 3rem;align-items:center;max-width:1280px;margin:2.7rem auto 0;border-top:1px solid #a8bad32b;padding:1.6rem 0 .4rem}
-.stats{display:flex;gap:2.2rem;margin:0}
-.stats div{display:flex;flex-direction:column;gap:.2rem;width:8.5rem}
-.stats dt{font-family:var(--font-fraunces);font-size:2.4rem;line-height:1;color:var(--gold);letter-spacing:-.02em}
-.stats dd{margin:0;font-size:.75rem;line-height:1.35;color:#aeb9d0}
-.trust p{margin:0 0 .55rem;font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
-.trust ul{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin:0;padding:0;list-style:none}
-.trust li{display:inline-flex;align-items:center;font-family:var(--font-fraunces);font-size:1.05rem;color:var(--cream)}
-.trust li::before{content:"";width:5px;height:5px;margin-right:.6rem;border-radius:50%;background:var(--gold);opacity:.7;flex:none}
-.trust a{color:inherit;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .3s var(--arrive),color .3s var(--arrive)}
-.trust a:hover{color:var(--gold);border-color:currentColor}
-@media(max-width:999px){.proof{grid-template-columns:1fr;gap:1.4rem}}
-@media(max-width:639px){.proof{margin-top:1.4rem;padding-top:1.2rem}.stats{gap:1rem}.stats div{width:auto;flex:1}.stats dt{font-size:1.9rem}.stats dd{font-size:.68rem}.trust li{font-size:.95rem}.trust ul{gap:.35rem 1rem}.benefits{font-size:.85rem}}
 </style>
