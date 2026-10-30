@@ -134,7 +134,9 @@ html.reveal-all [data-reveal] {
   100% {transform:translateX(400%);opacity:0;}
 }
 /* Native details remain the fallback. The enhanced accordion owns one short height transition. */
-.qa[data-motion-accordion]::details-content { block-size:auto; transition:none; }
+/* Doubled attribute: wins over the page's own ::details-content transition
+   whatever order the stylesheets load in, so only the script animates. */
+.qa[data-motion-accordion][data-motion-accordion]::details-content { block-size:auto; transition:none; }
 :where(.btn,.cta,.bar-cta,.quote-link,.wa) {
   transition:transform var(--dur-short) var(--ease-hover),border-color var(--dur-micro) var(--ease-hover),color var(--dur-micro) var(--ease-hover);
 }
