@@ -1,0 +1,19 @@
+---
+// The Vitrine on Instagram, with its icon. "night" sits on the dark footers,
+// "paper" on light pages.
+import { instagram } from "../data/business";
+interface Props { tone?: "night" | "paper"; label?: string }
+const { tone = "night", label } = Astro.props;
+---
+<a class={`insta ${tone}`} href={instagram.url} target="_blank" rel="noopener me" aria-label={label ? `${label} ${instagram.handle}` : `Instagram ${instagram.handle}`}>
+  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/></svg>
+  <span>{instagram.handle}</span>
+</a>
+<style>
+  .insta { display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; transition: color 0.2s; }
+  .insta.night { color: var(--text-lo, #b4c0dc); }
+  .insta.night:hover { color: var(--lamp, #ffc27d); }
+  .insta.paper { color: var(--ink); font-weight: 600; }
+  .insta.paper:hover { color: var(--accent); }
+  .insta svg { flex: none; }
+</style>

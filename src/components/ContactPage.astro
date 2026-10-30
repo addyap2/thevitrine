@@ -4,6 +4,7 @@
 // protection as the questionnaire. Beside the form: the questionnaire, and
 // both makers' WhatsApp buttons (numbers decoded only on tap, src/protect.ts).
 import SubPage from "./SubPage.astro";
+import InstagramLink from "./InstagramLink.astro";
 import { strings, contactPath, questionnairePath, homePath, tr, type Lang } from "../i18n";
 import { whatsapp } from "../data/business";
 import { pageLd } from "../ld";
@@ -91,6 +92,7 @@ const people = [
               </a>
             </div>
           ))}
+          <p class="insta-line"><InstagramLink tone="paper" label={tr(lang, { fr: "Suivez-nous sur Instagram", en: "Follow us on Instagram", it: "Seguici su Instagram" })} /></p>
         </div>
       </aside>
     </div>
@@ -269,4 +271,5 @@ const people = [
     .done-badge path { animation: none; stroke-dashoffset: 0; }
     .btn.primary:hover { transform: none; }
   }
+  .insta-line { margin: 1.25rem 0 0; padding-top: 1rem; border-top: 1px solid var(--line); }
 </style>

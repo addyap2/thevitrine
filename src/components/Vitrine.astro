@@ -1,5 +1,6 @@
 ---
 import ProjectCard from "./ProjectCard.astro";
+import InstagramLink from "./InstagramLink.astro";
 import ClassicHero from "./Hero.astro";
 import ShowcaseHero from "./HeroShowcase.astro";
 import projects from "../data/projects.json";
@@ -361,6 +362,7 @@ const ld = {
       <p class="small" data-reveal>
         <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
         <span class="footer-links">
+          <InstagramLink />
           {hasBlog && langHasBlog(lang) && <a href={blogPath[lang]}>{t.blogName}</a>}
           <a href={legalPath[lang]}>{t.legalLink}</a>
         </span>

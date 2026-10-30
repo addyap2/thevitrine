@@ -4,6 +4,7 @@
 // Drafts are noindex, carry a notice, and are left out of the sitemap.
 import { Font } from "astro:assets";
 import SiteHeader from "./SiteHeader.astro";
+import InstagramLink from "./InstagramLink.astro";
 import "../styles/motion.css";
 import "../styles/tokens.css";
 import projects from "../data/projects.json";
@@ -201,7 +202,7 @@ const ld = {
         <a class="cta" href={questionnairePath[lang]} data-reveal>{t.heroCta2} <span aria-hidden="true">→</span></a>
         <p class="small">
           <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
-          <a href={legalPath[lang]}>{t.legalLink}</a>
+          <span class="footer-links"><InstagramLink /><a href={legalPath[lang]}>{t.legalLink}</a></span>
         </p>
       </div>
     </footer>
@@ -364,6 +365,7 @@ const ld = {
     font-size: 0.85rem; color: var(--text-lo);
   }
   .small a { color: var(--text-lo); text-underline-offset: 3px; }
+  .footer-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem; }
   .small a:hover { color: var(--lamp); }
 
   @media (prefers-reduced-motion: reduce) {

@@ -6,6 +6,7 @@
 // It also describes the project questionnaire (api/devis.js): keep it in step.
 import { Font } from "astro:assets";
 import SiteHeader from "./SiteHeader.astro";
+import InstagramLink from "./InstagramLink.astro";
 import "../styles/motion.css";
 import "../styles/tokens.css";
 import { strings, homePath, legalPath, langs, langNames, type Lang } from "../i18n";
@@ -171,7 +172,7 @@ const fr = lang === "fr";
     </main>
 
     <footer class="wrap foot">
-      <p>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</p>
+      <p>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois · <InstagramLink tone="paper" /></p>
     </footer>
     <script>
       import { decodeNumber, formatPhone } from "../protect";

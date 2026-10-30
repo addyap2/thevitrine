@@ -16,9 +16,12 @@ export const whatsapp = {
   julien: "NTg1Nzg4NDc2MzM=",
 };
 
-/** The Vitrine's own public profiles once they exist: Google Business Profile,
- *  Malt, LinkedIn page, Sortlist… Used as `sameAs` in structured data. */
-export const profiles: string[] = [];
+/** The Vitrine on Instagram. */
+export const instagram = { handle: "@thevitrine.fr", url: "https://www.instagram.com/thevitrine.fr/" };
+
+/** The Vitrine's own public profiles: Instagram, and later Google Business
+ *  Profile, LinkedIn, Malt… Used as `sameAs` in structured data. */
+export const profiles: string[] = [instagram.url];
 
 export function missingBusinessFields(): string[] {
   const missing: string[] = [];

@@ -3,6 +3,7 @@
 // paper body for the slot, and the night contact band that closes every page.
 import { Font } from "astro:assets";
 import SiteHeader from "./SiteHeader.astro";
+import InstagramLink from "./InstagramLink.astro";
 import "../styles/motion.css";
 import "../styles/tokens.css";
 import { strings, homePath, legalPath, questionnairePath, contactPath, langNames, tr, hasBlog, type Lang } from "../i18n";
@@ -86,7 +87,7 @@ const ogImage = new URL(ogPath ?? `/og/${lang}.jpg`, Astro.site);
         {current === "project" && <a class="cta" href={contactPath[lang]}>{tr(lang, { fr: "Une question avant de commencer ? Contactez-nous", en: "A question before you start? Contact us", it: "Una domanda prima di iniziare? Contattaci" })} <span aria-hidden="true">→</span></a>}
         <p class="small">
           <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
-          <a href={legalPath[lang]}>{t.legalLink}</a>
+          <span class="footer-links"><InstagramLink /><a href={legalPath[lang]}>{t.legalLink}</a></span>
         </p>
       </div>
     </footer>
@@ -141,6 +142,7 @@ const ogImage = new URL(ogPath ?? `/og/${lang}.jpg`, Astro.site);
     font-size: 0.85rem; color: var(--text-lo);
   }
   .small a { color: var(--text-lo); text-underline-offset: 3px; }
+  .footer-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem; }
   .small a:hover { color: var(--lamp); }
   @media (prefers-reduced-motion: reduce) { .cta:hover { transform: none; } }
 </style>
