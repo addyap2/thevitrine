@@ -20,7 +20,7 @@ export const whatsapp = {
 export const instagram = { handle: "@thevitrine.fr", url: "https://www.instagram.com/thevitrine.fr/" };
 
 /** The Vitrine on Facebook. */
-export const facebook = { url: "https://www.facebook.com/thevitrine.fr/" };
+export const facebook = { handle: "thevitrine.fr", url: "https://www.facebook.com/thevitrine.fr/" };
 
 /** The Vitrine's own public profiles: Instagram, Facebook, and later Google
  *  Business Profile, LinkedIn, Malt… Used as `sameAs` in structured data. */

@@ -1,0 +1,19 @@
+---
+// The Vitrine on Facebook, with its icon. Same tones as InstagramLink: "night"
+// sits on the dark footers, "paper" on light pages.
+import { facebook } from "../data/business";
+interface Props { tone?: "night" | "paper"; label?: string }
+const { tone = "night", label } = Astro.props;
+---
+<a class={`fb ${tone}`} href={facebook.url} target="_blank" rel="noopener me" aria-label={label ? `${label} ${facebook.handle}` : `Facebook ${facebook.handle}`}>
+  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.77l-.44 2.89h-2.33v6.99A10 10 0 0 0 22 12Z"/></svg>
+  <span>{facebook.handle}</span>
+</a>
+<style>
+  .fb { display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; transition: color 0.2s; }
+  .fb.night { color: var(--text-lo, #b4c0dc); }
+  .fb.night:hover { color: var(--lamp, #ffc27d); }
+  .fb.paper { color: var(--ink); font-weight: 600; }
+  .fb.paper:hover { color: var(--accent); }
+  .fb svg { flex: none; }
+</style>
