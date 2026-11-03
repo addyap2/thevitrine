@@ -3,6 +3,7 @@ import ProjectCard from "./ProjectCard.astro";
 import InstagramLink from "./InstagramLink.astro";
 import ClassicHero from "./Hero.astro";
 import ShowcaseHero from "./HeroShowcase.astro";
+import FilmScroll from "./FilmScroll.astro";
 import projects from "../data/projects.json";
 import { categories } from "../data/overrides.json";
 import { strings, homePath, legalPath, blogPath, postPath, casePath, auditPath, questionnairePath, contactPath, langs, langNames, tr, hasBlog as langHasBlog, type Lang } from "../i18n";
@@ -19,9 +20,10 @@ import { Font } from "astro:assets";
 interface Props {
   lang: Lang;
   classicHero?: boolean;
+  film?: boolean;
   noindex?: boolean;
 }
-const { lang, classicHero = false, noindex = false } = Astro.props;
+const { lang, classicHero = false, film = false, noindex = false } = Astro.props;
 const Hero = classicHero ? ClassicHero : ShowcaseHero;
 const t = strings[lang];
 
@@ -209,7 +211,8 @@ const ld = {
     <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />
   </head>
   <body>
-    <Hero lang={lang} projects={projects} total={projects.length} />
+    <Hero lang={lang} projects={projects} total={projects.length} film={film} />
+    {film && <FilmScroll lang={lang} />}
 
     <main id="main-content" tabindex="-1" class="wrap">
       <div id="work">
