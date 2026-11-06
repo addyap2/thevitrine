@@ -13,15 +13,13 @@ const heroProjects = projects.filter(p => p.slug !== "jan-stenborg").map(p => p.
 const selected = [...opening.map(id => heroProjects.find(p => p.slug === id)), ...heroProjects.filter(p => !opening.includes(p.slug))].filter((p): p is Project => !!p?.image && !!p.url && p.slug !== "addy-sap-connect");
 // The logo, inline so its parts can move: the window mark, each letter, and
 // the lit pane that switches on (see .logo-word below).
-let glyph = 0;
 const logoSvg = logoRaw
   .replace(/<svg([^>]*?)\s+role="img"/, "<svg$1")
   .replace(/\s+aria-label="[^"]*"/, "")
   .replace("<svg ", '<svg aria-hidden="true" focusable="false" ')
   .replace('<g fill="#f6f2ea">', '<g class="mark" fill="#f6f2ea">')
   .replace('fill="#ffc27d"/>', 'fill="#ffc27d" class="lamp"/>')
-  .replace(/(<\/g>\s*)<g fill="#f6f2ea">/, '$1<g class="word" fill="#f6f2ea">')
-  .replace(/<path transform=/g, () => `<path style="--i:${glyph++}" transform=`);
+  .replace(/(<\/g>\s*)<g fill="#f6f2ea">/, '$1<g class="word" fill="#f6f2ea">');
 const words = L("Transformez vos visiteurs|en clients.", "Turn visitors|into customers.", "Trasforma i visitatori|in clienti.").split("|");
 ---
 <SiteHeader lang={lang} alternates={homePath} />
@@ -41,7 +39,7 @@ const words = L("Transformez vos visiteurs|en clients.", "Turn visitors|into cus
       <div class="architecture" aria-hidden="true"><i class="rail left"></i><i class="rail right"></i><i class="lintel"></i><i class="base"></i><span class="cross top">+</span><span class="cross bottom">+</span><div class="orbit"></div></div>
       <div class="depth" data-depth>
         {selected.map((p,i) => <div class="project-scene" data-scene data-index={i} aria-hidden={i ? "true" : undefined} inert={i > 0}>
-          <a class="desktop-device" href={p.url!} target="_blank" rel="noopener" aria-label={`${p.title} — ${L("visiter le site", "visit website", "visita il sito")}`}>
+          <a class="desktop-device" href={p.url!} target="_blank" rel="noopener" aria-label={`${new URL(p.url!).hostname.replace(/^www\./, "")} — ${p.title}, ${L("visiter le site", "visit website", "visita il sito")}`}>
             <div class="device-chrome" aria-hidden="true"><span class="traffic"><i></i><i></i><i></i></span><span>{new URL(p.url!).hostname.replace(/^www\./, "")}</span><span>↗</span></div>
             <img src={i === 0 ? src800(p.image!) : undefined} srcset={i === 0 ? srcset(p.image!) : undefined} data-src={src800(p.image!)} data-srcset={srcset(p.image!)} sizes="(min-width: 1100px) 760px, (min-width: 640px) 85vw, 92vw" width="1280" height="800" alt={t.shotAlt.replace("{title}",p.title).replace("{host}",new URL(p.url!).host)} fetchpriority={i === 0 ? "high" : undefined} loading={i ? "lazy" : "eager"} />
           </a>
@@ -256,7 +254,9 @@ const words = L("Transformez vos visiteurs|en clients.", "Turn visitors|into cus
 :global(.js) .logo-word:not(.lit) :global(.word path){opacity:0;translate:0 10px}
 :global(.js) .logo-word:not(.lit) :global(.lamp){fill:#2b3756;filter:none}
 .logo-word.lit :global(.mark){animation:logo-mark 1.1s .15s var(--arrive) both}
-.logo-word.lit :global(.word path){animation:logo-glyph .9s var(--arrive) both;animation-delay:calc(.55s + var(--i) * 80ms)}
+.logo-word.lit :global(.word path){animation:logo-glyph .9s var(--arrive) both;animation-delay:.55s}
+/* Letter by letter, without inline styles (the CSP forbids them). */
+.logo-word.lit :global(.word path:nth-child(1)){animation-delay:0.55s}.logo-word.lit :global(.word path:nth-child(2)){animation-delay:0.63s}.logo-word.lit :global(.word path:nth-child(3)){animation-delay:0.71s}.logo-word.lit :global(.word path:nth-child(4)){animation-delay:0.79s}.logo-word.lit :global(.word path:nth-child(5)){animation-delay:0.87s}.logo-word.lit :global(.word path:nth-child(6)){animation-delay:0.95s}.logo-word.lit :global(.word path:nth-child(7)){animation-delay:1.03s}.logo-word.lit :global(.word path:nth-child(8)){animation-delay:1.11s}.logo-word.lit :global(.word path:nth-child(9)){animation-delay:1.19s}.logo-word.lit :global(.word path:nth-child(10)){animation-delay:1.27s}.logo-word.lit :global(.word path:nth-child(11)){animation-delay:1.35s}.logo-word.lit :global(.word path:nth-child(12)){animation-delay:1.43s}
 .logo-word.lit :global(.lamp){animation:logo-lamp 1.1s 1.7s both,logo-breathe 3.8s 3s ease-in-out infinite}
 .logo-word.lit .glint{animation:logo-glint 1.4s 2.5s ease-in-out both}
 @keyframes logo-mark{from{opacity:0;transform:translateY(.12em) scale(.9)}to{opacity:1;transform:none}}

@@ -34,7 +34,24 @@ const abs = (path: string) => new URL(path, Astro.site).href;
 const category = (categories.find((k) => k.id === p.category)?.label as Record<Lang, string> | undefined)?.[lang] ?? t.more;
 const host = p.url ? new URL(p.url).host.replace(/^www\./, "") : null;
 const description = (p.description as Record<Lang, string>)[lang];
-const metaDescription = c.seoDescription?.[lang] ?? description;
+// Search description: a hand-written one if there is one, the card text if it
+// fits, otherwise "Name (place): first sentence", kept under 160 characters.
+const fitDescription = () => {
+  const text = description.trim();
+  if (text.length <= 160) return text;
+  const first = (text.match(/^.+?[.!?](?=\s|$)/) || [])[0] ?? text;
+  const lead = /^(un|une|le|la|les|l'|a|an|the|il|lo|uno|una)\b/i.test(first) ? first.charAt(0).toLowerCase() + first.slice(1) : first;
+  const sep = lang === "fr" ? "\u00a0: " : ": ";
+  // The place helps local searches; "online", "internal tool" and the like don't.
+  const place = c.place[lang];
+  const placed = /online|en ligne|in linea|outil|internal|interno|studio|psycholog|psicolog|on site|in sede|sur site/i.test(place) ? null : `${p.title}, ${place}${sep}${lead}`;
+  for (const candidate of [placed, `${p.title}${sep}${lead}`, first].filter((x): x is string => !!x)) {
+    if (candidate.length <= 160) return candidate;
+  }
+  const cut = first.slice(0, 157);
+  return cut.slice(0, cut.lastIndexOf(" ")).replace(/[\s,;:—–-]+$/, "") + "…";
+};
+const metaDescription = c.seoDescription?.[lang] ?? fitDescription();
 const title = t.caseTitle.replace("{title}", p.title);
 const draft = c.status === "draft";
 
