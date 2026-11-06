@@ -5,6 +5,7 @@
 import { Font } from "astro:assets";
 import SiteHeader from "./SiteHeader.astro";
 import InstagramLink from "./InstagramLink.astro";
+import ReviewLink from "./ReviewLink.astro";
 import "../styles/motion.css";
 import "../styles/tokens.css";
 import projects from "../data/projects.json";
@@ -219,7 +220,7 @@ const ld = {
         <a class="cta" href={questionnairePath[lang]} data-reveal>{t.heroCta2} <span aria-hidden="true">→</span></a>
         <p class="small">
           <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
-          <span class="footer-links"><InstagramLink /><a href={legalPath[lang]}>{t.legalLink}</a></span>
+          <span class="footer-links"><ReviewLink lang={lang} /><InstagramLink /><a href={legalPath[lang]}>{t.legalLink}</a></span>
         </p>
       </div>
     </footer>

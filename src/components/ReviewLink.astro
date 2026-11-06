@@ -1,0 +1,22 @@
+---
+// "Leave a review" on The Vitrine's Google Business Profile. Same tones as
+// InstagramLink: "night" on the dark footers, "paper" on light pages.
+import { google } from "../data/business";
+import { tr, type Lang } from "../i18n";
+interface Props { lang: Lang; tone?: "night" | "paper" }
+const { lang, tone = "night" } = Astro.props;
+const label = tr(lang, { fr: "Laisser un avis Google", en: "Leave a Google review", it: "Lascia una recensione su Google" });
+---
+<a class={`review ${tone}`} href={google.review} target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.75 5.57 6.15.9-4.45 4.33 1.05 6.12L12 16.83l-5.5 2.89 1.05-6.12L3.1 9.27l6.15-.9L12 2.8z"/></svg>
+  <span>{label}</span>
+</a>
+<style>
+  .review { display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; text-decoration: none; transition: color 0.2s; }
+  .review svg { flex: none; color: #ffc27d; }
+  .review.night { color: var(--text-lo, #b4c0dc); }
+  .review.night:hover { color: var(--lamp, #ffc27d); }
+  .review.paper { color: var(--ink); font-weight: 600; }
+  .review.paper svg { color: #e0a030; }
+  .review.paper:hover { color: var(--accent); }
+</style>

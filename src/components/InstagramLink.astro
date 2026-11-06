@@ -10,7 +10,7 @@ const { tone = "night", label } = Astro.props;
   <span>{instagram.handle}</span>
 </a>
 <style>
-  .insta { display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; transition: color 0.2s; }
+  .insta { display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; text-decoration: none; transition: color 0.2s; }
   .insta.night { color: var(--text-lo, #b4c0dc); }
   .insta.night:hover { color: var(--lamp, #ffc27d); }
   .insta.paper { color: var(--ink); font-weight: 600; }

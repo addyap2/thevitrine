@@ -22,9 +22,16 @@ export const instagram = { handle: "@thevitrine.fr", url: "https://www.instagram
 /** The Vitrine on Facebook. */
 export const facebook = { handle: "thevitrine.fr", url: "https://www.facebook.com/thevitrine.fr/" };
 
-/** The Vitrine's own public profiles: Instagram, Facebook, and later Google
- *  Business Profile, LinkedIn, Malt… Used as `sameAs` in structured data. */
-export const profiles: string[] = [instagram.url, facebook.url];
+/** The Vitrine's Google Business Profile: the listing, and the link that opens
+ *  "write a review" (from the profile's "Ask for reviews"). */
+export const google = {
+  profile: "https://maps.google.com/?cid=11737106957522019738",
+  review: "https://g.page/r/CZql3Y2XlOKiEBM/review",
+};
+
+/** The Vitrine's own public profiles: Google, Instagram, Facebook, and later
+ *  LinkedIn, Malt… Used as `sameAs` in structured data. */
+export const profiles: string[] = [google.profile, instagram.url, facebook.url];
 
 export function missingBusinessFields(): string[] {
   const missing: string[] = [];

@@ -6,6 +6,7 @@
 import SubPage from "./SubPage.astro";
 import InstagramLink from "./InstagramLink.astro";
 import FacebookLink from "./FacebookLink.astro";
+import ReviewLink from "./ReviewLink.astro";
 import { strings, contactPath, questionnairePath, homePath, tr, type Lang } from "../i18n";
 import { whatsapp } from "../data/business";
 import { pageLd } from "../ld";
@@ -102,6 +103,7 @@ const people = [
           <div class="social-line">
             <InstagramLink tone="paper" label={tr(lang, { fr: "Suivez-nous sur Instagram", en: "Follow us on Instagram", it: "Seguici su Instagram" })} />
             <FacebookLink tone="paper" label={tr(lang, { fr: "Suivez-nous sur Facebook", en: "Follow us on Facebook", it: "Seguici su Facebook" })} />
+            <ReviewLink lang={lang} tone="paper" />
           </div>
         </div>
       </aside>

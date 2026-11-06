@@ -1,6 +1,7 @@
 ---
 import ProjectCard from "./ProjectCard.astro";
 import InstagramLink from "./InstagramLink.astro";
+import ReviewLink from "./ReviewLink.astro";
 import ClassicHero from "./Hero.astro";
 import ShowcaseHero from "./HeroShowcase.astro";
 import projects from "../data/projects.json";
@@ -362,6 +363,7 @@ const ld = {
       <p class="small" data-reveal>
         <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
         <span class="footer-links">
+          <ReviewLink lang={lang} />
           <InstagramLink />
           {hasBlog && langHasBlog(lang) && <a href={blogPath[lang]}>{t.blogName}</a>}
           <a href={legalPath[lang]}>{t.legalLink}</a>
@@ -981,7 +983,8 @@ const ld = {
     gap: 0.5rem 1.5rem;
   }
   .small a { color: var(--text-lo); text-underline-offset: 3px; text-decoration-thickness: 1px; }
-  .footer-links { display: flex; gap: 1.25rem; }
+  .footer-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem; }
+  .footer-links > :global(*) { white-space: nowrap; }
   .small a:hover { color: var(--lamp); }
   @media (prefers-reduced-motion: reduce) {
     .person:hover { transform: none; }

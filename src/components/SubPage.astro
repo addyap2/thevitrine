@@ -4,6 +4,7 @@
 import { Font } from "astro:assets";
 import SiteHeader from "./SiteHeader.astro";
 import InstagramLink from "./InstagramLink.astro";
+import ReviewLink from "./ReviewLink.astro";
 import "../styles/motion.css";
 import "../styles/tokens.css";
 import { strings, homePath, legalPath, questionnairePath, contactPath, langNames, tr, hasBlog, type Lang } from "../i18n";
@@ -87,7 +88,7 @@ const ogImage = new URL(ogPath ?? `/og/${lang}.jpg`, Astro.site);
         {current === "project" && <a class="cta" href={contactPath[lang]}>{tr(lang, { fr: "Une question avant de commencer ? Contactez-nous", en: "A question before you start? Contact us", it: "Una domanda prima di iniziare? Contattaci" })} <span aria-hidden="true">→</span></a>}
         <p class="small">
           <span>The Vitrine · {t.madeBy} Antony Addy {t.and} Julien Bourgois</span>
-          <span class="footer-links"><InstagramLink /><a href={legalPath[lang]}>{t.legalLink}</a></span>
+          <span class="footer-links"><ReviewLink lang={lang} /><InstagramLink /><a href={legalPath[lang]}>{t.legalLink}</a></span>
         </p>
       </div>
     </footer>
