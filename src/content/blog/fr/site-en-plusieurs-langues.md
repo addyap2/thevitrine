@@ -10,7 +10,7 @@ date: 2026-10-22
 status: published
 cover: planb-global-connect
 cases: [planb-global-connect, ristorante-lola]
-next: [restaurant-website, our-process]
+next: [tourist-season, restaurant-website]
 ---
 
 Sur la Côte d'Azur, une partie de vos clients ne parle pas français, ou préfère lire dans sa langue. Un site multilingue n'est pas un luxe réservé aux grandes entreprises : c'est souvent la façon la plus simple de ne pas perdre ces visiteurs à la première page.

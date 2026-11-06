@@ -9,7 +9,7 @@ date: 2026-10-28
 status: published
 cover: planb-global-connect
 cases: [ristorante-lola, E-Mconcept, autoecole]
-next: [domain-hosting, our-process]
+next: [choosing-var, domain-hosting]
 ---
 
 C'est souvent la première question, et la réponse honnête est : cela dépend. Pas pour éviter le sujet, mais parce qu'un site d'une page pour un artisan et un site en quatre langues avec réservation pour un restaurant ne demandent pas le même travail. Voici ce qui fait réellement varier le prix, pour que vous sachiez quoi demander.

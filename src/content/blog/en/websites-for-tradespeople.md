@@ -9,7 +9,7 @@ date: 2026-10-28
 status: published
 cover: E-Mconcept
 cases: [E-Mconcept, planb-global-connect, autoecole]
-next: [local-google, website-cost]
+next: [trades-east-var, local-google]
 ---
 
 Electrician, plumber, builder, joiner, landscaper: customers often find you by word of mouth, then check online before they call. Your website has one real job: to give them confidence, and get them to pick up the phone. Here's what matters.

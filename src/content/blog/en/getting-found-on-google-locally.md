@@ -9,7 +9,7 @@ date: 2026-10-23
 status: published
 cover: wall-street
 cases: [wall-street, autoecole, stephanie]
-next: [why-a-website, our-process]
+next: [local-restaurants, trades-east-var]
 ---
 
 "Restaurant near me", "driving school Fréjus", "football club Bristol": every day, people search for exactly what you offer, a few miles from where you are. The first thing they see isn't a list of websites, it's a map with three businesses on it. Here's how to get onto that map, and how to turn the visit into a call.

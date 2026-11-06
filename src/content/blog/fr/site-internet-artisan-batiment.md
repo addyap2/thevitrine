@@ -9,7 +9,7 @@ date: 2026-10-28
 status: published
 cover: E-Mconcept
 cases: [E-Mconcept, planb-global-connect, autoecole]
-next: [local-google, website-cost]
+next: [trades-east-var, local-google]
 ---
 
 Électricien, plombier, maçon, menuisier, paysagiste : vos clients vous trouvent souvent par le bouche-à-oreille, puis vérifient sur internet avant d'appeler. Votre site a un seul vrai travail : leur donner confiance, et les faire appeler. Voici ce qui compte.

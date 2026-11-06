@@ -9,7 +9,7 @@ date: 2026-10-28
 status: published
 cover: planb-global-connect
 cases: [ristorante-lola, E-Mconcept, autoecole]
-next: [domain-hosting, our-process]
+next: [choosing-var, domain-hosting]
 ---
 
 It's often the first question, and the honest answer is: it depends. Not to dodge it, but because a one-page site for a tradesperson and a four-language site with booking for a restaurant aren't the same amount of work. Here's what really changes the price, so you know what to ask.

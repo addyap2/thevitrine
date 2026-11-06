@@ -285,7 +285,7 @@ export const offers: Offer[] = [
     ],
     cases: ["wall-street", "so-good-diner", "autoecole", "stephanie"],
     faq: ["where", "languages"],
-    blog: "local-google",
+    blog: "local-restaurants",
   },
   {
     key: "riviera",
@@ -321,7 +321,7 @@ export const offers: Offer[] = [
     ],
     cases: ["E-Mconcept", "planb-global-connect", "stephanie"],
     faq: ["where", "google"],
-    blog: "tradespeople-website",
+    blog: "trades-east-var",
   },
   {
     key: "remote",

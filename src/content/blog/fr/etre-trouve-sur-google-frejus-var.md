@@ -9,7 +9,7 @@ date: 2026-10-23
 status: published
 cover: wall-street
 cases: [wall-street, autoecole, stephanie]
-next: [why-a-website, our-process]
+next: [local-restaurants, trades-east-var]
 ---
 
 « Restaurant Fréjus », « auto-école Saint-Raphaël », « sophrologue près de moi » : chaque jour, des gens cherchent exactement ce que vous proposez, à quelques kilomètres de chez vous. Ce qu'ils voient en premier, ce n'est pas une liste de sites, c'est une carte avec trois établissements. Voici comment y apparaître, et comment transformer cette visite en appel.

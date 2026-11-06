@@ -10,7 +10,7 @@ date: 2026-10-22
 status: published
 cover: planb-global-connect
 cases: [planb-global-connect, ristorante-lola]
-next: [restaurant-website, our-process]
+next: [tourist-season, restaurant-website]
 ---
 
 On the French Riviera, some of your customers don't speak French, or would rather read in their own language. A multilingual website isn't a luxury for big companies: it's often the simplest way not to lose those visitors on the first page.
