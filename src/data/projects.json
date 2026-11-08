@@ -152,6 +152,25 @@
     "image": "/shots/julienb.jpg"
   },
   {
+    "slug": "manusecurite",
+    "title": "Cabinet Thorelle",
+    "description": {
+      "fr": "Un site nocturne et feutré pour un cabinet de conseil en sûreté, loin des cadenas et des images qui font peur. Les accompagnements pour entreprises et pour particuliers sont présentés séparément, avec un premier échange confidentiel à portée de main.",
+      "en": "A calm, night-time site for a security consultancy, far from padlocks and fear-driven imagery. Services for businesses and for private clients are presented separately, with a confidential first conversation always within reach.",
+      "it": "Un sito notturno e discreto per uno studio di consulenza in sicurezza, lontano da lucchetti e immagini che fanno paura. I servizi per le aziende e per i privati sono presentati separatamente, con un primo colloquio riservato sempre a portata di mano."
+    },
+    "url": "https://www.thorellesurete.fr",
+    "repo": "https://github.com/addyap2/manusecurite",
+    "maker": "Antony",
+    "category": "services",
+    "tags": [],
+    "featured": false,
+    "inProgress": false,
+    "order": 5,
+    "updated": "2026-11-07T15:02:30Z",
+    "image": "/shots/manusecurite.jpg"
+  },
+  {
     "slug": "stephanie",
     "title": "SR Bien-être",
     "description": {
@@ -395,7 +414,7 @@
     "featured": false,
     "inProgress": false,
     "order": 1,
-    "updated": "2026-11-08T11:51:45Z",
+    "updated": "2026-11-08T12:17:58Z",
     "image": "/shots/addys-english-pro.jpg"
   },
   {

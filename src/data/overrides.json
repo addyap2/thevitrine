@@ -118,6 +118,18 @@
       "category": "services",
       "order": 1
     },
+    "manusecurite": {
+      "title": "Cabinet Thorelle",
+      "url": "https://www.thorellesurete.fr",
+      "description": {
+        "fr": "Un site nocturne et feutré pour un cabinet de conseil en sûreté, loin des cadenas et des images qui font peur. Les accompagnements pour entreprises et pour particuliers sont présentés séparément, avec un premier échange confidentiel à portée de main.",
+        "en": "A calm, night-time site for a security consultancy, far from padlocks and fear-driven imagery. Services for businesses and for private clients are presented separately, with a confidential first conversation always within reach.",
+        "it": "Un sito notturno e discreto per uno studio di consulenza in sicurezza, lontano da lucchetti e immagini che fanno paura. I servizi per le aziende e per i privati sono presentati separatamente, con un primo colloquio riservato sempre a portata di mano."
+      },
+      "maker": "Antony",
+      "category": "services",
+      "order": 5
+    },
     "lumbacure": {
       "title": "LumbaCure",
       "url": "https://lumba-phi.vercel.app",

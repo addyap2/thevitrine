@@ -71,6 +71,20 @@ export const casesIt: Record<string, CaseIt> = {
     ],
     design: "Un tono calmo e rassicurante, adatto al mestiere: i dati chiave in evidenza (esperienza, servizio bilingue, zone coperte), testi che si rivolgono direttamente ai proprietari e un fondo scuro con accenti dorati che richiama la Costa Azzurra senza cliché.",
   },
+  "manusecurite": {
+    place: "Consulenza in sicurezza",
+    client: "Il Cabinet Thorelle Conseils è lo studio di Emmanuel Thorelle, specializzato in gestione dei rischi e consulenza per la sicurezza. Aiuta aziende e privati a capire meglio i rischi e ad adottare le abitudini giuste: audit e diagnosi di sicurezza, sensibilizzazione del personale, assistenza a dirigenti e famiglie, consulenza per l'abitazione.",
+    built: [
+      "Una home page costruita come una notte di guardia: un orologio discreto passa dalle 21:47 alle 06:12 durante la lettura, e il modulo di contatto compare all'alba.",
+      "Due percorsi, per le aziende e per i privati, ciascuno con i propri servizi e un metodo in quattro tappe.",
+      "La sessione di sensibilizzazione di tre ore presentata passo dopo passo: teoria, osservazione, controllo degli accessi, reazione a un incidente.",
+      "Le parole del fondatore, l'approccio dello studio e i suoi undici valori.",
+      "Un diario di consigli pratici e una pagina di domande frequenti.",
+      "Un modulo di contatto riservato e la chiamata in un tocco dal telefono.",
+    ],
+    design: "I siti sulla sicurezza spesso vendono paura: lucchetti, scudi, schermi blu. Questo fa la scelta opposta, quella dell'attenzione calma. Uno sfondo blu notte, il fascio di un faro che spazza il mare e un'unica luce dorata, ripresa dal biglietto da visita, per i filetti e le parole importanti. Le sezioni sono numerate in cifre romane, come le ore di un giornale di bordo, e il tono resta discreto, come vuole il mestiere.",
+    seoDescription: "Il sito del Cabinet Thorelle, consulenza in sicurezza: una notte di guardia dalle 21:47 all'alba, due percorsi (aziende, privati) e un colloquio riservato.",
+  },
   autoecole: {
     place: "Fréjus, Var",
     client: "L'Auto-école La Tour de Mare è una scuola guida che serve Fréjus, Saint-Raphaël e l'est del Var: patente auto con cambio manuale o automatico, guida accompagnata, moto, ciclomotore, microcar e rimorchio. Con quasi 30 anni di esperienza alle spalle, figura tra le Migliori Scuole Guida di Francia 2026 secondo Auto Plus e VroomVroom.",

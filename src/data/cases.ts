@@ -171,6 +171,38 @@ export const cases: Record<string, CaseStudy> = {
     },
   },
 
+  "manusecurite": {
+    status: "published",
+    seoDescription: { fr: "Le site du Cabinet Thorelle, conseil en sûreté : une nuit de veille de 21:47 à l'aube, deux parcours (entreprises, particuliers) et un premier échange discret.", en: "Cabinet Thorelle's security consulting site: one night of watch from 21:47 to dawn, two paths (businesses, private clients) and a discreet first conversation." },
+    place: { fr: "Conseil en sûreté", en: "Security consulting" },
+    client: {
+      fr: "Le Cabinet Thorelle Conseils est le cabinet d'Emmanuel Thorelle, spécialisé en Risk & Management et en accompagnement de sûreté. Il aide les entreprises et les particuliers à mieux comprendre les risques et à adopter les bons réflexes : audit et diagnostic de sûreté, sensibilisation des équipes, accompagnement des dirigeants et des familles, conseil pour la résidence.",
+      en: "Cabinet Thorelle Conseils is Emmanuel Thorelle's consultancy, specialising in risk management and security support. It helps businesses and private clients understand risks better and build the right habits: security audits and assessments, staff awareness training, support for executives and families, and advice for the home.",
+    },
+    built: {
+      fr: [
+        "Un accueil construit comme une nuit de veille : une horloge discrète passe de 21:47 à 06:12 au fil de la lecture, et le formulaire de contact apparaît à l'aube.",
+        "Deux parcours, entreprises et particuliers, chacun avec ses prestations et sa démarche en quatre étapes.",
+        "La session de sensibilisation de trois heures présentée pas à pas : théorie, observation, maîtrise des accès, réaction en cas d'incident.",
+        "Le mot du fondateur, l'approche du cabinet et ses onze valeurs.",
+        "Un journal de conseils pratiques et une page de questions fréquentes.",
+        "Un formulaire de contact confidentiel et l'appel en un geste sur téléphone.",
+      ],
+      en: [
+        "A home page built as one night of watch: a discreet clock moves from 21:47 to 06:12 as you read, and the contact form appears at dawn.",
+        "Two paths, for businesses and for private clients, each with its own services and four-step approach.",
+        "The three-hour awareness session laid out step by step: theory, observation, access control, responding to an incident.",
+        "A word from the founder, the consultancy's approach and its eleven values.",
+        "A journal of practical advice and a page of frequently asked questions.",
+        "A confidential contact form and one-tap calling on mobile.",
+      ],
+    },
+    design: {
+      fr: "Les sites de sûreté vendent souvent la peur : cadenas, boucliers, écrans bleus. Celui-ci fait le choix inverse, celui de l'attention calme. Un fond bleu nuit, un faisceau de phare qui balaie la mer et une seule lumière dorée, reprise de la carte de visite, pour les filets et les mots importants. Les parties sont numérotées en chiffres romains, comme les heures d'un journal de bord, et le ton reste discret, à l'image du métier.",
+      en: "Security sites often sell fear: padlocks, shields, glowing blue screens. This one does the opposite and sells calm attention. A night-blue background, a lighthouse beam sweeping the sea and a single gold light, taken from the business card, for hairlines and key words. Sections are numbered in Roman numerals, like the hours of a watch log, and the tone stays discreet, as the job demands.",
+    },
+  },
+
   autoecole: {
     status: "published",
     place: { fr: "Fréjus, Var", en: "Fréjus, Var" },
@@ -756,6 +788,7 @@ const publishedSlugs: Record<string, string> = {
   "so-good-diner": "so-good-diner",
   "tandoor-global": "mr-tandoors",
   "planb-global-connect": "plan-b-concept",
+  "manusecurite": "cabinet-thorelle",
   "autoecole": "auto-ecole-la-tour-de-mare",
   "E-Mconcept": "em-concept",
   "julienb": "julien-bourgois",
