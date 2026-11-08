@@ -22,6 +22,156 @@
       "source": "/fr/",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/realisations/julien-bourgois",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/realisations/julien-bourgois/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/en/work/julien-bourgois",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/en/work/julien-bourgois/",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/it/progetti/julien-bourgois",
+      "destination": "/it/",
+      "permanent": true
+    },
+    {
+      "source": "/it/progetti/julien-bourgois/",
+      "destination": "/it/",
+      "permanent": true
+    },
+    {
+      "source": "/realisations/tp-english-pro",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/realisations/tp-english-pro/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/en/work/tp-english-pro",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/en/work/tp-english-pro/",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/it/progetti/tp-english-pro",
+      "destination": "/it/",
+      "permanent": true
+    },
+    {
+      "source": "/it/progetti/tp-english-pro/",
+      "destination": "/it/",
+      "permanent": true
+    },
+    {
+      "source": "/realisations/antony-addy",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/realisations/antony-addy/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/en/work/antony-addy",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/en/work/antony-addy/",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/it/progetti/antony-addy",
+      "destination": "/it/",
+      "permanent": true
+    },
+    {
+      "source": "/it/progetti/antony-addy/",
+      "destination": "/it/",
+      "permanent": true
+    },
+    {
+      "source": "/realisations/formation-ia-generative",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/realisations/formation-ia-generative/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/en/work/formation-ia-generative",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/en/work/formation-ia-generative/",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/it/progetti/formation-ia-generative",
+      "destination": "/it/",
+      "permanent": true
+    },
+    {
+      "source": "/it/progetti/formation-ia-generative/",
+      "destination": "/it/",
+      "permanent": true
+    },
+    {
+      "source": "/realisations/sap-mm-training",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/realisations/sap-mm-training/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/en/work/sap-mm-training",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/en/work/sap-mm-training/",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/it/progetti/sap-mm-training",
+      "destination": "/it/",
+      "permanent": true
+    },
+    {
+      "source": "/it/progetti/sap-mm-training/",
+      "destination": "/it/",
+      "permanent": true
     }
   ],
   "headers": [

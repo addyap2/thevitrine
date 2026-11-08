@@ -6,17 +6,18 @@ lang: fr
 slug: site-internet-formateur
 key: training-website
 date: 2026-10-28
+updated: 2026-11-08
 status: published
-cover: addy-genai-training
-cases: [addy-genai-training, addys-english-pro, toeic-success-hub, student-mark-tracker]
+cover: toeic-success-hub
+cases: [toeic-success-hub, student-mark-tracker, cloe-prep-path]
 next: [ai-built-websites, website-cost]
 ---
 
-Un formateur s'adresse souvent à deux publics à la fois : la personne qui va suivre la formation, et celle qui la valide ou la finance, un responsable RH, un dirigeant, parfois un financeur. Votre site doit parler aux deux. Nous connaissons ce métier de l'intérieur : Antony est formateur certifié depuis 2017, et nous avons construit ses sites avec cette idée en tête.
+Un formateur s'adresse souvent à deux publics à la fois : la personne qui va suivre la formation, et celle qui la valide ou la finance, un responsable RH, un dirigeant, parfois un financeur. Votre site doit parler aux deux. Nous connaissons ce métier de l'intérieur : Antony est formateur certifié depuis 2017, et nous construisons ses plateformes avec cette idée en tête.
 
 ## 1. Des parcours clairs, par public
 
-Le visiteur doit trouver sa formation en un clic. Sur le site principal d'[Antony](/realisations/antony-addy/), trois chemins partent de l'accueil : anglais professionnel, IA générative, sites et outils. Le site [Formation IA Générative](/realisations/formation-ia-generative/) distingue deux parcours, pour les entreprises et pour les indépendants.
+Le visiteur doit trouver sa formation en un clic. Organisez l'accueil par public ou par objectif, pas par ordre d'arrivée de vos formations. Sur [ToeicPath](/realisations/toeicpath/), la navigation se fait par compétence et par format d'examen : chacun va droit à ce qu'il doit travailler.
 
 ## 2. Des programmes concrets
 
@@ -27,7 +28,7 @@ Un responsable de formation veut savoir précisément ce qu'il achète. Pour cha
 - la **durée** et le **format** (présentiel, à distance, en entreprise) ;
 - les **modalités d'évaluation**.
 
-Reliez chaque compétence à des usages réels. Le site Formation IA Générative présente quatre compétences clés, chacune illustrée par des cas d'usage concrets.
+Reliez chaque compétence à des usages réels : un exemple concret par compétence vaut mieux qu'une longue liste.
 
 ## 3. Le financement
 
@@ -37,7 +38,7 @@ Si vos formations peuvent être financées (CPF, OPCO, plan de développement de
 
 Témoignages de stagiaires, recommandations de clients, entreprises formées : ce sont vos meilleurs arguments. Les ressources gratuites (guides, exercices, articles) montrent aussi votre expertise avant même le premier contact.
 
-Antony va plus loin : son site présente les plateformes qu'il a lui-même construites avec l'IA, comme [ToeicPath](/realisations/toeicpath/), une préparation complète au TOEIC. La meilleure preuve qu'on sait enseigner un outil, c'est de montrer ce qu'on en fait.
+Antony va plus loin : il construit ses propres plateformes d'entraînement, comme [ToeicPath](/realisations/toeicpath/), une préparation complète au TOEIC. La meilleure preuve qu'on sait enseigner un outil, c'est de montrer ce qu'on en fait.
 
 ## 5. Un premier contact facile
 

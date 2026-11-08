@@ -236,7 +236,8 @@
       },
       "maker": "Antony",
       "category": "training",
-      "order": 1
+      "order": 1,
+      "hidden": true
     },
     "addy-genai-training": {
       "title": "Formation IA Générative",
@@ -248,7 +249,8 @@
       },
       "maker": "Antony",
       "category": "training",
-      "order": 2
+      "order": 2,
+      "hidden": true
     },
     "student-mark-tracker": {
       "title": "Student Mark Tracker",
@@ -264,6 +266,15 @@
       "order": 4
     },
     "osteoflo": {
+      "hidden": true
+    },
+    "julienb": {
+      "hidden": true
+    },
+    "biz-fluent-coach": {
+      "hidden": true
+    },
+    "addy-sap-connect": {
       "hidden": true
     }
   },
@@ -311,20 +322,6 @@
       "order": 3
     },
     {
-      "slug": "julienb",
-      "title": "Julien Bourgois",
-      "url": "https://julienb.vercel.app",
-      "repo": "https://github.com/bourgoisju/julienb",
-      "maker": "Julien",
-      "description": {
-        "fr": "Un portfolio qui présente l'approche du studio à travers ses réalisations. Les exemples, les prestations et les conseils permettent de découvrir le travail de Julien et de préparer un premier échange autour de son projet.",
-        "en": "A portfolio that introduces the studio's approach through its work. Project examples, services and practical advice help visitors discover Julien's work and prepare for a first conversation about their project.",
-        "it": "Un portfolio che presenta l'approccio dello studio attraverso le sue realizzazioni. Esempi, servizi e consigli pratici permettono di scoprire il lavoro di Julien e di preparare un primo colloquio sul proprio progetto."
-      },
-      "category": "services",
-      "order": 4
-    },
-    {
       "slug": "tandoor-global",
       "title": "Mr. Tandoors",
       "url": "https://tandoor-global.vercel.app",
@@ -363,32 +360,6 @@
       "maker": "Antony",
       "category": "languages",
       "order": 7
-    },
-    {
-      "slug": "biz-fluent-coach",
-      "title": "TP English Pro",
-      "url": "https://ad.antonyaddy.com",
-      "description": {
-        "fr": "Une plateforme organisée autour des besoins en anglais des futurs assistants de direction. Les mises en situation, le vocabulaire professionnel et le simulateur d'examen accompagnent la préparation, avec un entraînement dédié à l'oral.",
-        "en": "A platform organised around the English skills future executive assistants need. Workplace scenarios, professional vocabulary and an exam simulator support preparation, with dedicated speaking practice.",
-        "it": "Una piattaforma organizzata attorno alle competenze d'inglese dei futuri assistenti di direzione. Situazioni lavorative, lessico professionale e un simulatore d'esame accompagnano la preparazione, con esercizi dedicati all'orale."
-      },
-      "maker": "Antony",
-      "category": "languages",
-      "order": 8
-    },
-    {
-      "slug": "addy-sap-connect",
-      "title": "SAP MM Training",
-      "url": "https://sap.antonyaddy.com",
-      "description": {
-        "fr": "Un site de formation qui présente les usages de SAP MM et les programmes proposés. La structure bilingue permet aux professionnels de repérer les sujets qui les concernent et de découvrir le parcours du formateur avant de le contacter.",
-        "en": "A training site that explains how SAP MM is used and presents the available courses. Its bilingual structure helps professionals find relevant topics and learn about the trainer's background before getting in touch.",
-        "it": "Un sito di formazione che presenta gli utilizzi di SAP MM e i programmi disponibili. La struttura bilingue aiuta i professionisti a individuare gli argomenti di interesse e a conoscere il percorso del formatore prima di contattarlo."
-      },
-      "maker": "Antony",
-      "category": "training",
-      "order": 3
     },
     {
       "slug": "jan-stenborg",

@@ -10,7 +10,7 @@ const fr = lang === "fr", t = strings[lang];
 const L = (frText: string, enText: string, itText: string) => (lang === "fr" ? frText : lang === "en" ? enText : itText);
 const opening = ["ristorante-lola", "filton-athletic-fc", "planb-global-connect", "wall-street"];
 const heroProjects = projects.filter(p => p.slug !== "jan-stenborg").map(p => p.slug === "tandoor-global" ? projects.find(site => site.slug === "jan-stenborg") : p).filter((p): p is Project => !!p);
-const selected = [...opening.map(id => heroProjects.find(p => p.slug === id)), ...heroProjects.filter(p => !opening.includes(p.slug))].filter((p): p is Project => !!p?.image && !!p.url && p.slug !== "addy-sap-connect");
+const selected = [...opening.map(id => heroProjects.find(p => p.slug === id)), ...heroProjects.filter(p => !opening.includes(p.slug))].filter((p): p is Project => !!p?.image && !!p.url);
 // The logo, inline so its parts can move: the window mark, each letter, and
 // the lit pane that switches on (see .logo-word below).
 const logoSvg = logoRaw

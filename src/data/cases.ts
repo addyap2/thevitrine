@@ -261,33 +261,6 @@ export const cases: Record<string, CaseStudy> = {
     },
   },
 
-  julienb: {
-    status: "published",
-    place: { fr: "Studio web indépendant", en: "Independent web studio" },
-    client: {
-      fr: "C'est le site du studio de Julien Bourgois, cofondateur de The Vitrine. Julien conçoit et développe des sites vitrines sur mesure pour les artisans, commerçants, thérapeutes et auteurs : rapides, pensés pour le téléphone et faits pour donner envie d'appeler.",
-      en: "This is the studio site of Julien Bourgois, co-founder of The Vitrine. Julien designs and builds made-to-measure websites for tradespeople, shopkeepers, therapists and authors: fast, made for phones and designed to make people want to call.",
-    },
-    built: {
-      fr: [
-        "Un portfolio « quatre métiers, quatre identités » avec un aperçu en direct de chaque site.",
-        "Trois formules pour travailler ensemble, présentées simplement.",
-        "Une méthode en quatre étapes, « aucune surprise ».",
-        "Une FAQ et un contact direct par e-mail et téléphone.",
-      ],
-      en: [
-        "A \"four trades, four identities\" portfolio with a live preview of each site.",
-        "Three ways to work together, set out simply.",
-        "A four-step method, \"no surprises\".",
-        "An FAQ and direct contact by email and phone.",
-      ],
-    },
-    design: {
-      fr: "Un studio qui se présente par l'exemple : une typographie éditoriale très affirmée, beaucoup de blanc, et des travaux montrés en direct plutôt qu'en captures. Le ton est direct et chaleureux, comme un premier échange avec Julien.",
-      en: "A studio that leads by example: strong editorial type, plenty of white space, and work shown live rather than as screenshots. The tone is direct and warm, like a first conversation with Julien.",
-    },
-  },
-
   stephanie: {
     status: "published",
     place: { fr: "Saint-Raphaël, Var", en: "Saint-Raphaël, Var" },
@@ -597,121 +570,6 @@ export const cases: Record<string, CaseStudy> = {
     },
   },
 
-  "biz-fluent-coach": {
-    status: "published",
-    place: { fr: "En ligne", en: "Online" },
-    client: {
-      fr: "TP English Pro est une plateforme d'anglais professionnel créée par Antony Addy pour les personnes qui préparent le titre professionnel Assistant de Direction, et notamment son épreuve orale d'anglais. Elle est gratuite.",
-      en: "TP English Pro is a professional-English platform built by Antony Addy for people preparing France's Assistant de Direction (executive assistant) qualification, and in particular its oral English exam. It is free to use.",
-    },
-    built: {
-      fr: [
-        "Un entraînement à la conversation avec une IA, sur 10 situations de bureau, à la voix ou à l'écrit.",
-        "Un retour détaillé immédiat et un mode examen qui simule l'épreuve orale.",
-        "Des modules : e-mails, téléphone, réunions, traduction professionnelle.",
-        "500 termes de vocabulaire administratif et des révisions.",
-        "Une interface en français, ukrainien, russe, arabe et roumain.",
-      ],
-      en: [
-        "AI conversation practice across 10 office situations, by voice or text.",
-        "Detailed instant feedback and an exam mode that simulates the oral test.",
-        "Modules on emails, phone calls, meetings and professional translation.",
-        "500 administrative vocabulary terms and revision.",
-        "An interface in French, Ukrainian, Russian, Arabic and Romanian.",
-      ],
-    },
-    design: {
-      fr: "Une plateforme pensée comme un parcours de formation : modules numérotés, suivi de progression et révisions, autour d'un objectif unique, réussir l'épreuve. Le choix des langues d'interface reflète le public des formations.",
-      en: "A platform designed as a training path: numbered modules, progress tracking and revision, all around one goal, passing the exam. The choice of interface languages reflects the people who take the course.",
-    },
-  },
-
-  "addys-english-pro": {
-    status: "published",
-    seoDescription: { fr: "Le site d'Antony : formations d'anglais professionnel, ateliers d'IA générative et création de sites web, dans le Var, les Alpes-Maritimes et à distance." },
-    place: { fr: "Côte d'Azur et à distance", en: "French Riviera and online" },
-    client: {
-      fr: "C'est le site principal d'Antony Addy, cofondateur de The Vitrine : formateur d'anglais professionnel, britannique natif, certifié Formateur Professionnel d'Adultes depuis 2017, formateur en IA générative et créateur de sites web et d'outils pédagogiques, sur la Côte d'Azur et à distance.",
-      en: "This is the main site of Antony Addy, co-founder of The Vitrine: a native British professional English trainer, certified as a Formateur Professionnel d'Adultes since 2017, a generative-AI trainer and a builder of websites and learning tools, on the French Riviera and online.",
-    },
-    built: {
-      fr: [
-        "Trois parcours depuis l'accueil : anglais professionnel, IA générative, sites web et outils.",
-        "Un seul interlocuteur pour les trois activités, présenté dès le premier écran.",
-        "Des témoignages et recommandations de clients.",
-        "Un premier échange gratuit, avec réponse sous 24 h ouvrées, et un contact WhatsApp.",
-        "Des ressources gratuites et les mentions légales complètes.",
-      ],
-      en: [
-        "Three paths from the home page: professional English, generative AI, and websites and tools.",
-        "One contact for all three activities, introduced on the first screen.",
-        "Client testimonials and recommendations.",
-        "A free first call, with a reply within 24 working hours, and WhatsApp contact.",
-        "Free resources and a full legal notice.",
-      ],
-    },
-    design: {
-      fr: "Trois lignes de titre pour trois métiers, « L'anglais. L'IA. Le web. », et un code couleur par activité qui suit le visiteur dans tout le site. L'ensemble reste personnel : c'est Antony qui parle, à la première personne.",
-      en: "Three headline lines for three trades, \"English. AI. The web.\", and a colour for each activity that follows visitors through the site. It stays personal: it's Antony speaking, in the first person.",
-    },
-  },
-
-  "addy-genai-training": {
-    status: "published",
-    place: { fr: "Fréjus et à distance", en: "Fréjus and online" },
-    client: {
-      fr: "Antony Addy, formateur certifié d'État basé à Fréjus, forme les entreprises et les indépendants à l'IA générative : ChatGPT, Claude, Gemini ou Copilot, en présentiel ou à distance, en français ou en anglais, à partir de leurs propres cas d'usage.",
-      en: "Antony Addy, a state-certified trainer based in Fréjus, trains companies and freelancers in generative AI: ChatGPT, Claude, Gemini or Copilot, in person or online, in French or English, built around their own use cases.",
-    },
-    built: {
-      fr: [
-        "Quatre compétences clés, chacune liée à des usages concrets : IA conversationnelle, création visuelle, automatisation et agents…",
-        "Deux parcours, pour les entreprises et pour les indépendants.",
-        "Les plateformes qu'Antony a lui-même conçues avec l'IA, comme preuve par l'exemple.",
-        "Des guides pratiques, une FAQ, une demande de devis et un contact WhatsApp.",
-        "Une version française et une version anglaise.",
-      ],
-      en: [
-        "Four key skills, each tied to concrete uses: conversational AI, visual creation, automation and agents, and more.",
-        "Two paths, for companies and for freelancers.",
-        "The platforms Antony has built with AI himself, as proof by example.",
-        "Practical guides, an FAQ, a quote request and WhatsApp contact.",
-        "French and English versions.",
-      ],
-    },
-    design: {
-      fr: "L'accueil montre une consigne tapée en direct, « Résume ce rapport de 40 pages » : l'IA générative expliquée par l'exemple, sans jargon. Le site garde l'identité visuelle du site principal d'Antony, avec sa propre couleur.",
-      en: "The home page shows a prompt being typed live, \"Summarise this 40-page report\": generative AI explained by example, without jargon. The site shares the look of Antony's main site, with a colour of its own.",
-    },
-  },
-
-  "addy-sap-connect": {
-    status: "published",
-    place: { fr: "Sur site et à distance", en: "On site and online" },
-    client: {
-      fr: "Antony Addy propose des formations au module SAP Materials Management (MM) pour les professionnels et les entreprises. Britannique natif, bilingue en français et formateur certifié depuis 2017, il forme sur site, à distance ou sur mesure.",
-      en: "Antony Addy offers training in the SAP Materials Management (MM) module for professionals and companies. A native English speaker, bilingual in French and a certified trainer since 2017, he trains on site, online or to a custom programme.",
-    },
-    built: {
-      fr: [
-        "Les trois grands domaines de la formation : achats, gestion des stocks et données de base.",
-        "Le détail des programmes de formation MM.",
-        "La présentation du formateur et de son parcours.",
-        "Un site en anglais et en français, avec un espace « Ma formation ».",
-      ],
-      en: [
-        "The three core training areas: procurement, inventory management and master data.",
-        "Details of the MM training programmes.",
-        "An introduction to the trainer and his background.",
-        "A site in English and French, with a \"My training\" area.",
-      ],
-    },
-    design: {
-      fr: "Un site sobre et professionnel, adapté à un public d'entreprise : les bénéfices concrets de la formation passent en premier, et les qualifications du formateur sont visibles dès l'accueil.",
-      en: "A clean, professional site for a corporate audience: the practical benefits of the training come first, and the trainer's qualifications are visible from the home page.",
-    },
-  },
-
   "student-mark-tracker": {
     status: "published",
     seoDescription: { fr: "Un espace privé et sécurisé pour un organisme de formation : documents, notes et progression de chaque apprenant, protégés par connexion." },
@@ -791,7 +649,6 @@ const publishedSlugs: Record<string, string> = {
   "manusecurite": "cabinet-thorelle",
   "autoecole": "auto-ecole-la-tour-de-mare",
   "E-Mconcept": "em-concept",
-  "julienb": "julien-bourgois",
   "stephanie": "sr-bien-etre",
   "taquet": "annick-taquet-assoignons",
   "filton-athletic-fc": "filton-athletic-fc",
@@ -803,10 +660,6 @@ const publishedSlugs: Record<string, string> = {
   "adventure-books": "english-reading-adventures",
   "listening-english-antonyaddy": "listenup",
   "anglais-a-distance-learn": "anglais-a-distance",
-  "biz-fluent-coach": "tp-english-pro",
-  "addys-english-pro": "antony-addy",
-  "addy-genai-training": "formation-ia-generative",
-  "addy-sap-connect": "sap-mm-training",
   "student-mark-tracker": "student-mark-tracker",
   "jan-stenborg": "jan-stenborg"
 };

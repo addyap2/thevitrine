@@ -3,7 +3,7 @@
 const WIDTHS = [480, 800, 1280];
 
 // Refresh cached copies when an existing project receives new screenshots.
-export const screenshotSrc = (image: string) => image.includes("/julienb.") || image.includes("/julienb-") ? `${image}?v=20261025` : image;
+export const screenshotSrc = (image: string) => image;
 
 export const srcset = (image: string) =>
   WIDTHS.map((w) => `${screenshotSrc(image.replace(/^\/shots\/(.+)\.jpg$/, `/shots/w/$1-${w}.webp`))} ${w}w`).join(", ");

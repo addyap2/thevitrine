@@ -133,25 +133,6 @@
     "image": "/shots/E-Mconcept.jpg"
   },
   {
-    "repo": "https://github.com/bourgoisju/julienb",
-    "category": "services",
-    "tags": [],
-    "featured": false,
-    "inProgress": false,
-    "order": 4,
-    "updated": null,
-    "slug": "julienb",
-    "title": "Julien Bourgois",
-    "url": "https://julienb.vercel.app",
-    "maker": "Julien",
-    "description": {
-      "fr": "Un portfolio qui présente l'approche du studio à travers ses réalisations. Les exemples, les prestations et les conseils permettent de découvrir le travail de Julien et de préparer un premier échange autour de son projet.",
-      "en": "A portfolio that introduces the studio's approach through its work. Project examples, services and practical advice help visitors discover Julien's work and prepare for a first conversation about their project.",
-      "it": "Un portfolio che presenta l'approccio dello studio attraverso le sue realizzazioni. Esempi, servizi e consigli pratici permettono di scoprire il lavoro di Julien e di preparare un primo colloquio sul proprio progetto."
-    },
-    "image": "/shots/julienb.jpg"
-  },
-  {
     "slug": "manusecurite",
     "title": "Cabinet Thorelle",
     "description": {
@@ -378,82 +359,6 @@
     },
     "maker": "Antony",
     "image": "/shots/anglais-a-distance-learn.jpg"
-  },
-  {
-    "repo": null,
-    "category": "languages",
-    "tags": [],
-    "featured": false,
-    "inProgress": false,
-    "order": 8,
-    "updated": null,
-    "slug": "biz-fluent-coach",
-    "title": "TP English Pro",
-    "url": "https://ad.antonyaddy.com",
-    "description": {
-      "fr": "Une plateforme organisée autour des besoins en anglais des futurs assistants de direction. Les mises en situation, le vocabulaire professionnel et le simulateur d'examen accompagnent la préparation, avec un entraînement dédié à l'oral.",
-      "en": "A platform organised around the English skills future executive assistants need. Workplace scenarios, professional vocabulary and an exam simulator support preparation, with dedicated speaking practice.",
-      "it": "Una piattaforma organizzata attorno alle competenze d'inglese dei futuri assistenti di direzione. Situazioni lavorative, lessico professionale e un simulatore d'esame accompagnano la preparazione, con esercizi dedicati all'orale."
-    },
-    "maker": "Antony",
-    "image": "/shots/biz-fluent-coach.jpg"
-  },
-  {
-    "slug": "addys-english-pro",
-    "title": "Antony Addy",
-    "description": {
-      "fr": "Un site personnel qui organise trois activités autour d'un même interlocuteur : l'anglais, l'IA et la création web. Chaque parcours présente l'offre et les ressources associées, pour aider le visiteur à trouver l'accompagnement qui lui correspond.",
-      "en": "A personal site that brings English training, AI workshops and web design together around one point of contact. Each path presents the relevant services and resources, helping visitors find the support that suits them.",
-      "it": "Un sito personale che riunisce inglese, IA e creazione di siti web attorno a un unico referente. Ogni percorso presenta i servizi e le risorse disponibili, per aiutare il visitatore a trovare il supporto adatto."
-    },
-    "url": "https://www.antonyaddy.com",
-    "repo": "https://github.com/addyap/addys-english-pro",
-    "maker": "Antony",
-    "category": "training",
-    "tags": [],
-    "featured": false,
-    "inProgress": false,
-    "order": 1,
-    "updated": "2026-11-08T12:17:58Z",
-    "image": "/shots/addys-english-pro.jpg"
-  },
-  {
-    "slug": "addy-genai-training",
-    "title": "Formation IA Générative",
-    "description": {
-      "fr": "Un site qui présente la formation à l'IA générative à travers des usages concrets. Les parcours pour entreprises et indépendants, les exemples et les guides pratiques permettent de comprendre l'accompagnement proposé avant de demander un devis.",
-      "en": "A site that introduces generative AI training through practical uses. Separate paths for businesses and freelancers, examples and guides explain the support on offer before visitors request a quote.",
-      "it": "Un sito che presenta la formazione sull'IA generativa attraverso utilizzi concreti. Percorsi per aziende e professionisti, esempi e guide pratiche aiutano a comprendere il supporto offerto prima di richiedere un preventivo."
-    },
-    "url": "https://www.antonyaddy.com/ia",
-    "repo": "https://github.com/addyap/addy-genai-training",
-    "maker": "Antony",
-    "category": "training",
-    "tags": [],
-    "featured": false,
-    "inProgress": false,
-    "order": 2,
-    "updated": "2026-11-06T13:38:37Z",
-    "image": "/shots/addy-genai-training.jpg"
-  },
-  {
-    "repo": null,
-    "category": "training",
-    "tags": [],
-    "featured": false,
-    "inProgress": false,
-    "order": 3,
-    "updated": null,
-    "slug": "addy-sap-connect",
-    "title": "SAP MM Training",
-    "url": "https://sap.antonyaddy.com",
-    "description": {
-      "fr": "Un site de formation qui présente les usages de SAP MM et les programmes proposés. La structure bilingue permet aux professionnels de repérer les sujets qui les concernent et de découvrir le parcours du formateur avant de le contacter.",
-      "en": "A training site that explains how SAP MM is used and presents the available courses. Its bilingual structure helps professionals find relevant topics and learn about the trainer's background before getting in touch.",
-      "it": "Un sito di formazione che presenta gli utilizzi di SAP MM e i programmi disponibili. La struttura bilingue aiuta i professionisti a individuare gli argomenti di interesse e a conoscere il percorso del formatore prima di contattarlo."
-    },
-    "maker": "Antony",
-    "image": "/shots/addy-sap-connect.jpg"
   },
   {
     "slug": "student-mark-tracker",

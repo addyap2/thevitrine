@@ -6,17 +6,18 @@ lang: en
 slug: websites-for-trainers
 key: training-website
 date: 2026-10-28
+updated: 2026-11-08
 status: published
-cover: addy-genai-training
-cases: [addy-genai-training, addys-english-pro, toeic-success-hub, student-mark-tracker]
+cover: toeic-success-hub
+cases: [toeic-success-hub, student-mark-tracker, cloe-prep-path]
 next: [ai-built-websites, website-cost]
 ---
 
-A trainer often speaks to two audiences at once: the person who'll take the course, and the person who approves or pays for it, an HR manager, a business owner, sometimes a funding body. Your website has to speak to both. We know this line of work from the inside: Antony has been a certified trainer since 2017, and we built his sites with that in mind.
+A trainer often speaks to two audiences at once: the person who'll take the course, and the person who approves or pays for it, an HR manager, a business owner, sometimes a funding body. Your website has to speak to both. We know this line of work from the inside: Antony has been a certified trainer since 2017, and we build his platforms with that in mind.
 
 ## 1. Clear paths, by audience
 
-Visitors should find their course in one click. On [Antony's main site](/en/work/antony-addy/), three paths lead from the home page: professional English, generative AI, and websites and tools. The [generative-AI training site](/en/work/formation-ia-generative/) separates two paths, for companies and for freelancers.
+Visitors should find their course in one click. Organise the home page by audience or by goal, not by the order your courses happened to arrive. On [ToeicPath](/en/work/toeicpath/), navigation works by skill and by exam format, so each learner goes straight to what they need to practise.
 
 ## 2. Concrete programmes
 
@@ -27,7 +28,7 @@ A training manager wants to know exactly what they're buying. For each course, g
 - the **length** and **format** (in person, online, on site);
 - **how learning is assessed**.
 
-Tie each skill to real uses. The generative-AI training site presents four key skills, each illustrated with concrete use cases.
+Tie each skill to real uses: one concrete example per skill beats a long list.
 
 ## 3. Funding
 
@@ -37,7 +38,7 @@ If your courses can be funded (in France, through CPF or OPCO, for example), say
 
 Learner testimonials, client recommendations, companies you've trained: these are your best arguments. Free resources (guides, exercises, articles) also show your expertise before the first contact.
 
-Antony goes further: his site shows the platforms he has built with AI himself, such as [ToeicPath](/en/work/toeicpath/), a complete TOEIC preparation platform. The best proof that you can teach a tool is to show what you've made with it.
+Antony goes further: he builds his own practice platforms, such as [ToeicPath](/en/work/toeicpath/), a complete TOEIC preparation platform. The best proof that you can teach a tool is to show what you've made with it.
 
 ## 5. An easy first contact
 

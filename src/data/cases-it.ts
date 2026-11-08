@@ -109,17 +109,6 @@ export const casesIt: Record<string, CaseIt> = {
     ],
     design: "Il sito mette in scena il mestiere: la luce che si accende e si spegne nella sala mostra con un solo gesto cosa installa l'azienda. Fondo scuro, caratteri eleganti e animazioni su misura danno un'immagine di alta gamma, all'altezza degli impianti stessi.",
   },
-  julienb: {
-    place: "Studio web indipendente",
-    client: "È il sito dello studio di Julien Bourgois, cofondatore di The Vitrine. Julien progetta e sviluppa siti vetrina su misura per artigiani, commercianti, terapeuti e autori: veloci, pensati per il telefono e fatti per invogliare a chiamare.",
-    built: [
-      "Un portfolio «quattro mestieri, quattro identità» con l'anteprima dal vivo di ogni sito.",
-      "Tre modi di collaborare, spiegati in modo semplice.",
-      "Un metodo in quattro tappe, «senza sorprese».",
-      "Le domande frequenti e il contatto diretto via e-mail e telefono.",
-    ],
-    design: "Uno studio che si presenta con l'esempio: una tipografia editoriale decisa, tanto spazio bianco e lavori mostrati dal vivo anziché in schermate. Il tono è diretto e caloroso, come un primo incontro con Julien.",
-  },
   stephanie: {
     place: "Saint-Raphaël, Var",
     client: "SR Bien-être è lo studio di una sofrologa e operatrice di trattamenti energetici a Saint-Raphaël. Lavora con adulti, adolescenti e bambini: sofrologia, trattamenti energetici e Reiki, linfodrenaggio, massaggio modellante e yoga per bambini, in studio o a domicilio nei dintorni di Saint-Raphaël.",
@@ -246,54 +235,6 @@ export const casesIt: Record<string, CaseIt> = {
       "Progressi salvati sul dispositivo, senza account né registrazione.",
     ],
     design: "La home page fa scorrere gli errori più comuni: ogni francofono ne riconosce qualcuno, e la voglia di capirne il perché fa il resto. Tutto è in francese, accessibile e gratuito, con una ricerca rapida per trovare qualsiasi regola.",
-  },
-  "biz-fluent-coach": {
-    place: "Online",
-    client: "TP English Pro è una piattaforma d'inglese professionale creata da Antony Addy per chi prepara il titolo professionale francese di Assistant de Direction (assistente di direzione), e in particolare la sua prova orale d'inglese. È gratuita.",
-    built: [
-      "Conversazioni con l'IA in 10 situazioni d'ufficio, a voce o per iscritto.",
-      "Feedback immediato e dettagliato e una modalità esame che simula la prova orale.",
-      "Moduli su e-mail, telefonate, riunioni e traduzione professionale.",
-      "500 termini di lessico amministrativo e ripasso.",
-      "Un'interfaccia in francese, ucraino, russo, arabo e rumeno.",
-    ],
-    design: "Una piattaforma pensata come un percorso di formazione: moduli numerati, monitoraggio dei progressi e ripasso, tutto intorno a un unico obiettivo, superare l'esame. La scelta delle lingue dell'interfaccia rispecchia chi frequenta il corso.",
-  },
-  "addys-english-pro": {
-    place: "Costa Azzurra e online",
-    client: "È il sito principale di Antony Addy, cofondatore di The Vitrine: formatore d'inglese professionale britannico, certificato come Formateur Professionnel d'Adultes dal 2017, formatore in IA generativa e creatore di siti web e strumenti didattici, in Costa Azzurra e online.",
-    built: [
-      "Tre percorsi dalla home page: inglese professionale, IA generativa, siti e strumenti.",
-      "Un unico referente per le tre attività, presentato fin dalla prima schermata.",
-      "Testimonianze e raccomandazioni dei clienti.",
-      "Una prima chiamata gratuita, con risposta entro 24 ore lavorative, e il contatto su WhatsApp.",
-      "Risorse gratuite e note legali complete.",
-    ],
-    design: "Tre righe di titolo per tre mestieri, «L'inglese. L'IA. Il web.», e un colore per ogni attività che accompagna il visitatore in tutto il sito. Il tono resta personale: è Antony che parla, in prima persona.",
-    seoDescription: "Il sito di Antony: inglese professionale, workshop di IA generativa e siti web, con un unico referente, in Costa Azzurra e online.",
-  },
-  "addy-genai-training": {
-    place: "Fréjus e online",
-    client: "Antony Addy, formatore certificato con sede a Fréjus, forma aziende e liberi professionisti all'IA generativa: ChatGPT, Claude, Gemini o Copilot, in presenza o a distanza, in francese o in inglese, partendo dai loro casi d'uso.",
-    built: [
-      "Quattro competenze chiave, ciascuna legata a usi concreti: IA conversazionale, creazione visiva, automazione e agenti, e altro.",
-      "Due percorsi, per le aziende e per i liberi professionisti.",
-      "Le piattaforme che Antony ha creato lui stesso con l'IA, come prova concreta.",
-      "Guide pratiche, domande frequenti, richiesta di preventivo e contatto su WhatsApp.",
-      "Versioni in francese e in inglese.",
-    ],
-    design: "La home page mostra una richiesta digitata dal vivo, «Riassumi questo rapporto di 40 pagine»: l'IA generativa spiegata con l'esempio, senza gergo. Il sito riprende l'identità visiva del sito principale di Antony, con un colore tutto suo.",
-  },
-  "addy-sap-connect": {
-    place: "In sede e online",
-    client: "Antony Addy offre formazione sul modulo SAP Materials Management (MM) per professionisti e aziende. Madrelingua inglese, bilingue in francese e formatore certificato dal 2017, forma in sede, online o con un programma su misura.",
-    built: [
-      "Le tre aree principali della formazione: acquisti, gestione del magazzino e anagrafiche.",
-      "Il dettaglio dei programmi di formazione MM.",
-      "La presentazione del formatore e del suo percorso.",
-      "Un sito in inglese e in francese, con un'area «La mia formazione».",
-    ],
-    design: "Un sito pulito e professionale per un pubblico aziendale: i benefici concreti della formazione vengono prima di tutto, e le qualifiche del formatore sono visibili dalla home page.",
   },
   "student-mark-tracker": {
     place: "Strumento interno",
