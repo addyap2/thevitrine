@@ -360,15 +360,14 @@ const u = UI[lang];
   // ---------- wire up ----------
   build();
   loadDraft();
-  // Arriving from the Audit express: start a redesign request for that site.
+  // Keep the audit context without deciding that the visitor needs a redesign.
   try {
     const h = JSON.parse(sessionStorage.getItem(AUDIT_HANDOFF) || "null");
     if (h && typeof h.url === "string" && Date.now() - Number(h.at) < 3600 * 1000) {
-      const kind = form.querySelector<HTMLInputElement>('[name="kind"][value="redesign"]');
-      if (kind && !valuesOf("kind").length) kind.checked = true;
-      const cur = form.querySelector<HTMLInputElement>('[name="current"]');
+      const notes = form.querySelector<HTMLTextAreaElement>('[name="notes"]');
       const issues = Array.isArray(h.issues) ? h.issues.filter((x: unknown) => typeof x === "string").slice(0, 8) : [];
-      if (cur && !cur.value) cur.value = `${h.url.slice(0, 120)}${issues.length ? " · Audit express : " + issues.join(" ; ") : ""}`.slice(0, 600);
+      const context = `Audit express : ${h.url.slice(0, 300)}${issues.length ? " · " + issues.join(" ; ") : ""}`.slice(0, 1200);
+      if (notes && !notes.value.includes(context)) notes.value = [notes.value, context].filter(Boolean).join("\n\n");
       applyConditions();
       sessionStorage.removeItem(AUDIT_HANDOFF);
     }

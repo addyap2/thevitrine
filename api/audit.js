@@ -12,6 +12,7 @@ import http from "node:http";
 import https from "node:https";
 import dns from "node:dns";
 import net from "node:net";
+import { parse } from "parse5";
 import { limited, clientIp, isJson } from "./_guard.js";
 import { originOk, readJson } from "./_email.js";
 
@@ -63,19 +64,21 @@ export function normaliseUrl(input) {
 }
 
 // ---------- fetching ----------
-function get(url) {
+function get(url, remainingMs) {
   return new Promise((resolve, reject) => {
     const lib = url.protocol === "https:" ? https : http;
     const started = Date.now();
     const req = lib.get(url, {
       lookup: safeLookup,
-      timeout: TIMEOUT_MS,
+      timeout: remainingMs,
       headers: { "User-Agent": "TheVitrine-AuditExpress/1.0 (+https://thevitrine.fr/audit-express/)", Accept: "text/html,application/xhtml+xml" },
     }, (res) => {
       const ttfb = Date.now() - started;
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        res.resume();
-        return resolve({ redirect: res.headers.location, status: res.statusCode, ttfb });
+        clearTimeout(deadline);
+        resolve({ redirect: res.headers.location, status: res.statusCode, ttfb });
+        res.destroy();
+        return;
       }
       const chunks = []; let size = 0;
       res.on("data", (c) => {
@@ -83,21 +86,26 @@ function get(url) {
         if (size > MAX_BYTES) { req.destroy(Object.assign(new Error("too large"), { code: "ETOOLARGE" })); return; }
         chunks.push(c);
       });
-      res.on("end", () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks).toString("utf8"), size, ttfb, total: Date.now() - started }));
+      res.on("end", () => { clearTimeout(deadline); resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks).toString("utf8"), size, ttfb, total: Date.now() - started }); });
       res.on("error", reject);
     });
+    // Socket inactivity alone does not bound DNS, slow streams or redirects.
+    const deadline = setTimeout(() => req.destroy(Object.assign(new Error("timeout"), { code: "ETIMEOUT" })), remainingMs);
     req.on("timeout", () => req.destroy(Object.assign(new Error("timeout"), { code: "ETIMEOUT" })));
-    req.on("error", reject);
+    req.on("error", (e) => { clearTimeout(deadline); reject(e); });
+    req.on("close", () => clearTimeout(deadline));
   });
 }
 
-async function fetchPage(start) {
+export async function fetchPage(start) {
   let url = start, hops = 0;
-  const deadline = Date.now() + TIMEOUT_MS;
+  const started = Date.now();
+  const deadline = started + TIMEOUT_MS;
   for (;;) {
-    if (Date.now() > deadline) throw Object.assign(new Error("timeout"), { code: "ETIMEOUT" });
-    const r = await get(url);
-    if (!r.redirect) return { ...r, finalUrl: url, hops };
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) throw Object.assign(new Error("timeout"), { code: "ETIMEOUT" });
+    const r = await get(url, remaining);
+    if (!r.redirect) return { ...r, total: Date.now() - started, finalUrl: url, hops };
     if (++hops > MAX_REDIRECTS) throw Object.assign(new Error("redirects"), { code: "EREDIRECTS" });
     const next = normaliseUrl(new URL(r.redirect, url).href);
     if (!next) throw Object.assign(new Error("blocked redirect"), { code: "EBLOCKED" });
@@ -106,28 +114,36 @@ async function fetchPage(start) {
 }
 
 // ---------- checks ----------
-const attr = (tag, name) => (tag.match(new RegExp(`\\b${name}\\s*=\\s*("([^"]*)"|'([^']*)'|([^\\s>]+))`, "i")) || [])
-  .slice(2).find((v) => v !== undefined);
-const decode = (s) => String(s || "").replace(/&amp;/g, "&").replace(/&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
-
 export function analyse(html, meta) {
-  const head = html.slice(0, 200000);
-  const metas = [...head.matchAll(/<meta\b[^>]*>/gi)].map((m) => m[0]);
+  // Parse inert HTML, never execute it. Script strings, comments, templates and
+  // data-* attributes must not count as actual headings, images or metadata.
+  const elements = [];
+  const pending = [parse(html)];
+  while (pending.length) {
+    const node = pending.pop();
+    if (node.tagName) elements.push(node);
+    if (node.tagName !== "template") {
+      const children = node.childNodes || [];
+      for (let i = children.length - 1; i >= 0; i--) pending.push(children[i]);
+    }
+  }
+  const tags = (name) => elements.filter((node) => node.tagName === name);
+  const attr = (node, name) => node?.attrs?.find((a) => a.name === name)?.value;
+  const text = (node) => (node?.childNodes || []).map((n) => n.value || "").join("").replace(/\s+/g, " ").trim();
+  const metas = tags("meta");
   const metaContent = (key) => {
     const tag = metas.find((t) => (attr(t, "name") || attr(t, "property") || "").toLowerCase() === key);
-    return tag ? decode(attr(tag, "content")) : null;
+    return tag ? (attr(tag, "content") || "").trim() : null;
   };
-  const title = decode((head.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || "");
+  const title = text(tags("title")[0]);
   const description = metaContent("description");
   const viewport = metaContent("viewport") || "";
-  const htmlTag = (html.match(/<html\b[^>]*>/i) || [""])[0];
-  const lang = attr(htmlTag, "lang");
-  const h1 = (html.match(/<h1[\s>]/gi) || []).length;
-  const tel = /href\s*=\s*["']?tel:/i.test(html);
-  const jsonLd = /<script[^>]+type\s*=\s*["']?application\/ld\+json/i.test(html);
+  const lang = (attr(tags("html")[0], "lang") || "").trim();
+  const h1 = tags("h1").length;
+  const tel = tags("a").some((node) => /^tel:.+/i.test((attr(node, "href") || "").trim()));
+  const jsonLd = tags("script").some((node) => (attr(node, "type") || "").trim().toLowerCase() === "application/ld+json");
   const ogImage = metaContent("og:image");
-  const hreflangs = new Set([...head.matchAll(/<link\b[^>]*hreflang\s*=\s*["']?([a-z-]+)/gi)].map((m) => m[1].toLowerCase()).filter((l) => l !== "x-default"));
-  const imgs = [...html.matchAll(/<img\b[^>]*>/gi)].map((m) => m[0]);
+  const imgs = tags("img");
   const noAlt = imgs.filter((t) => attr(t, "alt") === undefined).length;
 
   const checks = [];
@@ -135,16 +151,17 @@ export function analyse(html, meta) {
   add("https", meta.https ? "good" : "bad");
   add("mobile", /width\s*=\s*device-width/i.test(viewport) ? "good" : "bad");
   add("speed", meta.total < 1500 ? "good" : meta.total < 3500 ? "warn" : "bad", meta.total);
-  add("weight", meta.size < 300 * 1024 ? "good" : meta.size < 800 * 1024 ? "warn" : "bad", Math.round(meta.size / 1024));
+  add("weight", meta.size < 300 * 1024 ? "good" : meta.size < 800 * 1024 ? "warn" : "bad", Math.max(0.1, Math.round(meta.size / 102.4) / 10));
   add("title", !title ? "bad" : title.length >= 10 && title.length <= 65 ? "good" : "warn", title.length);
-  add("description", !description ? "bad" : description.length >= 50 && description.length <= 170 ? "good" : "warn", description ? description.length : 0);
+  // Description length alone does not establish quality or search appearance.
+  add("description", description ? "good" : "bad", description ? description.length : 0);
   add("h1", h1 === 1 ? "good" : h1 === 0 ? "bad" : "warn", h1);
   add("phone", tel ? "good" : "warn");
   add("structured", jsonLd ? "good" : "warn");
   add("share", ogImage ? "good" : "warn");
   add("lang", lang ? "good" : "warn");
   if (imgs.length) add("alt", noAlt === 0 ? "good" : noAlt / imgs.length < 0.3 ? "warn" : "bad", noAlt);
-  return { checks, languages: Math.max(1, hreflangs.size) };
+  return { checks };
 }
 
 export default async function handler(req, res) {
@@ -178,5 +195,5 @@ export default async function handler(req, res) {
 
   const result = analyse(page.body, { https: page.finalUrl.protocol === "https:", total: page.total, size: page.size });
   console.info(JSON.stringify({ event: "audit_run", checks: result.checks.length }));
-  return res.status(200).json({ ok: true, host: page.finalUrl.hostname, ...result });
+  return res.status(200).json({ ok: true, host: page.finalUrl.hostname, url: page.finalUrl.href, ...result });
 }
