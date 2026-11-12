@@ -6,6 +6,9 @@ export type L3 = { fr: string; en: string; it: string };
 type Status = "good" | "warn" | "bad";
 
 export const CHECKS: Record<string, { label: L3 } & Partial<Record<Status, L3>>> = {
+  "indexability": {"label": {"fr": "Consignes d'indexation (Google)", "en": "Indexing instructions (Google)", "it": "Istruzioni di indicizzazione (Google)"}, "good": {"fr": "Aucune directive noindex ou none détectée dans le HTML et les en-têtes reçus. Cela ne confirme pas la présence dans Google.", "en": "No noindex or none directive detected in the received HTML and headers. This does not confirm a listing in Google.", "it": "Nessuna direttiva noindex o none rilevata nel codice HTML e nelle intestazioni ricevute. Non conferma la presenza su Google."}, "bad": {"fr": "Une directive noindex ou none demande de ne pas indexer cette page. Ce choix peut être volontaire.", "en": "A noindex or none directive requests that this page not be indexed. This may be intentional.", "it": "Una direttiva noindex o none richiede di non indicizzare la pagina. Può essere una scelta voluta."}},
+  "canonical": {"label": {"fr": "Adresse canonique", "en": "Canonical address", "it": "Indirizzo canonico"}, "good": {"fr": "Une adresse canonique cohérente est déclarée. La destination et le choix de Google n'ont pas été vérifiés.", "en": "A consistent canonical address is declared. The destination and Google's choice have not been verified.", "it": "Indirizzo canonico coerente dichiarato. La destinazione e la scelta di Google non sono state verificate."}, "warn": {"fr": "Une déclaration canonique mérite votre attention. Ce point est hors note.", "en": "A canonical declaration needs review. This check is outside the score.", "it": "Una dichiarazione canonica richiede attenzione. Questo controllo è fuori voto."}, "bad": {"fr": "Plusieurs adresses canoniques différentes sont déclarées pour cette page.", "en": "Different canonical addresses are declared for this page.", "it": "Sono dichiarati indirizzi canonici diversi per questa pagina."}},
+
   https: {
     label: { fr: "Connexion sécurisée (HTTPS)", en: "Secure connection (HTTPS)", it: "Connessione sicura (HTTPS)" },
     good: { fr: "La page a été récupérée en HTTPS. Cela ne vérifie pas toute la sécurité du site.", en: "The page was fetched over HTTPS. This does not check the site's overall security.", it: "Pagina recuperata in HTTPS. La sicurezza complessiva del sito non è verificata." },
@@ -227,6 +230,9 @@ export const UIA = {
 export const AUDIT_HANDOFF = "vitrine-audit-handoff";
 
 export const ACTIONS: Record<string, L3> = {
+  "indexability": {"fr": "Si cette page doit apparaître dans Google, vérifiez les réglages noindex/none dans votre CMS et les en-têtes du serveur. Conservez-les pour les pages que vous souhaitez exclure.", "en": "If this page should appear in Google, review noindex/none settings in your CMS and server headers. Keep them on pages you intend to exclude.", "it": "Se la pagina deve apparire su Google, verifica noindex/none nel CMS e nelle intestazioni del server. Mantienili sulle pagine da escludere."},
+  "canonical": {"fr": "Pour des pages similaires, choisissez une adresse de référence pertinente et alignez les déclarations HTML et HTTP. Ne modifiez pas un choix volontaire sans vérifier le contenu.", "en": "For similar pages, choose a relevant preferred address and align HTML and HTTP declarations. Review the content before changing an intentional choice.", "it": "Per pagine simili, scegli un indirizzo di riferimento pertinente e allinea le dichiarazioni HTML e HTTP. Verifica i contenuti prima di cambiare una scelta voluta."},
+
   "https": {
     "fr": "Activez HTTPS et redirigez les adresses HTTP vers leur version sécurisée.",
     "en": "Enable HTTPS and redirect HTTP addresses to the secure version.",
@@ -291,6 +297,11 @@ export const ACTIONS: Record<string, L3> = {
 
 export const AUDIT_DETAILS = {
   "fr": {
+    "needsReview": "Points à examiner",
+    "passed": "Contrôles réussis ({n})",
+    "indexBlocked": "Une consigne demande d'exclure cette page de Google.",
+    "indexBlockedSub": "Vérifiez ce choix en priorité si cette page doit être visible dans les recherches.",
+
     "scope": "Gratuit, sans inscription. Une seule page est contrôlée ; les réponses facultatives ne changent pas la note technique.",
     "technical": "Contrôles automatiques",
     "outsideScore": "hors note",
@@ -298,7 +309,7 @@ export const AUDIT_DETAILS = {
     "priorities": "Par où commencer",
     "action": "À faire",
     "method": "Comment lire cette note",
-    "methodText": "Indicateur des contrôles HTML uniquement : chaque contrôle compte autant (bon = 1, à améliorer = 0,5, à corriger = 0), puis moyenne sur 100. Le téléphone, les données structurées et vos réponses sont hors note. Les seuils de taille, de délai et de longueur sont indicatifs. Ce bilan ne mesure ni les ventes, ni le référencement réel, ni l'accessibilité complète, ni le chargement sur téléphone.",
+    "methodText": "Indicateur des contrôles HTML uniquement : chaque contrôle compte autant (bon = 1, à améliorer = 0,5, à corriger = 0), puis moyenne sur 100. Le téléphone, les données structurées, l’adresse canonique et vos réponses sont hors note. Les seuils de taille, de délai et de longueur sont indicatifs. Le fichier robots.txt et la présence réelle dans Google ne sont pas vérifiés. Ce bilan ne mesure ni les ventes, ni le référencement réel, ni l'accessibilité complète, ni le chargement sur téléphone.",
     "summary": "{n} contrôles dans la note · {issues} points à examiner",
     "noActions": "Aucun point signalé par les contrôles inclus dans la note. Testez aussi le parcours de contact et l'affichage réel sur téléphone.",
     "noScript": "Activez JavaScript pour lancer ce contrôle, ou contactez-nous pour un bilan.",
@@ -306,6 +317,11 @@ export const AUDIT_DETAILS = {
     "ctaHelp": "Besoin d'aide pour choisir quoi corriger ? Ces résultats seront repris dans le questionnaire de votre projet."
   },
   "en": {
+    "needsReview": "Points to review",
+    "passed": "Passed checks ({n})",
+    "indexBlocked": "An instruction asks Google to exclude this page.",
+    "indexBlockedSub": "Review this first if the page should be visible in search results.",
+
     "scope": "Free, no sign-up. One page is checked; optional answers do not change the technical score.",
     "technical": "Automated checks",
     "outsideScore": "outside the score",
@@ -313,7 +329,7 @@ export const AUDIT_DETAILS = {
     "priorities": "Where to start",
     "action": "Next step",
     "method": "How to read this score",
-    "methodText": "HTML check indicator only: every check counts equally (good = 1, could be better = 0.5, needs fixing = 0), averaged out of 100. Phone links, structured data and your answers are excluded. Size, time and length thresholds are guidelines. This does not measure sales, actual search rankings, full accessibility or loading on a phone.",
+    "methodText": "HTML check indicator only: every check counts equally (good = 1, could be better = 0.5, needs fixing = 0), averaged out of 100. Phone links, structured data, canonical addresses and your answers are excluded. Size, time and length thresholds are guidelines. The robots.txt file and actual listings in Google are not checked. This does not measure sales, actual search rankings, full accessibility or loading on a phone.",
     "summary": "{n} scored checks · {issues} points to review",
     "noActions": "No issues flagged by the scored checks. Also test the contact flow and actual layout on a phone.",
     "noScript": "Enable JavaScript to run this check, or contact us for a review.",
@@ -321,6 +337,11 @@ export const AUDIT_DETAILS = {
     "ctaHelp": "Need help choosing what to fix? These results will be included in your project questionnaire."
   },
   "it": {
+    "needsReview": "Punti da esaminare",
+    "passed": "Controlli superati ({n})",
+    "indexBlocked": "Un'istruzione chiede a Google di escludere la pagina.",
+    "indexBlockedSub": "Verifica prima questa scelta se la pagina deve apparire nei risultati di ricerca.",
+
     "scope": "Gratuito, senza registrazione. Si controlla una pagina; le risposte facoltative non cambiano il voto tecnico.",
     "technical": "Controlli automatici",
     "outsideScore": "fuori voto",
@@ -328,7 +349,7 @@ export const AUDIT_DETAILS = {
     "priorities": "Da dove iniziare",
     "action": "Cosa fare",
     "method": "Come leggere il voto",
-    "methodText": "Indicatore dei soli controlli HTML: ogni controllo pesa uguale (bene = 1, da migliorare = 0,5, da correggere = 0), con media su 100. Telefono, dati strutturati e risposte sono esclusi. Le soglie di peso, tempo e lunghezza sono indicative. Non misura vendite, posizionamento reale, accessibilità completa o caricamento su telefono.",
+    "methodText": "Indicatore dei soli controlli HTML: ogni controllo pesa uguale (bene = 1, da migliorare = 0,5, da correggere = 0), con media su 100. Telefono, dati strutturati, indirizzi canonici e risposte sono esclusi. Le soglie di peso, tempo e lunghezza sono indicative. Il file robots.txt e la presenza effettiva su Google non sono verificati. Non misura vendite, posizionamento reale, accessibilità completa o caricamento su telefono.",
     "summary": "{n} controlli nel voto · {issues} punti da esaminare",
     "noActions": "Nessun problema segnalato dai controlli inclusi nel voto. Prova anche il percorso di contatto e la visualizzazione reale su telefono.",
     "noScript": "Attiva JavaScript per avviare il controllo, oppure contattaci per una verifica.",
@@ -336,3 +357,30 @@ export const AUDIT_DETAILS = {
     "ctaHelp": "Vuoi aiuto a scegliere cosa correggere? I risultati saranno inclusi nel questionario del progetto."
   }
 } as const;
+
+export const CHECK_DETAILS: Record<string, Record<string, L3>> = {
+  "indexability": {
+    "conflict": {
+      "fr": "Des consignes index/all et noindex/none se contredisent. Pour Google, la consigne restrictive prévaut. Vérifiez si cette exclusion est voulue.",
+      "en": "Index/all and noindex/none instructions conflict. Google follows the restrictive instruction. Check whether this exclusion is intended.",
+      "it": "Le istruzioni index/all e noindex/none sono in conflitto. Google segue l'istruzione restrittiva. Verifica se l'esclusione è voluta."
+    }
+  },
+  "canonical": {
+    "missing": {
+      "fr": "Aucune adresse canonique détectée dans le HTML ou l'en-tête Link. Elle est facultative ; elle peut aider à regrouper les pages similaires.",
+      "en": "No canonical address detected in the HTML or Link header. It is optional and can help consolidate similar pages.",
+      "it": "Nessun indirizzo canonico rilevato nel codice HTML o nell'intestazione Link. È facoltativo e può aiutare a raggruppare pagine simili."
+    },
+    "invalid": {
+      "fr": "Une déclaration canonique est vide, non résolue ou utilise un format non pris en charge (fragment, protocole ou attributs). Vérifiez sa configuration.",
+      "en": "A canonical declaration is empty, unresolved or uses an unsupported format (fragment, scheme or attributes). Review its configuration.",
+      "it": "Una dichiarazione canonica è vuota, non risolta o usa un formato non supportato (frammento, protocollo o attributi). Verifica la configurazione."
+    },
+    "other": {
+      "fr": "La page désigne une autre adresse comme canonique. Cela peut être volontaire : vérifiez que les deux pages représentent bien le même contenu.",
+      "en": "The page names another address as canonical. This can be intentional: check that both pages represent the same content.",
+      "it": "La pagina indica un altro indirizzo canonico. Può essere voluto: verifica che le due pagine rappresentino lo stesso contenuto."
+    }
+  }
+};

@@ -13,6 +13,7 @@ import https from "node:https";
 import dns from "node:dns";
 import net from "node:net";
 import { parse } from "parse5";
+import { searchChecks } from "./_audit-search.js";
 import { limited, clientIp, isJson } from "./_guard.js";
 import { originOk, readJson } from "./_email.js";
 
@@ -86,7 +87,7 @@ function get(url, remainingMs) {
         if (size > MAX_BYTES) { req.destroy(Object.assign(new Error("too large"), { code: "ETOOLARGE" })); return; }
         chunks.push(c);
       });
-      res.on("end", () => { clearTimeout(deadline); resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks).toString("utf8"), size, ttfb, total: Date.now() - started }); });
+      res.on("end", () => { clearTimeout(deadline); resolve({ status: res.statusCode, headers: { ...res.headers, ...(res.headersDistinct?.['x-robots-tag'] ? { 'x-robots-tag': res.headersDistinct['x-robots-tag'] } : {}) }, body: Buffer.concat(chunks).toString("utf8"), size, ttfb, total: Date.now() - started }); });
       res.on("error", reject);
     });
     // Socket inactivity alone does not bound DNS, slow streams or redirects.
@@ -146,7 +147,19 @@ export function analyse(html, meta) {
   const imgs = tags("img");
   const noAlt = imgs.filter((t) => attr(t, "alt") === undefined).length;
 
-  const checks = [];
+  const inHead = (node) => {
+    for (let parent = node.parentNode; parent; parent = parent.parentNode) if (parent.tagName === 'head') return true;
+    return false;
+  };
+  let baseUrl = meta.url;
+  const declaredBase = attr(tags('base').find(inHead), 'href');
+  if (declaredBase !== undefined) try { baseUrl = new URL(declaredBase, meta.url).href; } catch {}
+  const checks = searchChecks({
+    robots: metas.map((node) => ({name: attr(node, 'name') || '', content: attr(node, 'content') || ''})),
+    canonicals: tags('link').filter((node) => inHead(node) && (attr(node, 'rel') || '').toLowerCase().split(/\s+/).includes('canonical')).map((node) => ({href: attr(node, 'href'), base: baseUrl, unsupported: ['hreflang', 'lang', 'media', 'type'].some((name) => attr(node, name) !== undefined)})),
+    baseUrl: meta.url,
+    headers: meta.headers,
+  });
   const add = (id, status, value) => checks.push({ id, status, ...(value !== undefined ? { value } : {}) });
   add("https", meta.https ? "good" : "bad");
   add("mobile", /width\s*=\s*device-width/i.test(viewport) ? "good" : "bad");
@@ -193,7 +206,7 @@ export default async function handler(req, res) {
   const type = String(page.headers["content-type"] || "");
   if (type && !/html/i.test(type)) return res.status(200).json({ ok: false, error: "nothtml" });
 
-  const result = analyse(page.body, { https: page.finalUrl.protocol === "https:", total: page.total, size: page.size });
+  const result = analyse(page.body, { https: page.finalUrl.protocol === "https:", total: page.total, size: page.size, url: page.finalUrl.href, headers: page.headers });
   console.info(JSON.stringify({ event: "audit_run", checks: result.checks.length }));
   return res.status(200).json({ ok: true, host: page.finalUrl.hostname, url: page.finalUrl.href, ...result });
 }

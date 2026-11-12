@@ -22,7 +22,7 @@ test('refuses a public name that resolves to a private address', async () => {
 });
 
 test('analyses a page', () => {
-  const html = '<html lang="fr"><head><title>Pizzeria Da Mario à Fréjus</title><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Pizzas au feu de bois, à emporter ou sur place, au cœur de Fréjus. Réservez en un clic."><meta property="og:image" content="/x.jpg"><script type="application/ld+json">{}</script></head><body><h1>Da Mario</h1><a href="tel:+33600000000">Appeler</a><img src="a.jpg" alt=""></body></html>';
+  const html = '<html lang="fr"><head><title>Pizzeria Da Mario à Fréjus</title><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Pizzas au feu de bois, à emporter ou sur place, au cœur de Fréjus. Réservez en un clic."><meta property="og:image" content="/x.jpg"><link rel="canonical" href="https://example.com/"><script type="application/ld+json">{}</script></head><body><h1>Da Mario</h1><a href="tel:+33600000000">Appeler</a><img src="a.jpg" alt=""></body></html>';
   const { checks } = analyse(html, { https: true, total: 800, size: 20000 });
   assert.ok(checks.every((c) => c.status === 'good'), JSON.stringify(checks.filter((c) => c.status !== 'good')));
   const bare = analyse('<html><body><p>Hello</p></body></html>', { https: false, total: 5000, size: 900000 }).checks;

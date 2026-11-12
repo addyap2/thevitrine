@@ -5,7 +5,7 @@
 // score; findings can pre-fill the project questionnaire through sessionStorage.
 import SubPage from "./SubPage.astro";
 import { auditPath, homePath, questionnairePath, tr, type Lang } from "../i18n";
-import { UIA, QUESTIONS, CHECKS, ACTIONS, AUDIT_DETAILS } from "../audit";
+import { UIA, QUESTIONS, CHECKS, CHECK_DETAILS, ACTIONS, AUDIT_DETAILS } from "../audit";
 import { offers, offerPath } from "../data/offers";
 import { pageLd } from "../ld";
 
@@ -18,6 +18,7 @@ const words = {
   lang,
   ui: u,
   checks: Object.fromEntries(Object.entries(CHECKS).map(([id, c]) => [id, { label: c.label[lang], good: c.good?.[lang], warn: c.warn?.[lang], bad: c.bad?.[lang], action: ACTIONS[id]?.[lang] }])),
+  checkDetails: Object.fromEntries(Object.entries(CHECK_DETAILS).map(([id, details]) => [id, Object.fromEntries(Object.entries(details).map(([key, text]) => [key, text[lang]]))])),
   questions: QUESTIONS.map((q) => ({ id: q.id, q: q.q[lang], options: q.options.map((o) => ({ v: o.v, status: o.status })), result: { good: q.result.good?.[lang], warn: q.result.warn?.[lang], bad: q.result.bad?.[lang] } })),
 };
 ---
@@ -77,8 +78,14 @@ const words = {
         <ol id="audit-priorities"></ol>
         <p id="audit-no-actions" hidden>{u.noActions}</p>
       </section>
-      <h2 class="section-title">{u.technical}</h2>
-      <ul id="audit-list" class="list"></ul>
+      <section id="audit-findings">
+        <h2 class="section-title">{u.needsReview}</h2>
+        <ul id="audit-list" class="list"></ul>
+      </section>
+      <details id="audit-passed" class="passed" hidden>
+        <summary id="audit-passed-summary"></summary>
+        <ul id="audit-passed-list" class="list"></ul>
+      </details>
       <section id="audit-context" hidden>
         <h2 class="section-title">{u.context}</h2>
         <ul id="audit-answers" class="list"></ul>
@@ -106,6 +113,8 @@ const words = {
   const errorEl = document.getElementById("audit-error")!;
   const result = document.getElementById("audit-result")!;
   const list = document.getElementById("audit-list")!;
+  const passed = document.getElementById("audit-passed") as HTMLDetailsElement;
+  const passedList = document.getElementById("audit-passed-list")!;
   const answers = document.getElementById("audit-answers")!;
   const priorities = document.getElementById("audit-priorities")!;
   const runLabel = run.innerHTML;
@@ -155,24 +164,28 @@ const words = {
       }
       if (typeof data.host !== "string" || !data.host) throw new Error("Invalid audit result");
       const report = auditScore(data.checks);
-      list.replaceChildren(); answers.replaceChildren(); priorities.replaceChildren();
+      list.replaceChildren(); passedList.replaceChildren(); answers.replaceChildren(); priorities.replaceChildren(); passed.open = false;
       const issues: string[] = [];
       for (const c of report.checks) {
         const words = W.checks[c.id];
         const status = c.status as Status;
-        const text = String(words[status] || "").replace("{v}", String(c.value ?? ""));
+        const detail = c.reason && Object.hasOwn(W.checkDetails[c.id] || {}, c.reason) ? W.checkDetails[c.id][c.reason] : words[status];
+        const text = String(detail || "").replace("{v}", String(c.value ?? ""));
         const label = CONTEXT_CHECKS.has(c.id) ? `${words.label} · ${W.ui.outsideScore}` : words.label;
-        list.append(item(label, text, status, words.action));
+        (status === "good" ? passedList : list).append(item(label, text, status, words.action));
         if (status !== "good") issues.push(words.label);
       }
-      for (const c of report.issues.slice(0, 3)) {
+      passed.hidden = !passedList.childElementCount;
+      document.getElementById("audit-findings")!.hidden = !list.childElementCount;
+      document.getElementById("audit-passed-summary")!.textContent = W.ui.passed.replace("{n}", passedList.childElementCount);
+      for (const c of report.priorities.slice(0, 3)) {
         const words = W.checks[c.id];
         const li = document.createElement("li");
         const title = document.createElement("strong"); title.textContent = words.label;
         const advice = document.createElement("p"); advice.textContent = words.action;
         li.append(title, advice); priorities.append(li);
       }
-      document.getElementById("audit-no-actions")!.hidden = report.issues.length > 0;
+      document.getElementById("audit-no-actions")!.hidden = report.priorities.length > 0;
       for (const q of W.questions) {
         const picked = submitted.get(q.id);
         const option = q.options.find((o: any) => o.v === picked);
@@ -186,8 +199,8 @@ const words = {
       document.getElementById("audit-context")!.hidden = !answers.childElementCount;
       document.getElementById("audit-score")!.textContent = String(report.score);
       result.dataset.band = report.band;
-      document.getElementById("audit-verdict")!.textContent = W.ui.verdict[report.band];
-      document.getElementById("audit-verdict-sub")!.textContent = W.ui.verdictSub[report.band];
+      document.getElementById("audit-verdict")!.textContent = report.indexingBlocked ? W.ui.indexBlocked : W.ui.verdict[report.band];
+      document.getElementById("audit-verdict-sub")!.textContent = report.indexingBlocked ? W.ui.indexBlockedSub : W.ui.verdictSub[report.band];
       document.getElementById("audit-summary")!.textContent = W.ui.summary.replace("{n}", report.count).replace("{issues}", report.issues.length);
       document.getElementById("audit-checked")!.textContent = W.ui.checked.replace("{host}", data.url || data.host);
       if (navigator.doNotTrack !== "1") fetch("/api/event/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event: "audit_run", lang: W.lang }), keepalive: true }).catch(() => {});
@@ -220,6 +233,9 @@ const words = {
   .method { margin: 1rem 0; }
   .method summary { cursor: pointer; text-decoration: underline; text-underline-offset: 3px; min-height: 44px; display: flex; align-items: center; }
   .section-title, .priorities h2 { font-size: 1.25rem; margin: 2rem 0 0; }
+  .passed { margin: 1.5rem 0; border: 1px solid var(--line); border-radius: 12px; padding: 0 1rem; }
+  .passed summary { cursor: pointer; min-height: 48px; padding: 0.8rem 0; font-weight: 600; }
+  .passed .list { margin-top: 0; }
   .priorities { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 1.5rem; margin: 1.5rem 0 2rem; }
   .priorities h2 { margin: 0 0 1rem; }
   .priorities ol { padding-left: 1.4rem; margin: 0; }
