@@ -7,6 +7,7 @@ import {
   C, SERIF, SANS, SITE, esc, clip, oneLine, isEmail, originOk, readJson, recipients, sender, send, submissionKey, phoneDigits,
   documentHtml, header, button, buttons, eyebrow, footer, signature, pickLang, HOME, QUOTE, SIGN_OFF, LANG_FR,
 } from "./_email.js";
+import { isBlocked } from "./_blocklist.js";
 
 const MAX_BODY = 16 * 1024;      // bytes
 const MAX_MESSAGE = 5000;        // characters
@@ -141,6 +142,8 @@ export default async function handler(req, res) {
   if (!d.name || !isEmail(d.email) || !d.message || !d.consent) return res.status(422).json({ ok: false, error: "invalid" });
   // Link-stuffed messages are spam: accept silently, send nothing.
   if (countLinks(d.message) > MAX_LINKS) return res.status(200).json({ ok: true });
+  // Blocked senders: accept silently, send nothing.
+  if (isBlocked({ email: d.email, phone: d.phone, text: `${d.name}\n${d.message}` })) return res.status(200).json({ ok: true });
 
   const ip = clientIp(req);
   try {

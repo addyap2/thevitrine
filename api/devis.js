@@ -11,6 +11,7 @@ import {
   C, SERIF, SANS, SITE, esc, clip, oneLine, isEmail, originOk, readJson, recipients, sender, send, submissionKey, phoneDigits,
   documentHtml, header, button, buttons, eyebrow, footer, signature, pickLang, HOME, SIGN_OFF, LANG_FR,
 } from "./_email.js";
+import { isBlocked } from "./_blocklist.js";
 
 const MAX_BODY = 48 * 1024;      // bytes
 const MAX_SECTIONS = 10;
@@ -247,6 +248,9 @@ export default async function handler(req, res) {
 
   const d = clean(body);
   if (!d.name || !isEmail(d.email) || !d.consent) return res.status(422).json({ ok: false, error: "invalid" });
+  // Blocked senders: accept silently, send nothing.
+  const answers = d.sections.flatMap((s) => s.items.map((it) => it.value)).join("\n");
+  if (isBlocked({ email: d.email, phone: d.phone, text: `${d.name}\n${d.company}\n${answers}` })) return res.status(200).json({ ok: true });
 
   // Per sender IP, and per address the confirmation goes to (stops mail-bombing one inbox).
   const ip = clientIp(req);

@@ -22,3 +22,11 @@ for(const [name,handler] of [['contact',contact],['quote',devis]]){
  }finally{globalThis.fetch=original;}});
 }
 test('shared replay claims are atomic and shared limits use expiring hashed keys',async()=>{process.env.KV_REST_API_URL='https://example.invalid';process.env.KV_REST_API_TOKEN='dummy';const original=globalThis.fetch;let claims=0;globalThis.fetch=async(url,options)=>{const cmd=JSON.parse(options.body);assert.ok(!JSON.stringify(cmd).includes('private@example.com'));return new Response(JSON.stringify({result:cmd[0]==='SET'?(claims++===0?'OK':null):2}),{status:200});};try{const t=matureToken();assert.equal(await checkToken(t,3000),'ok');assert.equal(await checkToken(t,3000),'invalid');assert.equal(await limited('test','private@example.com',1,10000),true);}finally{globalThis.fetch=original;delete process.env.KV_REST_API_URL;delete process.env.KV_REST_API_TOKEN;}});
+for(const [name,handler] of [['contact',contact],['quote',devis]]){
+ test(`${name}: blocked senders get a silent success and no email`,async()=>{const original=globalThis.fetch;let calls=0;globalThis.fetch=async()=>{calls++;return new Response('{"id":"x"}',{status:200});};try{
+  for(const tweak of [{email:'Alexis.Felten3342@probox.my.id'},{email:'someone-else@probox.my.id'},{phone:'+33 7 23 92 67 32'},{message:'Exemple ici : https://unpartage.online/fr/mkt/x',sections:[{title:'Projet',items:[{label:'Notes',value:'voir unpartage.online'}]}]}]){
+   const req=request(`${name}-blocked@example.com`);Object.assign(req.body,tweak,{submissionId:Math.random().toString(36)});const res=response();await handler(req,res);assert.equal(res.code,200);assert.equal(res.body.ok,true);
+  }
+  assert.equal(calls,0);
+ }finally{globalThis.fetch=original;}});
+}
