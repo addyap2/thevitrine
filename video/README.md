@@ -5,13 +5,18 @@ Remotion project that turns a project's live site into two videos:
 | Output | Size | Where it goes |
 |---|---|---|
 | `../public/video/<slug>.mp4` | 1280×800, silent loop, ~1.7 MB | Played over the screenshot on the case-study page |
-| `out/<slug>-reel.mp4` | 1080×1920 with the end card and sonic logo | Instagram / Facebook Reels, Google Business Profile |
+| `out/<slug>-reel.mp4` | 1080×1920 with the site's address, the end card and sonic logo | Instagram / Facebook Reels, Google Business Profile |
+
+Reels are only made for sites on their own domain (`ristorantedalola.it`, `janstenborg.com`…),
+because the Reel ends on that address. Sites on `*.vercel.app` or on antonyaddy.com
+(subdomains and pages) get the website clip only. The rule is `ownDomain()` in `render.mjs`.
 
 ```bash
 cd video
 npm install
 npm run clip -- ristorante-lola            # capture the live site, then render both
 npm run clip -- --no-capture ristorante-lola
+npm run clip -- --reels-only --all           # only the Reels, from existing captures
 npm run dev                                 # Remotion Studio, to tweak the look
 ```
 

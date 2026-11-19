@@ -9,6 +9,7 @@ const sample: ClipProps = {
   title: "Ristorante da Lola",
   category: "Restaurants & bars",
   host: "ristorantedalola.it",
+  link: "ristorantedalola.it",
   desktop: { file: "ristorante-lola-desktop.jpg", width: 1280, height: 6400 },
   mobile: { file: "ristorante-lola-mobile.jpg", width: 390, height: 7200 },
 };
