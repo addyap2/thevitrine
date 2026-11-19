@@ -13,6 +13,7 @@ import { categories } from "../data/overrides.json";
 import { cases, caseSlug } from "../data/cases";
 import { strings, homePath, legalPath, casePath, questionnairePath, langs, langNames, type Lang } from "../i18n";
 import { srcset, src800 } from "../img";
+import { existsSync } from "node:fs";
 
 interface Props { lang: Lang; project: string }
 const { lang, project: slug } = Astro.props;
@@ -28,7 +29,9 @@ const c = cases[slug];
 const prev = withCases[(i - 1 + withCases.length) % withCases.length];
 const next = withCases[(i + 1) % withCases.length];
 
-const mobileImage = ["ristorante-lola", "filton-athletic-fc", "student-mark-tracker"].includes(p.slug) ? `/shots/mobile/${p.slug}.webp` : null;
+// Walkthrough clip made by video/render.mjs, played over the screenshot when it exists.
+const clip = existsSync(`public/video/${slug}.mp4`) ? `/video/${slug}.mp4` : null;
+const mobileImage =["ristorante-lola", "filton-athletic-fc", "student-mark-tracker"].includes(p.slug) ? `/shots/mobile/${p.slug}.webp` : null;
 const urlSlug = caseSlug(p.slug);
 const canonical = new URL(casePath(lang, urlSlug), Astro.site);
 const abs = (path: string) => new URL(path, Astro.site).href;
@@ -148,21 +151,86 @@ const ld = {
                 <i></i><i></i><i></i>
                 {host && <span class="url">{host}</span>}
               </span>
-              <img
-                src={src800(p.image)}
-                srcset={srcset(p.image)}
-                sizes="(min-width: 960px) 600px, calc(100vw - 2rem)"
-                alt={t.shotAlt.replace("{title}", p.title).replace("{host}", host ?? "")}
-                width="1280"
-                height="800"
-                fetchpriority="high"
-              />
+              <div class="screen">
+                <img
+                  src={src800(p.image)}
+                  srcset={srcset(p.image)}
+                  sizes="(min-width: 960px) 600px, calc(100vw - 2rem)"
+                  alt={t.shotAlt.replace("{title}", p.title).replace("{host}", host ?? "")}
+                  width="1280"
+                  height="800"
+                  fetchpriority="high"
+                />
+                {clip && (
+                  <video class="clip" data-src={clip} muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" width="1280" height="800"></video>
+                )}
+              </div>
             </div>
+            {clip && (
+              <button class="clip-toggle" type="button" hidden aria-pressed="false" data-pause={L("Mettre la visite en pause", "Pause the walkthrough", "Metti in pausa la visita")} data-play={L("Lire la visite du site", "Play the site walkthrough", "Riproduci la visita del sito")}>
+                <span class="icon" aria-hidden="true"></span>
+                <span class="label">{L("Mettre la visite en pause", "Pause the walkthrough", "Metti in pausa la visita")}</span>
+              </button>
+            )}
           </div>
         )}
       </div>
       <div class="sill horizon" aria-hidden="true"></div>
     </header>
+
+    {clip && (
+      <script>
+        // Plays the walkthrough over the screenshot, only while it's on screen.
+        // The screenshot stays for reduced motion, data saving, slow connections,
+        // no JavaScript, or if the video fails to load.
+        const video = document.querySelector<HTMLVideoElement>(".clip");
+        const button = document.querySelector<HTMLButtonElement>(".clip-toggle");
+        const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+        const net = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+        const slow = !!net && (net.saveData || /(^|-)2g$/.test(net.effectiveType ?? ""));
+
+        if (video && button && !slow) {
+          let inView = false;
+          let userPaused = false;
+          let loaded = false;
+
+          const label = (playing: boolean) => {
+            const text = playing ? button.dataset.pause! : button.dataset.play!;
+            button.querySelector(".label")!.textContent = text;
+            button.setAttribute("aria-pressed", String(!playing));
+            button.classList.toggle("paused", !playing);
+          };
+          const sync = () => {
+            const want = inView && !userPaused && !reduce.matches && !document.hidden;
+            if (want && !loaded) {
+              loaded = true;
+              video.src = video.dataset.src!;
+            }
+            if (want) video.play().catch(() => {});
+            else video.pause();
+          };
+
+          video.addEventListener("playing", () => {
+            video.classList.add("on");
+            button.hidden = false;
+            label(true);
+          }, { once: true });
+          video.addEventListener("error", () => { video.remove(); button.remove(); });
+
+          button.addEventListener("click", () => {
+            userPaused = !userPaused;
+            label(!userPaused);
+            sync();
+          });
+          new IntersectionObserver(([e]) => { inView = e.isIntersecting; sync(); }, { threshold: 0.35 }).observe(video);
+          document.addEventListener("visibilitychange", sync);
+          reduce.addEventListener("change", () => {
+            if (reduce.matches) { video.pause(); video.classList.remove("on"); button.hidden = true; }
+            sync();
+          });
+        }
+      </script>
+    )}
 
     <main id="main-content" tabindex="-1" class="wrap article">
       <section class="glance" aria-labelledby="glance" data-reveal>
@@ -309,6 +377,22 @@ const ld = {
   .chrome i:first-child { background: #ff7b6b; }
   .url { margin-left: 10px; font-size: 11px; color: var(--text-lo); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .pane img { display: block; width: 100%; height: auto; }
+  .screen { position: relative; }
+  .clip { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity var(--dur-base) var(--ease-arrive); pointer-events: none; }
+  .clip.on { opacity: 1; }
+  .stage { position: relative; }
+  .clip-toggle {
+    position: absolute; right: 0.75rem; bottom: -1.25rem; z-index: 1;
+    display: grid; place-items: center; width: 44px; height: 44px; padding: 0;
+    border: 1px solid rgb(255 255 255 / 0.18); border-radius: 50%;
+    color: var(--text-hi); background: rgb(16 35 77 / 0.88); cursor: pointer;
+    box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.8);
+    transition: border-color var(--dur-micro) var(--ease-hover), background var(--dur-micro) var(--ease-hover);
+  }
+  .clip-toggle:hover { border-color: var(--lamp); }
+  .clip-toggle .icon { width: 12px; height: 14px; border-left: 4px solid currentColor; border-right: 4px solid currentColor; }
+  .clip-toggle.paused .icon { width: 0; height: 0; border-style: solid; border-width: 7px 0 7px 12px; border-color: transparent transparent transparent currentColor; margin-left: 3px; }
+  .clip-toggle .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .sill { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, var(--lamp) 35%, var(--blue) 75%, transparent); opacity: 0.8; transform: none; }
 
   /* The write-up: a readable column on paper. */
@@ -388,6 +472,7 @@ const ld = {
 
   @media (prefers-reduced-motion: reduce) {
     .pane { animation: none; }
+    .clip { transition: none; }
     .cta:hover, .pager a:hover { transform: none; }
   }
 </style>
