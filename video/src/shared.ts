@@ -27,6 +27,8 @@ export type ClipProps = {
   /** Sector label, e.g. "Restaurants & bars". Never a place name. */
   category: string;
   host: string;
+  /** The client's own domain, shown as the call to action in the Reel. */
+  link?: string | null;
   desktop: Shot;
   mobile: Shot;
 };

@@ -104,12 +104,43 @@ export const ReelClip: React.FC<ClipProps> = (p) => {
             </div>
           </div>
 
+          {/* The client's own site, as the call to action */}
+          {p.link && (
+            <div
+              style={{
+                position: "absolute",
+                left: 72,
+                bottom: 196,
+                display: "flex",
+                alignItems: "center",
+                gap: 16,
+                padding: "18px 32px",
+                borderRadius: 99,
+                border: `2px solid ${C.lamp}`,
+                background: "rgb(255 194 125 / 0.12)",
+                boxShadow: "0 0 50px -12px rgb(255 178 102 / 0.6)",
+                fontFamily: INTER,
+                fontWeight: 600,
+                fontSize: 44,
+                letterSpacing: "-0.01em",
+                color: C.textHi,
+                opacity: interpolate(frame, [34, 52], [0, 1], clamp),
+                translate: interpolate(frame, [34, 56], ["0px 20px", "0px 0px"], { ...clamp, easing: ARRIVE }),
+              }}
+            >
+              <span>{p.link}</span>
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={C.lamp} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M7 17 17 7M8 7h9v9" />
+              </svg>
+            </div>
+          )}
+
           {/* Sign-off line */}
           <div
             style={{
               position: "absolute",
               left: 72,
-              bottom: 150,
+              bottom: p.link ? 128 : 150,
               display: "flex",
               alignItems: "center",
               gap: 16,
