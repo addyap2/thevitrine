@@ -13,11 +13,14 @@ const KEY_LEN = 32;
 const DUMMY = { salt: "AAAAAAAAAAAAAAAAAAAAAA", hash: "A".repeat(43) };
 
 /** "antony:salt:hash;julien:salt:hash" → Map(name → { salt, hash }) */
+// Tolerates what a hand-pasted value can pick up: quotes, spaces, line breaks or
+// an "OUTILS_USERS=" prefix.
 export function parseUsers(value) {
   const users = new Map();
-  for (const entry of String(value || "").split(";")) {
-    const [name, salt, hash] = entry.trim().split(":");
-    if (name && salt && hash) users.set(name.toLowerCase(), { salt, hash });
+  const cleaned = String(value || "").replace(/^\s*OUTILS_USERS\s*[=:]?\s*/i, "");
+  for (const entry of cleaned.split(/[;\s]+/)) {
+    const m = entry.replace(/^["']+|["']+$/g, "").match(/^([a-z0-9-]{1,32}):([A-Za-z0-9_-]{16,}):([A-Za-z0-9_-]{40,})$/i);
+    if (m) users.set(m[1].toLowerCase(), { salt: m[2], hash: m[3] });
   }
   return users;
 }
