@@ -468,7 +468,6 @@ export const strings = {
     aboutShared: "Cosa ci unisce",
     aboutNext: "Hai un progetto in mente?",
     legalLink: "Note legali",
-    privateLink: "Area riservata",
     shotAlt: "Home page del sito {title} ({host})",
     portfolioName: "Siti realizzati da The Vitrine",
     serviceName: "Progettazione e realizzazione di siti web",
