@@ -242,7 +242,7 @@ export default function App() {
         <input ref={fileInput} type="file" className="sr-only" aria-label="Importer des devis JSON" accept="application/json,.json" onChange={e => { void importFile(e.target.files?.[0]); }} />
         {!inLibrary && <div className="mobile-total">
           <button type="button" onClick={() => document.querySelector('.summary-column')?.scrollIntoView({ behavior: 'smooth' })}>
-            <small>{quote.selected.length} prestation{quote.selected.length > 1 ? 's' : ''} · {noVat(quote) ? '' : 'HT '}/ {quote.billing === 'annual' ? 'an' : 'mois'}</small>
+            <small>{quote.selected.length} prestation{quote.selected.length > 1 ? 's' : ''} · {noVat(quote) ? 'par' : 'HT /'} {quote.billing === 'annual' ? 'an' : 'mois'}</small>
             <strong>{money(t.periodNet)}</strong>
           </button>
           <button type="button" className="button primary" onClick={exportPdf} disabled={exporting}><Download size={17} />PDF</button>
