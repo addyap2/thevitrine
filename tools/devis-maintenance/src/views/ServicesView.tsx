@@ -28,11 +28,6 @@ export function ServicesView({ quote, patch, onReset, onNext }:
   const setPrice = (id: string, price: number) => patch({ prices: { ...quote.prices, [id]: price } });
 
   return <>
-    <section className="intro-banner">
-      <div><span className="overline">UN ABONNEMENT SUR MESURE</span><h2>Un site entre de bonnes mains.</h2><p>Sélectionnez vos services. Ajustez vos tarifs.<br />Le devis se construit en temps réel.</p></div>
-      <div className="banner-art" aria-hidden="true"><div className="art-window"><div className="art-dots"><i /><i /><i /></div><div className="art-lines"><b /><b /><b /></div></div><span className="art-shield"><ShieldCheck size={42} /></span><span className="art-spark"><Sparkles size={22} /></span></div>
-    </section>
-
     <div className="section-heading">
       <div><h2>Votre catalogue de prestations <span className="pill">{services.length}</span></h2><p>Tarifs mensuels HT indicatifs. Chaque prix est modifiable.</p></div>
       <button className="text-button" onClick={onReset}><Settings2 size={16} />Réinitialiser</button>

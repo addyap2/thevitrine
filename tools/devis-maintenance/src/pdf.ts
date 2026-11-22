@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf';
 import { autoTable } from 'jspdf-autotable';
 import { categories } from './catalogue';
-import { displayDate, expiryDate, exportErrors, linePrice, partyLines, selectedServices, summaryRows } from './model';
+import { NO_VAT_MENTION, displayDate, expiryDate, exportErrors, linePrice, noVat, partyLines, selectedServices, summaryRows } from './model';
 import type { Party, Quote } from './model';
 
 type RGB = [number, number, number];
@@ -66,7 +66,7 @@ export function buildPdf(q: Quote, opts: { logo?: string } = {}) {
     .map(s => [pdfText(`${s.name}\n${s.description}`), pdfText(category.name), pdfText(linePrice(q.prices[s.id]))]));
   autoTable(doc, {
     startY: y, margin: { left: 16, right: 16, bottom: 22, top: 20 },
-    head: [['Prestations incluses', 'Catégorie', 'Prix HT / mois']], body: rows,
+    head: [['Prestations incluses', 'Catégorie', noVat(q) ? 'Prix / mois' : 'Prix HT / mois']], body: rows,
     styles: { font: 'helvetica', fontSize: 9, cellPadding: 3.5, overflow: 'linebreak', textColor: NAVY },
     headStyles: { fillColor: NAVY, textColor: 255 }, alternateRowStyles: { fillColor: PAPER },
     columnStyles: { 0: { cellWidth: 102 }, 1: { cellWidth: 42 }, 2: { cellWidth: 34, halign: 'right' } },
@@ -86,12 +86,17 @@ export function buildPdf(q: Quote, opts: { logo?: string } = {}) {
       if (summary[data.row.index]?.highlight) { data.cell.styles.fillColor = NAVY; data.cell.styles.textColor = 255; }
     },
   });
-  y = lastTableY(doc) + 12;
+  y = lastTableY(doc) + 6;
+  if (noVat(q)) {
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(...NAVY);
+    doc.text(pdfText(NO_VAT_MENTION), 194, y, { align: 'right' });
+    y += 6;
+  }
+  y += 6;
 
   section('MODALITÉS DE PAIEMENT', q.payment, true);
   section('CONDITIONS DE L’ABONNEMENT', q.conditions, true);
   if (q.notes.trim()) section('PRÉCISIONS', q.notes, true);
-  if (q.vat === 0) section('TVA', 'Taux de TVA : 0 %. Précisez dans les conditions la mention applicable à votre situation.', true);
 
   room(38); doc.setDrawColor(210, 214, 225); doc.line(16, y, 194, y); y += 8;
   doc.setFontSize(10); doc.text(pdfText('Bon pour accord – date et signature du client :'), 16, y);
