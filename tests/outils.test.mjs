@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { createSession, verifySession, readCookie, safeNext, COOKIE } from '../api/_outils-session.js';
-import { parseUsers, hashPassword, checkPassword } from '../api/outils-login.js';
+import { parseUsers, hashPassword, checkPassword, loginName } from '../api/outils-login.js';
 import middleware from '../middleware.js';
 
 const SECRET = 'test-secret-' + crypto.randomBytes(8).toString('hex');
@@ -112,4 +112,10 @@ test('shared quotes: signed-in only, saved with who saved them, listed, deleted,
     globalThis.fetch = realFetch;
     for (const k of ['OUTILS_SECRET', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'VERCEL_ENV']) delete process.env[k];
   }
+});
+
+test('the login name accepts a full or capitalised name', () => {
+  for (const typed of ['antony', 'Antony', ' Antony Addy ', 'ANTONY']) assert.equal(loginName(typed), 'antony');
+  assert.equal(loginName('Julien Bourgois'), 'julien');
+  assert.equal(loginName(''), '');
 });
