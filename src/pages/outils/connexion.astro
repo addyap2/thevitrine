@@ -49,7 +49,7 @@ import "../../styles/tokens.css";
         error.hidden = true;
         button.disabled = true;
         try {
-          const res = await fetch("/api/outils-login", {
+          const res = await fetch("/api/outils-login/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: data.get("name"), password: data.get("password"), next: params.get("next") }),

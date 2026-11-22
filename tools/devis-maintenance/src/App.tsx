@@ -129,7 +129,7 @@ export default function App() {
         <button className={inLibrary ? 'nav-item active' : 'nav-item'} onClick={() => go('saved')}><FolderOpen size={19} />Mes devis<span className="count">{saved.length}</span></button>
       </nav>
       <div className="sidebar-card"><div className="mini-symbol"><Sparkles size={21} /></div><h3>Votre expertise.<br />La bonne offre.</h3><p>Composez un abonnement qui correspond vraiment à votre client.</p><span>{services.length} prestations · {categories.length} expertises</span></div>
-      <div className="sidebar-bottom"><button className="nav-item" onClick={() => setModal('help')}><CircleHelp size={19} />Mode d’emploi</button><a className="nav-item" href="/api/outils-logout"><LogOut size={19} />Se déconnecter</a><div className="local-note"><ShieldCheck size={17} /><span>Vos données restent<br />sur cet appareil.</span></div></div>
+      <div className="sidebar-bottom"><button className="nav-item" onClick={() => setModal('help')}><CircleHelp size={19} />Mode d’emploi</button><a className="nav-item" href="/api/outils-logout/"><LogOut size={19} />Se déconnecter</a><div className="local-note"><ShieldCheck size={17} /><span>Vos données restent<br />sur cet appareil.</span></div></div>
     </aside>
 
     <div className="main-shell">
