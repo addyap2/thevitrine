@@ -367,6 +367,7 @@ const ld = {
           <InstagramLink />
           {hasBlog && langHasBlog(lang) && <a href={blogPath[lang]}>{t.blogName}</a>}
           <a href={legalPath[lang]}>{t.legalLink}</a>
+          <a class="private-link" href="/outils/connexion/" rel="nofollow">{t.privateLink}</a>
         </span>
       </p>
       </div>
@@ -985,6 +986,9 @@ const ld = {
   .small a { color: var(--text-lo); text-underline-offset: 3px; text-decoration-thickness: 1px; }
   .footer-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem; }
   .footer-links > :global(*) { white-space: nowrap; }
+  /* Team login (/outils/): present but quiet. */
+  .footer-links .private-link { opacity: 0.7; } /* still 4.5:1 on the night background */
+  .footer-links .private-link:hover, .footer-links .private-link:focus-visible { opacity: 1; }
   .small a:hover { color: var(--lamp); }
   @media (prefers-reduced-motion: reduce) {
     .person:hover { transform: none; }
