@@ -22,6 +22,11 @@ export function parseUsers(value) {
   return users;
 }
 
+/** "Antony Addy", " antony " or "Antony" → "antony": first name, lower case, no accents. */
+export function loginName(value) {
+  return String(value || "").trim().normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().split(/\s+/)[0].slice(0, 32);
+}
+
 export async function hashPassword(password, salt) {
   return (await scrypt(password.normalize("NFC"), Buffer.from(salt, "base64url"), KEY_LEN)).toString("base64url");
 }
@@ -44,7 +49,7 @@ export default async function handler(req, res) {
 
   let body;
   try { body = await readJson(req, 4096); } catch { return res.status(400).json({ ok: false }); }
-  const name = String(body.name || "").trim().toLowerCase().slice(0, 32);
+  const name = loginName(body.name);
   const password = String(body.password || "").slice(0, 200);
   if (!name || !password) return res.status(400).json({ ok: false, error: "missing" });
 

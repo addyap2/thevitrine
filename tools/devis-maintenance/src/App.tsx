@@ -6,6 +6,7 @@ import { issuerParty } from './issuers';
 import type { IssuerId } from './issuers';
 import type { Quote, SavedQuote } from './model';
 import { parseBackup, readDraft, readSaved, writeDraft, writeSaved } from './storage';
+import { RemoteUnavailable, deleteRemote, listRemote, markMigrated, mergeSaved, needsMigration, saveRemote } from './remote';
 import { Modal } from './components';
 import { ServicesView } from './views/ServicesView';
 import { DetailsView } from './views/DetailsView';
@@ -25,6 +26,8 @@ export default function App() {
   const [saved, setSaved] = useState<SavedQuote[]>(initial.saved.data);
   const [draftEnabled, setDraftEnabled] = useState(!initial.draft.error);
   const [savedError, setSavedError] = useState(initial.saved.error);
+  // 'shared': Mes devis comes from the site, the same for Antony and Julien. 'local': this device only (offline).
+  const [library, setLibrary] = useState<'loading' | 'shared' | 'local'>('loading');
   const [storageStatus, setStorageStatus] = useState(initial.draft.error || DRAFT_SAVED);
   const [view, setView] = useState<View>('services');
   const [notice, setNotice] = useState('');
@@ -69,14 +72,66 @@ export default function App() {
     return () => clearTimeout(timeout);
   }, [notice]);
 
-  function persist(items: SavedQuote[]) {
-    if (savedError) { setNotice(savedError); return false; }
-    try { writeSaved(items); setSaved(items); return true; }
+  // Load the shared list; fall back to this device's copy if the site can't be reached.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        let remote = await listRemote();
+        if (needsMigration()) {
+          const known = new Set(remote.map(s => s.quote.id));
+          const localOnly = initial.saved.data.filter(s => !known.has(s.quote.id));
+          if (localOnly.length) remote = mergeSaved(remote, await Promise.all(localOnly.map(s => saveRemote(s.quote))));
+          markMigrated();
+          if (!cancelled && localOnly.length) setNotice(`${localOnly.length} devis de cet appareil ajouté(s) à Mes devis partagés.`);
+        }
+        if (cancelled) return;
+        setSaved(remote); setSavedError(''); setLibrary('shared');
+        try { writeSaved(remote); } catch { /* the local copy is only a fallback */ }
+      } catch (error) {
+        if (cancelled) return;
+        setLibrary('local');
+        if (error instanceof RemoteUnavailable && error.message === '401') setNotice('Session expirée : reconnectez-vous pour retrouver Mes devis partagés.');
+        else if (!(error instanceof RemoteUnavailable && error.message === '404')) setNotice('Mes devis partagés sont indisponibles : affichage des devis de cet appareil.');
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function cacheLocally(items: SavedQuote[]) { try { writeSaved(items); } catch { /* fallback copy only */ } }
+
+  /** Saves quotes to Mes devis (shared when possible). Resolves false and explains why on failure. */
+  async function storeQuotes(quotes: Quote[], replaceUnreadable = false): Promise<boolean> {
+    if (library === 'shared') {
+      try {
+        const items = await Promise.all(quotes.map(q => saveRemote(structuredClone(q))));
+        setSaved(prev => { const next = mergeSaved(prev, items); cacheLocally(next); return next; });
+        return true;
+      } catch {
+        setNotice('Enregistrement impossible : Mes devis partagés ne répondent pas. Réessayez ou exportez une sauvegarde JSON.');
+        return false;
+      }
+    }
+    if (savedError && !replaceUnreadable) { setNotice(savedError); return false; }
+    const now = new Date().toISOString();
+    const next = mergeSaved(saved, quotes.map(q => ({ quote: structuredClone(q), savedAt: now })));
+    try { writeSaved(next); setSaved(next); return true; }
     catch { setNotice('Impossible d’enregistrer : stockage plein ou indisponible. Exportez une sauvegarde JSON.'); return false; }
   }
-  const saveCurrent = () => persist(upsertSaved(saved, quote));
 
-  function save() { if (saveCurrent()) setNotice(`Devis ${quote.reference} enregistré.`); }
+  async function removeQuote(id: string): Promise<boolean> {
+    if (library === 'shared') {
+      try { await deleteRemote(id); }
+      catch { setNotice('Suppression impossible : Mes devis partagés ne répondent pas. Réessayez.'); return false; }
+    } else if (savedError) { setNotice(savedError); return false; }
+    const next = saved.filter(s => s.quote.id !== id);
+    setSaved(next); cacheLocally(next);
+    return true;
+  }
+
+  const saveCurrent = () => storeQuotes([quote]);
+
+  async function save() { if (await saveCurrent()) setNotice(`Devis ${quote.reference} enregistré${library === 'shared' ? ' dans Mes devis partagés' : ''}.`); }
 
   async function exportPdf() {
     const errors = exportErrors(quote);
@@ -104,10 +159,8 @@ export default function App() {
       if (file.size > 10_000_000) throw new Error('Le fichier dépasse 10 Mo.');
       const imported = parseBackup(await file.text());
       if (!imported.length) throw new Error('La sauvegarde est vide.');
-      const byId = new Map(saved.map(s => [s.quote.id, s]));
-      imported.forEach(s => byId.set(s.quote.id, s));
-      const merged = [...byId.values()];
-      writeSaved(merged); setSaved(merged); setSavedError('');
+      if (!(await storeQuotes(imported.map(s => s.quote), true))) return; // a valid import may replace an unreadable local list
+      setSavedError('');
       setNotice(`${imported.length} devis importé(s).`); go('saved');
     } catch (error) { setNotice(error instanceof Error ? error.message : 'Import impossible. Aucun devis modifié.'); }
     if (fileInput.current) fileInput.current.value = '';
@@ -120,17 +173,17 @@ export default function App() {
     setNotice('Nouveau devis créé. Les coordonnées du prestataire sont conservées.');
   }
 
-  function openSaved(s: SavedQuote) {
+  async function openSaved(s: SavedQuote) {
     // Keep the current draft in "Mes devis" before replacing it, unless it is unchanged.
-    if (JSON.stringify(quote) !== JSON.stringify(s.quote) && !saveCurrent()) return;
+    if (JSON.stringify(quote) !== JSON.stringify(s.quote) && !(await saveCurrent())) return;
     setQuote(structuredClone(s.quote)); go('preview');
     setNotice('Devis ouvert. Le brouillon précédent a été conservé dans Mes devis.');
   }
 
-  function duplicateSaved(s: SavedQuote) {
+  async function duplicateSaved(s: SavedQuote) {
     const fresh = createQuote();
     const copy = { ...structuredClone(s.quote), id: fresh.id, reference: fresh.reference, date: fresh.date };
-    if (persist([{ quote: copy, savedAt: new Date().toISOString() }, ...saved])) setNotice('Copie créée dans Mes devis.');
+    if (await storeQuotes([copy])) setNotice('Copie créée dans Mes devis.');
   }
 
   const inLibrary = view === 'saved';
@@ -142,7 +195,7 @@ export default function App() {
         <button className={!inLibrary ? 'nav-item active' : 'nav-item'} onClick={() => go('services')}><LayoutGrid size={19} />Composer un devis</button>
         <button className={inLibrary ? 'nav-item active' : 'nav-item'} onClick={() => go('saved')}><FolderOpen size={19} />Mes devis<span className="count">{saved.length}</span></button>
       </nav>
-      <div className="sidebar-bottom"><button className="nav-item" onClick={() => setModal('help')}><CircleHelp size={19} />Mode d’emploi</button><a className="nav-item" href="/api/outils-logout/"><LogOut size={19} />Se déconnecter</a><div className="local-note"><ShieldCheck size={17} /><span>Vos données restent<br />sur cet appareil.</span></div></div>
+      <div className="sidebar-bottom"><button className="nav-item" onClick={() => setModal('help')}><CircleHelp size={19} />Mode d’emploi</button><a className="nav-item" href="/api/outils-logout/"><LogOut size={19} />Se déconnecter</a><div className="local-note"><ShieldCheck size={17} /><span>{library === 'local' ? <>Hors ligne : devis<br />de cet appareil.</> : <>Devis partagés entre<br />Antony et Julien.</>}</span></div></div>
     </aside>
 
     <div className="main-shell">
@@ -183,7 +236,7 @@ export default function App() {
           </div>
         </>}
 
-        {inLibrary && <SavedView saved={saved} savedError={savedError} onImport={() => fileInput.current?.click()} onBackup={backup}
+        {inLibrary && <SavedView saved={saved} savedError={library === 'shared' ? '' : savedError} library={library} onImport={() => fileInput.current?.click()} onBackup={backup}
           onCompose={() => go('services')} onOpen={openSaved} onDuplicate={duplicateSaved} onDelete={setDeleting} />}
 
         <input ref={fileInput} type="file" className="sr-only" aria-label="Importer des devis JSON" accept="application/json,.json" onChange={e => { void importFile(e.target.files?.[0]); }} />
@@ -206,7 +259,7 @@ export default function App() {
         <li><strong>Partagez votre devis.</strong> Vérifiez l’aperçu puis téléchargez le PDF.</li>
       </ol>
       <p>Le brouillon est enregistré automatiquement. « Enregistrer le devis » conserve une version dans Mes devis. Les modifications d’un devis ouvert remplacent sa version enregistrée uniquement lorsque vous cliquez sur ce bouton.</p>
-      <p>Les prix sont indicatifs. Adaptez les conditions et les mentions à votre activité. Les données restent dans ce navigateur ; utilisez la sauvegarde JSON pour les conserver ailleurs. L’import met à jour les devis ayant le même identifiant.</p>
+      <p>Les prix sont indicatifs. Adaptez les conditions et les mentions à votre activité. Mes devis est partagé entre Antony et Julien sur tous vos appareils ; le brouillon en cours reste sur l’appareil où vous l’éditez. La sauvegarde JSON garde une copie hors du site, et l’import met à jour les devis ayant le même identifiant.</p>
       <button className="button primary wide" onClick={() => setModal(null)}>C’est parti</button>
     </Modal>}
 
@@ -214,7 +267,7 @@ export default function App() {
       <p>Votre brouillon sera remplacé. Vous pouvez d’abord l’enregistrer dans Mes devis. Les coordonnées du prestataire seront conservées.</p>
       <div className="modal-actions">
         <button className="button secondary" onClick={() => setModal(null)}>Annuler</button>
-        <button className="button secondary" onClick={() => { if (saveCurrent()) newQuote(); }}>Enregistrer puis créer</button>
+        <button className="button secondary" onClick={async () => { if (await saveCurrent()) newQuote(); }}>Enregistrer puis créer</button>
         <button className="button primary" onClick={newQuote}>Créer sans enregistrer</button>
       </div>
     </Modal>}
@@ -231,7 +284,7 @@ export default function App() {
       <p>{deleting.quote.reference} — {deleting.quote.client.name || 'Client à compléter'} sera retiré de Mes devis. Le brouillon ouvert reste disponible.</p>
       <div className="modal-actions">
         <button className="button secondary" onClick={() => setDeleting(null)}>Annuler</button>
-        <button className="button danger" onClick={() => { if (persist(saved.filter(s => s.quote.id !== deleting.quote.id))) { setDeleting(null); setNotice('Devis supprimé.'); } }}>Supprimer le devis</button>
+        <button className="button danger" onClick={async () => { if (await removeQuote(deleting.quote.id)) { setDeleting(null); setNotice('Devis supprimé.'); } }}>Supprimer le devis</button>
       </div>
     </Modal>}
   </div>;

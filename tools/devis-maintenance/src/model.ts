@@ -8,7 +8,7 @@ export interface Quote {
   discount: number; annualDiscount: number; vat: number; setup: number;
   commitment: number; startDate: string; payment: string; conditions: string; notes: string;
 }
-export interface SavedQuote { quote: Quote; savedAt: string }
+export interface SavedQuote { quote: Quote; savedAt: string; savedBy?: string }
 export const blankParty = (): Party => ({ name: '', contact: '', email: '', phone: '', address: '', registration: '', vatNumber: '' });
 export function localDate(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;

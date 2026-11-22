@@ -24,7 +24,7 @@ import "../../styles/tokens.css";
       <p class="lead">Outils internes réservés à l’équipe.</p>
       <p class="info" id="out" hidden>Vous êtes déconnecté.</p>
       <form id="login" novalidate>
-        <label>Nom<input name="name" autocomplete="username" autocapitalize="none" spellcheck="false" required /></label>
+        <label>Prénom<input name="name" autocomplete="username" autocapitalize="none" spellcheck="false" required /></label>
         <label>Mot de passe<input name="password" type="password" autocomplete="current-password" required /></label>
         <p class="error" id="error" role="alert" hidden></p>
         <button type="submit">Se connecter</button>
@@ -37,9 +37,9 @@ import "../../styles/tokens.css";
       const params = new URLSearchParams(location.search);
       if (params.has("sortie")) document.getElementById("out")!.hidden = false;
       const messages: Record<string, string> = {
-        wrong: "Nom ou mot de passe incorrect.",
+        wrong: "Prénom ou mot de passe incorrect.",
         limit: "Trop de tentatives. Réessayez dans un quart d’heure.",
-        missing: "Renseignez votre nom et votre mot de passe.",
+        missing: "Renseignez votre prénom et votre mot de passe.",
         config: "Connexion indisponible : configuration incomplète.",
       };
       form.addEventListener("submit", async (event) => {
