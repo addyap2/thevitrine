@@ -1,5 +1,5 @@
 import { Download, FileText, Globe2 } from 'lucide-react';
-import { displayDate, expiryDate, linePrice, partyLines, selectedServices, summaryRows, termsLine } from '../model';
+import { NO_VAT_MENTION, displayDate, expiryDate, linePrice, noVat, partyLines, selectedServices, summaryRows, termsLine } from '../model';
 import type { Quote } from '../model';
 
 export function PreviewView({ quote, exporting, onExport }: { quote: Quote; exporting: boolean; onExport: () => void }) {
@@ -19,18 +19,18 @@ export function PreviewView({ quote, exporting, onExport }: { quote: Quote; expo
         </div>
         {quote.website && <p className="site-line"><Globe2 size={16} />{quote.website}</p>}
         <table className="document-table">
-          <thead><tr><th>Prestations incluses</th><th>HT / mois</th></tr></thead>
+          <thead><tr><th>Prestations incluses</th><th>{noVat(quote) ? 'Prix / mois' : 'HT / mois'}</th></tr></thead>
           <tbody>{chosen.map(s => <tr key={s.id}><td><strong>{s.name}</strong><small>{s.description}</small></td><td>{linePrice(quote.prices[s.id])}</td></tr>)}</tbody>
         </table>
         {!chosen.length && <p>Aucune prestation sélectionnée.</p>}
         <div className="document-totals">{rows.map(r => <div key={r.label} className={r.highlight ? 'grand-total' : undefined}><span>{r.label}</span><b>{r.value}</b></div>)}</div>
+        {noVat(quote) && <p className="vat-mention">{NO_VAT_MENTION}</p>}
         <div className="document-terms">
           <h3>Modalités & conditions</h3>
           <p>{termsLine(quote)}<br />Début des prestations : {displayDate(quote.startDate)}</p>
           <p>{quote.payment}</p>
           <p>{quote.conditions}</p>
           {quote.notes && <><h3>Précisions</h3><p>{quote.notes}</p></>}
-          {quote.vat === 0 && <p>TVA : 0 %. Précisez dans les conditions la mention applicable à votre situation.</p>}
           <div className="signature">Bon pour accord — date et signature du client</div>
         </div>
       </div>

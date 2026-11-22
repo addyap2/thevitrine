@@ -61,3 +61,16 @@ test('middleware lets the login page through, blocks pages and files without a s
   delete process.env.OUTILS_SECRET; // no secret configured: fail closed
   assert.equal((await middleware(req('/outils/devis-maintenance/', cookie))).status, 302);
 });
+
+test('outils-me names the signed-in person and refuses everyone else', async () => {
+  const { default: me } = await import('../api/outils-me.js');
+  process.env.OUTILS_SECRET = SECRET;
+  const run = async cookie => {
+    const out = {}; const res = { setHeader() {}, status(c) { out.status = c; return res; }, json(b) { out.body = b; return res; } };
+    await me({ headers: cookie ? { cookie } : {} }, res); return out;
+  };
+  assert.equal((await run()).status, 401);
+  const ok = await run(`${COOKIE}=${encodeURIComponent(await createSession('julien', SECRET))}`);
+  assert.deepEqual([ok.status, ok.body.user], [200, 'julien']);
+  delete process.env.OUTILS_SECRET;
+});

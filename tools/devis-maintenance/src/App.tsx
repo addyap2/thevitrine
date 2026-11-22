@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { BadgeCheck, Check, Download, ChevronRight, CircleHelp, FileText, FolderOpen, LayoutGrid, LogOut, Plus, ShieldCheck, Sparkles, X } from 'lucide-react';
-import { categories, services, starterIds } from './catalogue';
-import { createQuote, exportErrors, money, totals, upsertSaved } from './model';
+import { Check, Download, ChevronRight, CircleHelp, FileText, FolderOpen, LayoutGrid, LogOut, Plus, ShieldCheck, X } from 'lucide-react';
+import { services, starterIds } from './catalogue';
+import { createQuote, exportErrors, money, noVat, totals, upsertSaved } from './model';
+import { issuerParty } from './issuers';
+import type { IssuerId } from './issuers';
 import type { Quote, SavedQuote } from './model';
 import { parseBackup, readDraft, readSaved, writeDraft, writeSaved } from './storage';
 import { Modal } from './components';
@@ -46,6 +48,20 @@ export default function App() {
     }, 400);
     return () => clearTimeout(timeout);
   }, [quote, draftEnabled]);
+
+  // Pre-fill the issuer from whoever is signed in, when the quote has none yet.
+  useEffect(() => {
+    if (quote.provider.name.trim()) return;
+    let cancelled = false;
+    fetch('/api/outils-me/', { cache: 'no-store' })
+      .then(res => (res.ok ? res.json() : null))
+      .then((me: { user?: string } | null) => {
+        if (cancelled || (me?.user !== 'antony' && me?.user !== 'julien')) return;
+        setQuote(q => (q.provider.name.trim() ? q : { ...q, provider: issuerParty(me.user as IssuerId) }));
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [quote.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!notice) return;
@@ -122,20 +138,17 @@ export default function App() {
     <a className="skip-link" href="#main">Aller au contenu</a>
     <aside className="sidebar">
       <a href="#" className="brand" onClick={e => { e.preventDefault(); go('services'); }}><img className="brand-logo" src={`${import.meta.env.BASE_URL}brand/logo-light.svg`} alt="The Vitrine" width={250} height={64} /><small>DEVIS · MAINTENANCE WEB</small></a>
-      <div className="workspace-tag"><span className="workspace-avatar">TV</span><div>Mon espace<small>Devis de maintenance</small></div><BadgeCheck size={18} /></div>
-      <span className="nav-caption">ESPACE DE TRAVAIL</span>
       <nav aria-label="Navigation principale">
         <button className={!inLibrary ? 'nav-item active' : 'nav-item'} onClick={() => go('services')}><LayoutGrid size={19} />Composer un devis</button>
         <button className={inLibrary ? 'nav-item active' : 'nav-item'} onClick={() => go('saved')}><FolderOpen size={19} />Mes devis<span className="count">{saved.length}</span></button>
       </nav>
-      <div className="sidebar-card"><div className="mini-symbol"><Sparkles size={21} /></div><h3>Votre expertise.<br />La bonne offre.</h3><p>Composez un abonnement qui correspond vraiment à votre client.</p><span>{services.length} prestations · {categories.length} expertises</span></div>
       <div className="sidebar-bottom"><button className="nav-item" onClick={() => setModal('help')}><CircleHelp size={19} />Mode d’emploi</button><a className="nav-item" href="/api/outils-logout/"><LogOut size={19} />Se déconnecter</a><div className="local-note"><ShieldCheck size={17} /><span>Vos données restent<br />sur cet appareil.</span></div></div>
     </aside>
 
     <div className="main-shell">
       <header className="topbar">
         <div className="breadcrumb">Mon espace <ChevronRight size={14} /><span>{inLibrary ? 'Mes devis' : 'Nouveau devis'}</span></div>
-        <div className="topbar-actions"><button className="button subtle" onClick={() => setModal('new')}><Plus size={17} />Nouveau devis</button><button className="icon-button mobile-only" aria-label="Mode d’emploi" onClick={() => setModal('help')}><CircleHelp size={20} /></button><a className="icon-button mobile-only" aria-label="Se déconnecter" href="/api/outils-logout/"><LogOut size={20} /></a><span className="user-avatar">TV</span></div>
+        <div className="topbar-actions"><button className="button subtle" onClick={() => setModal('new')}><Plus size={17} />Nouveau devis</button><button className="icon-button mobile-only" aria-label="Mode d’emploi" onClick={() => setModal('help')}><CircleHelp size={20} /></button><a className="icon-button mobile-only" aria-label="Se déconnecter" href="/api/outils-logout/"><LogOut size={20} /></a></div>
       </header>
 
       <main id="main" className="main-content">
@@ -176,7 +189,7 @@ export default function App() {
         <input ref={fileInput} type="file" className="sr-only" aria-label="Importer des devis JSON" accept="application/json,.json" onChange={e => { void importFile(e.target.files?.[0]); }} />
         {!inLibrary && <div className="mobile-total">
           <button type="button" onClick={() => document.querySelector('.summary-column')?.scrollIntoView({ behavior: 'smooth' })}>
-            <small>{quote.selected.length} prestation{quote.selected.length > 1 ? 's' : ''} · HT / {quote.billing === 'annual' ? 'an' : 'mois'}</small>
+            <small>{quote.selected.length} prestation{quote.selected.length > 1 ? 's' : ''} · {noVat(quote) ? '' : 'HT '}/ {quote.billing === 'annual' ? 'an' : 'mois'}</small>
             <strong>{money(t.periodNet)}</strong>
           </button>
           <button type="button" className="button primary" onClick={exportPdf} disabled={exporting}><Download size={17} />PDF</button>

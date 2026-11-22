@@ -19,8 +19,8 @@ export function createQuote(): Quote {
     id: crypto.randomUUID(), reference: `DEV-${date.slice(0, 4)}-${crypto.randomUUID().slice(0, 6).toUpperCase()}`,
     title: 'Maintenance de site web', date, validDays: 30, client: blankParty(), provider: blankParty(), website: '',
     selected: [...starterIds], prices: Object.fromEntries(services.map(s => [s.id, s.price])), billing: 'monthly',
-    discount: 0, annualDiscount: 10, vat: 20, setup: 0, commitment: 12, startDate: '',
-    payment: 'Paiement à réception de facture par virement bancaire.',
+    discount: 0, annualDiscount: 10, vat: 0, setup: 0, commitment: 12, startDate: '',
+    payment: 'Paiement à réception de facture par virement bancaire. Clients professionnels : tout retard de paiement entraîne des pénalités au taux de trois fois le taux d’intérêt légal et une indemnité forfaitaire de 40 € pour frais de recouvrement (art. L441-10 du Code de commerce).',
     conditions: 'Les prestations sont réalisées les jours ouvrés. Les volumes inclus sont précisés pour chaque service et ne sont pas reportables. Toute demande hors périmètre fait l’objet d’un devis complémentaire. Les licences et achats tiers sont exclus sauf mention explicite. Renouvellement et résiliation selon accord écrit entre les parties.', notes: '',
   };
 }
@@ -41,7 +41,9 @@ export function totals(q: Quote) {
   const setupTax = round(setup * numeric(q.vat, 100) / 100);
   const firstPaymentNet = round(periodNet + setup);
   const firstPaymentGross = round(periodGross + setup + setupTax);
-  return { monthlyBase, commercialDiscount, monthlyAfterDiscount, yearlyBeforeDiscount, annualSaving, yearlyNet, periodNet, tax, periodGross, setup, setupTax, firstPaymentNet, firstPaymentGross, firstYearNet: round(yearlyNet + setup), effectiveMonthly: round(yearlyNet / 12) };
+  const budgetMonths = q.billing === 'monthly' && q.commitment > 0 && q.commitment < 12 ? q.commitment : 12;
+  const budgetNet = budgetMonths === 12 ? round(yearlyNet + setup) : round(monthlyAfterDiscount * budgetMonths + setup);
+  return { budgetMonths, budgetNet, monthlyBase, commercialDiscount, monthlyAfterDiscount, yearlyBeforeDiscount, annualSaving, yearlyNet, periodNet, tax, periodGross, setup, setupTax, firstPaymentNet, firstPaymentGross, firstYearNet: round(yearlyNet + setup), effectiveMonthly: round(yearlyNet / 12) };
 }
 export function expiryDate(q: Quote) {
   const d = new Date(`${q.date}T12:00:00`); d.setDate(d.getDate() + q.validDays); return localDate(d);
@@ -88,19 +90,38 @@ export const partyLines = (party: Party) =>
     party.registration && `SIRET / identifiant : ${party.registration}`,
     party.vatNumber && `N° TVA : ${party.vatNumber}`].filter((l): l is string => !!l);
 export interface SummaryRow { label: string; value: string; highlight?: boolean }
+/** The 293 B mention French micro-entrepreneurs must print when they charge no VAT. */
+export const NO_VAT_MENTION = 'TVA non applicable, art. 293 B du CGI';
+export const noVat = (q: Quote) => q.vat === 0;
+export const budgetLabel = (t: ReturnType<typeof totals>, suffix = 'HT') =>
+  t.budgetMonths === 12 ? `Budget de la première année ${suffix}` : `Budget sur ${t.budgetMonths} mois ${suffix}`;
 export function summaryRows(q: Quote, t = totals(q)): SummaryRow[] {
   const period = periodLabel(q);
+  const discounts = [
+    ...(q.discount > 0 ? [{ label: `Remise commerciale (${q.discount} %) / mois`, value: `− ${money(t.commercialDiscount)}` }] : []),
+    ...(q.billing === 'annual' ? [{ label: `Remise annuelle (${q.annualDiscount} %) / an`, value: `− ${money(t.annualSaving)}` }] : []),
+  ];
+  if (noVat(q)) {
+    // Franchise en base: no VAT lines, the net amount is what the client pays.
+    return [
+      { label: 'Base mensuelle', value: money(t.monthlyBase) },
+      ...discounts,
+      { label: `Abonnement / ${period}`, value: money(t.periodNet) },
+      ...(t.setup > 0 ? [{ label: 'Mise en service (une fois)', value: money(t.setup) }] : []),
+      { label: 'Premier règlement', value: money(t.firstPaymentNet), highlight: true },
+      { label: budgetLabel(t, '').trim(), value: money(t.budgetNet) },
+    ];
+  }
   return [
     { label: 'Base mensuelle HT', value: money(t.monthlyBase) },
-    { label: `Remise commerciale (${q.discount} %) / mois`, value: `− ${money(t.commercialDiscount)}` },
-    ...(q.billing === 'annual' ? [{ label: `Remise annuelle (${q.annualDiscount} %) / an`, value: `− ${money(t.annualSaving)}` }] : []),
+    ...discounts,
     { label: `Abonnement HT / ${period}`, value: money(t.periodNet) },
     { label: `TVA (${q.vat} %) / ${period}`, value: money(t.tax) },
     { label: `Abonnement TTC / ${period}`, value: money(t.periodGross) },
     { label: 'Mise en service HT (une fois)', value: money(t.setup) },
     { label: 'TVA sur la mise en service', value: money(t.setupTax) },
     { label: 'Premier règlement TTC', value: money(t.firstPaymentGross), highlight: true },
-    { label: 'Budget de la première année HT', value: money(t.firstYearNet) },
+    { label: budgetLabel(t), value: money(t.budgetNet) },
   ];
 }
 /** Puts a quote at the top of the saved list, replacing any older version of it. */

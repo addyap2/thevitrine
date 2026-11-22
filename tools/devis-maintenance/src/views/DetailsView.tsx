@@ -1,6 +1,7 @@
 import { Settings2 } from 'lucide-react';
 import type { Quote } from '../model';
 import { Field, PartyForm } from '../components';
+import { issuerIds, issuerName, issuerParty } from '../issuers';
 
 export function DetailsView({ quote, patch, onNext }: { quote: Quote; patch: (value: Partial<Quote>) => void; onNext: () => void }) {
   return <>
@@ -12,6 +13,14 @@ export function DetailsView({ quote, patch, onNext }: { quote: Quote; patch: (va
       <div className="full"><Field label="Site internet du client"><input type="text" placeholder="https://www.exemple.fr" maxLength={300} value={quote.website} onChange={e => patch({ website: e.target.value })} /></Field></div>
     </div></section>
     <PartyForm title="Votre client" value={quote.client} onChange={client => patch({ client })} />
+    <section className="panel issuer-picker">
+      <h2>Émis par</h2>
+      <p className="field-note">Remplit vos coordonnées depuis les mentions légales du site. Vous pouvez les modifier ensuite.</p>
+      <div className="billing-toggle">{issuerIds.map(id => {
+        const selected = quote.provider.contact === issuerName(id);
+        return <button key={id} type="button" aria-pressed={selected} className={selected ? 'selected' : ''} onClick={() => patch({ provider: issuerParty(id) })}>{issuerName(id)}</button>;
+      })}</div>
+    </section>
     <PartyForm title="Vous, le prestataire" value={quote.provider} onChange={provider => patch({ provider })} />
     <button className="button primary next-button" onClick={onNext}>Définir les conditions <Settings2 size={18} /></button>
   </>;

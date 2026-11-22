@@ -5,5 +5,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   base: '/outils/devis-maintenance/',
   plugins: [react()],
+  // issuers.ts reads the site's legal details from ../../src/data/legal.ts
+  server: { fs: { allow: ['../..'] } },
   build: { outDir: '../../dist/outils/devis-maintenance', emptyOutDir: true },
 });

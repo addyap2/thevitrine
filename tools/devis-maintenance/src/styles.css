@@ -74,3 +74,6 @@ a.nav-item{text-decoration:none}
 }
 @media(max-width:700px){.overline,.eyebrow,.pill,.draft-badge,.brand small,.intro-banner .overline,.category-tabs span,.saved-date,.summary-project>small,.document-header .overline{font-size:11px}.intro-banner p{font-size:14px}}
 @media(max-width:700px){.breadcrumb,.brand small{display:none}.topbar{justify-content:flex-end}.topbar-actions{gap:4px}.topbar .button.subtle{white-space:nowrap;font-size:13px;padding:0 14px}}
+.issuer-picker .field-note{margin:-12px 0 16px}
+.issuer-picker .billing-toggle{margin-bottom:0}
+.vat-mention{text-align:right;font-size:12px;font-weight:600;color:var(--navy);margin:-12px 0 24px}
