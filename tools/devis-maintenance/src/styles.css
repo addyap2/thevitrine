@@ -34,3 +34,43 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 @media(max-width:700px){.brand-logo{width:120px}}
 .sidebar-card{background:radial-gradient(ellipse at 80% 5%,#ffc27d26,transparent 70%),#10234d;border-color:#22305a}.sidebar-card:after{border-color:#ffc27d33}
 a.nav-item{text-decoration:none}
+
+/* ── Phones: readable text, 44px tap targets, no zoom on focus, total always in view ── */
+.mobile-only,.mobile-total{display:none}
+@media(max-width:700px){
+  .mobile-only{display:inline-grid;width:44px;height:44px}
+  .topbar{height:64px;padding-inline:16px}
+  .topbar .button.subtle{min-height:44px}
+  .user-avatar{display:none}
+  .main-content{padding:24px 16px 96px}
+  /* 16px stops iOS Safari zooming into a field when it is tapped */
+  input,textarea,.field input,.field textarea,.search-field input,.service-price input{font-size:16px}
+  .service-price{width:96px}
+  .service-price input{max-width:76px;min-height:40px}
+  .service-choice input{width:22px;height:22px}
+  .service-choice strong{font-size:15px}
+  .service-choice small{font-size:13px}
+  .category-tabs button{min-height:40px;padding:8px 12px;font-size:13px}
+  .text-button{min-height:44px;font-size:13px}
+  .selection-tools{font-size:13px}
+  .selected-filter{min-height:44px;font-size:13px}
+  .step{min-height:44px;font-size:13px}
+  .group-heading p,.group-count,.service-price small{font-size:12px}
+  .section-heading p,.field small,.field-note,.page-heading p{font-size:13px}
+  .billing-toggle>button{min-height:44px;font-size:13px}
+  .summary-lines>div,.year-budget,.first-payment{font-size:13px}
+  .first-payment small,.storage-status,.summary-price small{font-size:12px}
+  .document-table,.document-totals,.document-meta,.parties p{font-size:13px}
+  .document-table small{font-size:12px}
+  .saved-actions .button,.button{min-height:44px;font-size:14px}
+  .nav-item{min-height:44px}
+  .footer{font-size:12px;flex-direction:column}
+  .mobile-total{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;align-items:center;gap:12px;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fffdf9;border-top:1px solid #e4ded4;box-shadow:0 -8px 24px #3c28140f}
+  .mobile-total>button:first-child{flex:1;display:flex;flex-direction:column;align-items:flex-start;border:0;background:none;padding:0;text-align:left;min-height:44px;justify-content:center}
+  .mobile-total small{font-size:12px;color:#5d574f}
+  .mobile-total strong{font-family:Fraunces,serif;font-size:22px;font-weight:600;color:var(--violet)}
+  .mobile-total .button{flex:none;padding:0 20px}
+}
+@media(max-width:700px){.overline,.eyebrow,.pill,.draft-badge,.brand small,.intro-banner .overline,.category-tabs span,.saved-date,.summary-project>small,.document-header .overline{font-size:11px}.intro-banner p{font-size:14px}}
+@media(max-width:700px){.breadcrumb,.brand small{display:none}.topbar{justify-content:flex-end}.topbar-actions{gap:4px}.topbar .button.subtle{white-space:nowrap;font-size:13px;padding:0 14px}}

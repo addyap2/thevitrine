@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { BadgeCheck, Check, ChevronRight, CircleHelp, FileText, FolderOpen, LayoutGrid, LogOut, Plus, ShieldCheck, Sparkles, X } from 'lucide-react';
+import { BadgeCheck, Check, Download, ChevronRight, CircleHelp, FileText, FolderOpen, LayoutGrid, LogOut, Plus, ShieldCheck, Sparkles, X } from 'lucide-react';
 import { categories, services, starterIds } from './catalogue';
-import { createQuote, exportErrors, totals, upsertSaved } from './model';
+import { createQuote, exportErrors, money, totals, upsertSaved } from './model';
 import type { Quote, SavedQuote } from './model';
 import { parseBackup, readDraft, readSaved, writeDraft, writeSaved } from './storage';
 import { Modal } from './components';
@@ -135,7 +135,7 @@ export default function App() {
     <div className="main-shell">
       <header className="topbar">
         <div className="breadcrumb">Mon espace <ChevronRight size={14} /><span>{inLibrary ? 'Mes devis' : 'Nouveau devis'}</span></div>
-        <div className="topbar-actions"><button className="button subtle" onClick={() => setModal('new')}><Plus size={17} />Nouveau devis</button><span className="user-avatar">TV</span></div>
+        <div className="topbar-actions"><button className="button subtle" onClick={() => setModal('new')}><Plus size={17} />Nouveau devis</button><button className="icon-button mobile-only" aria-label="Mode d’emploi" onClick={() => setModal('help')}><CircleHelp size={20} /></button><a className="icon-button mobile-only" aria-label="Se déconnecter" href="/api/outils-logout/"><LogOut size={20} /></a><span className="user-avatar">TV</span></div>
       </header>
 
       <main id="main" className="main-content">
@@ -174,6 +174,13 @@ export default function App() {
           onCompose={() => go('services')} onOpen={openSaved} onDuplicate={duplicateSaved} onDelete={setDeleting} />}
 
         <input ref={fileInput} type="file" className="sr-only" aria-label="Importer des devis JSON" accept="application/json,.json" onChange={e => { void importFile(e.target.files?.[0]); }} />
+        {!inLibrary && <div className="mobile-total">
+          <button type="button" onClick={() => document.querySelector('.summary-column')?.scrollIntoView({ behavior: 'smooth' })}>
+            <small>{quote.selected.length} prestation{quote.selected.length > 1 ? 's' : ''} · HT / {quote.billing === 'annual' ? 'an' : 'mois'}</small>
+            <strong>{money(t.periodNet)}</strong>
+          </button>
+          <button type="button" className="button primary" onClick={exportPdf} disabled={exporting}><Download size={17} />PDF</button>
+        </div>}
         <footer className="footer"><span>The Vitrine <b>·</b> Pensé pour votre activité.</span><span>Maintenance web, l’esprit tranquille.</span></footer>
       </main>
     </div>
