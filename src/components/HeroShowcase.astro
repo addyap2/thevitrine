@@ -24,7 +24,7 @@ const words = L("Transformez vos visiteurs|en clients.", "Turn visitors|into cus
 ---
 <SiteHeader lang={lang} alternates={homePath} />
 <header class="showcase" data-showcase data-language={lang} data-view="desktop" data-paused="false" aria-labelledby="showcase-title">
-  <div class="ambience" aria-hidden="true"><span class="halo"></span><span class="coordinate b">{L("THE VITRINE — ATELIER WEB", "THE VITRINE — WEB ATELIER", "THE VITRINE — ATELIER WEB")}</span></div>
+  <div class="ambience" aria-hidden="true"><span class="plate"></span><span class="halo"></span><span class="coordinate b">{L("THE VITRINE — ATELIER WEB", "THE VITRINE — WEB ATELIER", "THE VITRINE — ATELIER WEB")}</span></div>
   <div class="intro">
     <p class="eyebrow arrival"><span class="signal" aria-hidden="true"></span>{L("Sites web sur mesure · Fréjus & Côte d'Azur", "Bespoke websites · French Riviera & UK", "Siti web su misura · Costa Azzurra e Italia")}</p>
     <h1 id="showcase-title"><span class="word-line"><span>{words[0]}</span></span> <span class="word-line accent"><em>{words[1]}</em></span></h1>
@@ -236,6 +236,10 @@ const words = L("Transformez vos visiteurs|en clients.", "Turn visitors|into cus
   .showcase { --cream:#f6f2ea; --muted:#b4c0dc; --gold:#ffc27d; --arrive:cubic-bezier(.16,1,.3,1); position:relative; isolation:isolate; overflow:hidden; background:#081227; color:var(--cream); padding:clamp(2rem,5vw,5rem) max(1.25rem,calc((100vw - 1280px)/2)) 0; color-scheme:dark; }
   .ambience { position:absolute; inset:0; z-index:-1; overflow:hidden; background:radial-gradient(ellipse at 80% 48%,#21365b66,transparent 60%); }
   .halo { position:absolute; width:65vw; aspect-ratio:1; right:-18vw; top:8%; border-radius:50%; background:radial-gradient(circle,#b7783838,transparent 65%); animation:atmosphere 12s cubic-bezier(.45,0,.55,1) infinite alternate; }
+  /* Background plate: a blurred lit shop window (generated with Runway), darkened on the left so the headline keeps its contrast. */
+  .plate { position:absolute; inset:0; opacity:.85; background:url(/hero/shop-window.webp) center right / cover no-repeat; }
+  .plate::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,#081227 0%,#081227cc 30%,#08122733 70%,#08122780 100%),linear-gradient(180deg,transparent 60%,#081227 100%); }
+  @media(max-width:700px){ .plate { background-position:70% 100%; } .plate::after { background:linear-gradient(180deg,#081227 0%,#081227d9 45%,#08122766 80%,#081227 100%); } }
   .coordinate { position:absolute; color:#a7b3cc; font-size:9px; letter-spacing:.18em; writing-mode:vertical-rl; }.coordinate.b{right:18px;top:24%}
   .intro { pointer-events:none; position:relative; z-index:2; max-width:1280px; margin:auto; }
   .intro > * { pointer-events:auto; }
