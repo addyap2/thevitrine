@@ -33,7 +33,7 @@ test('only paths inside /outils/ are accepted after login', () => {
 
 test('passwords are checked against salted scrypt hashes', async () => {
   const salt = crypto.randomBytes(16).toString('base64url');
-  const users = parseUsers(`antony:${salt}:${await hashPassword('correct horse battery', salt)}; julien:x:y`);
+  const users = parseUsers(`antony:${salt}:${await hashPassword('correct horse battery', salt)}; julien:${salt}:${'B'.repeat(43)}`);
   assert.equal(users.size, 2);
   assert.equal(await checkPassword(users, 'antony', 'correct horse battery'), true);
   assert.equal(await checkPassword(users, 'antony', 'wrong password!'), false);
@@ -118,4 +118,13 @@ test('the login name accepts a full or capitalised name', () => {
   for (const typed of ['antony', 'Antony', ' Antony Addy ', 'ANTONY']) assert.equal(loginName(typed), 'antony');
   assert.equal(loginName('Julien Bourgois'), 'julien');
   assert.equal(loginName(''), '');
+});
+
+test('the stored user list survives quotes, spaces and a pasted prefix', async () => {
+  const salt = crypto.randomBytes(16).toString('base64url');
+  const entry = `antony:${salt}:${await hashPassword('correct horse battery', salt)}`;
+  for (const value of [entry, `"${entry}"`, ` ${entry} \n`, `OUTILS_USERS=${entry}`, `${entry}; julien:${salt}:${'A'.repeat(43)}`]) {
+    const users = parseUsers(value);
+    assert.equal(await checkPassword(users, 'antony', 'correct horse battery'), true, value.slice(0, 20));
+  }
 });
