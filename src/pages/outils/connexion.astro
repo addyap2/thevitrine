@@ -1,0 +1,95 @@
+---
+// Login for the private tools under /outils/ (Antony and Julien only).
+// Posts to api/outils-login.js; middleware.js guards everything else in /outils/.
+import { Font } from "astro:assets";
+import "../../styles/tokens.css";
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#081227" />
+    <title>Espace privé · The Vitrine</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <Font cssVariable="--font-fraunces" />
+    <Font cssVariable="--font-inter" preload={[{ subset: "latin" }]} />
+  </head>
+  <body>
+    <main class="card">
+      <img src="/brand/logo-light.svg" alt="The Vitrine" width="250" height="64" class="logo" />
+      <h1>Espace privé</h1>
+      <p class="lead">Outils internes réservés à l’équipe.</p>
+      <p class="info" id="out" hidden>Vous êtes déconnecté.</p>
+      <form id="login" novalidate>
+        <label>Nom<input name="name" autocomplete="username" autocapitalize="none" spellcheck="false" required /></label>
+        <label>Mot de passe<input name="password" type="password" autocomplete="current-password" required /></label>
+        <p class="error" id="error" role="alert" hidden></p>
+        <button type="submit">Se connecter</button>
+      </form>
+    </main>
+
+    <script>
+      const form = document.getElementById("login") as HTMLFormElement;
+      const error = document.getElementById("error")!;
+      const params = new URLSearchParams(location.search);
+      if (params.has("sortie")) document.getElementById("out")!.hidden = false;
+      const messages: Record<string, string> = {
+        wrong: "Nom ou mot de passe incorrect.",
+        limit: "Trop de tentatives. Réessayez dans un quart d’heure.",
+        missing: "Renseignez votre nom et votre mot de passe.",
+        config: "Connexion indisponible : configuration incomplète.",
+      };
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const button = form.querySelector("button")!;
+        const data = new FormData(form);
+        error.hidden = true;
+        button.disabled = true;
+        try {
+          const res = await fetch("/api/outils-login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: data.get("name"), password: data.get("password"), next: params.get("next") }),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok && json.ok) { location.assign(json.next); return; }
+          error.textContent = messages[json.error] || "La connexion a échoué. Réessayez.";
+        } catch {
+          error.textContent = "Connexion impossible. Vérifiez votre réseau.";
+        }
+        error.hidden = false;
+        button.disabled = false;
+      });
+    </script>
+
+    <style>
+      body {
+        margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; box-sizing: border-box;
+        background: radial-gradient(ellipse at 50% 0%, #10234d, var(--night) 70%);
+        color: var(--text-hi); font-family: var(--font-inter), system-ui, sans-serif;
+      }
+      .card { width: 100%; max-width: 380px; }
+      .logo { width: 190px; height: auto; display: block; margin-bottom: 36px; }
+      h1 { font-family: var(--font-fraunces), Georgia, serif; font-weight: 600; font-size: 2rem; margin: 0 0 6px; }
+      .lead { color: var(--text-lo); margin: 0 0 28px; }
+      form { display: grid; gap: 16px; }
+      label { display: grid; gap: 7px; font-size: 0.9rem; font-weight: 600; }
+      input {
+        font: inherit; font-weight: 400; color: var(--text-hi); background: #ffffff0d; border: 1px solid #ffffff26;
+        border-radius: 10px; padding: 13px 14px;
+      }
+      input:focus { outline: 2px solid var(--lamp); outline-offset: 1px; border-color: transparent; }
+      button {
+        margin-top: 6px; min-height: 52px; border: 0; border-radius: 99px; font: inherit; font-weight: 600; cursor: pointer;
+        color: #1a0f04; background: linear-gradient(180deg, var(--lamp-hot), var(--lamp));
+        box-shadow: 0 10px 24px -12px rgb(255 178 102 / 0.9), inset 0 1px 0 rgb(255 255 255 / 0.6);
+      }
+      button:disabled { opacity: 0.6; cursor: wait; }
+      .error { margin: 0; color: #ffb4a8; font-size: 0.9rem; }
+      .info { margin: 0 0 20px; color: var(--lamp-hot); font-size: 0.9rem; }
+    </style>
+  </body>
+</html>
