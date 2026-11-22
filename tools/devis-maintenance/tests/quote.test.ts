@@ -132,3 +132,16 @@ describe('Issuer details', () => {
     expect(issuerParty('julien').contact).toBe('Julien Bourgois');
   });
 });
+
+describe('Shared Mes devis', () => {
+  it('merges saved items by id and keeps the newest first', async () => {
+    const { mergeSaved } = await import('../src/remote');
+    const a = createQuote(), b = createQuote();
+    const list = mergeSaved([{ quote: a, savedAt: '2026-01-01T00:00:00Z' }], [{ quote: b, savedAt: '2026-02-01T00:00:00Z' }]);
+    expect(list.map(s => s.quote.id)).toEqual([b.id, a.id]);
+    const again = mergeSaved(list, [{ quote: { ...a, title: 'Modifié' }, savedAt: '2026-03-01T00:00:00Z', savedBy: 'julien' }]);
+    expect(again.map(s => s.quote.id)).toEqual([a.id, b.id]);
+    expect(again[0].quote.title).toBe('Modifié');
+    expect(again).toHaveLength(2);
+  });
+});

@@ -74,3 +74,42 @@ test('outils-me names the signed-in person and refuses everyone else', async () 
   assert.deepEqual([ok.status, ok.body.user], [200, 'julien']);
   delete process.env.OUTILS_SECRET;
 });
+
+test('shared quotes: signed-in only, saved with who saved them, listed, deleted, and kept per environment', async () => {
+  const { default: quotes, quotesKey } = await import('../api/outils-quotes.js');
+  // In-memory stand-in for the Upstash REST API that api/_guard.js talks to.
+  const store = new Map();
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (_url, init) => {
+    const [cmd, key, ...args] = JSON.parse(init.body);
+    const h = store.get(key) || new Map(); store.set(key, h);
+    const result = { HGETALL: () => [...h].flat(), HSET: () => (h.set(args[0], args[1]), 1), HDEL: () => (h.delete(args[0]) ? 1 : 0),
+      HEXISTS: () => (h.has(args[0]) ? 1 : 0), HLEN: () => h.size }[cmd]();
+    return new Response(JSON.stringify({ result }), { status: 200 });
+  };
+  Object.assign(process.env, { OUTILS_SECRET: SECRET, KV_REST_API_URL: 'https://kv.test', KV_REST_API_TOKEN: 't', VERCEL_ENV: 'preview' });
+  const cookie = `${COOKIE}=${encodeURIComponent(await createSession('julien', SECRET))}`;
+  const call = async (method, { body, query = '', auth = true } = {}) => {
+    const out = {}; const res = { setHeader() {}, status(c) { out.status = c; return res; }, json(b) { out.body = b; return res; } };
+    const headers = { 'content-type': 'application/json', origin: 'https://thevitrine.fr', ...(auth ? { cookie } : {}) };
+    await quotes({ method, url: `/api/outils-quotes/${query}`, headers, body }, res); return out;
+  };
+  const quote = { id: '11111111-2222-4333-8444-555555555555', reference: 'DEV-1', selected: ['cms'], client: {}, provider: {} };
+  try {
+    assert.equal((await call('GET', { auth: false })).status, 401);
+    const saved = await call('POST', { body: { quote } });
+    assert.deepEqual([saved.status, saved.body.item.savedBy], [200, 'julien']);
+    const list = await call('GET');
+    assert.deepEqual(list.body.quotes.map(q => q.quote.reference), ['DEV-1']);
+    assert.equal((await call('POST', { body: { quote: { ...quote, id: 'not-a-uuid' } } })).status, 400);
+    assert.equal(quotesKey(), 'vitrine:outils:quotes:preview');
+    process.env.VERCEL_ENV = 'production';
+    assert.equal((await call('GET')).body.quotes.length, 0, 'production must not see preview quotes');
+    process.env.VERCEL_ENV = 'preview';
+    assert.equal((await call('DELETE', { query: `?id=${quote.id}` })).status, 200);
+    assert.equal((await call('GET')).body.quotes.length, 0);
+  } finally {
+    globalThis.fetch = realFetch;
+    for (const k of ['OUTILS_SECRET', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'VERCEL_ENV']) delete process.env[k];
+  }
+});
