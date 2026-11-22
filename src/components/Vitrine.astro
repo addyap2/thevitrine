@@ -367,7 +367,7 @@ const ld = {
           <InstagramLink />
           {hasBlog && langHasBlog(lang) && <a href={blogPath[lang]}>{t.blogName}</a>}
           <a href={legalPath[lang]}>{t.legalLink}</a>
-          <a class="private-link" href="/outils/connexion/" rel="nofollow">{t.privateLink}</a>
+          {"privateLink" in t && <a class="private-link" href="/outils/connexion/" rel="nofollow">{t.privateLink}</a>}
         </span>
       </p>
       </div>
