@@ -14,10 +14,15 @@ const logo = await readFile(new URL("public/brand/logo-light.svg", root), "utf8"
 function frontmatter(text) {
   const block = text.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? "";
   const field = (k) => block.match(new RegExp(`^${k}: (.*)$`, "m"))?.[1]?.trim().replace(/^"(.*)"$/, "$1");
-  return { title: field("title"), lang: field("lang"), slug: field("slug"), cover: field("cover"), status: field("status") };
+  return { title: field("title"), lang: field("lang"), slug: field("slug"), cover: field("cover"), sharePhoto: field("sharePhoto"), status: field("status") };
 }
 
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+async function photo(path) {
+  const buf = await sharp(new URL(`public${path}`, root).pathname).resize({ width: 900 }).jpeg({ quality: 82 }).toBuffer();
+  return `data:image/jpeg;base64,${buf.toString("base64")}`;
+}
 
 async function shot(slug) {
   const project = projects.find((p) => p.slug === slug);
@@ -26,7 +31,7 @@ async function shot(slug) {
   return `data:image/jpeg;base64,${buf.toString("base64")}`;
 }
 
-function html({ title, lang, image }) {
+function html({ title, lang, image, isPhoto }) {
   const size = title.length > 70 ? 50 : title.length > 50 ? 56 : 64;
   return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,7 +58,7 @@ function html({ title, lang, image }) {
     <h1>${esc(title)}</h1>
     <p class="by">Antony Addy &amp; Julien Bourgois · thevitrine.fr</p>
   </div>
-  <div class="frame"><div class="dots"><i></i><i></i><i></i></div><img src="${image}" alt=""></div>
+  <div class="frame"${isPhoto ? ' style="left: 680px; top: 72px; width: 460px"' : ""}>${isPhoto ? "" : `<div class="dots"><i></i><i></i><i></i></div>`}<img src="${image}" alt=""${isPhoto ? ' style="height: 480px; object-position: center 20%"' : ""}></div>
   <div class="sill"></div>
 </body></html>`;
 }
@@ -67,7 +72,7 @@ for (const lang of ["fr", "en"]) {
   for (const file of (await readdir(dir)).filter((f) => f.endsWith(".md"))) {
     const post = frontmatter(await readFile(new URL(file, dir), "utf8"));
     if (!post.cover) { console.warn(`skipped ${lang}/${file}: no cover`); continue; }
-    await page.setContent(html({ ...post, image: await shot(post.cover) }), { waitUntil: "networkidle" });
+    await page.setContent(html({ ...post, image: post.sharePhoto ? await photo(post.sharePhoto) : await shot(post.cover), isPhoto: !!post.sharePhoto }), { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({ path: new URL(`${post.slug}.jpg`, out).pathname, type: "jpeg", quality: 84 });
     console.log(`og/blog/${lang}/${post.slug}.jpg`);
