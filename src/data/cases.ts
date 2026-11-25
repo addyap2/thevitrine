@@ -23,6 +23,8 @@ export interface CaseStudy {
   design: Text;
   /** Shorter search description (under 160 characters) when the card's text is too long. */
   seoDescription?: Partial<Text>;
+  /** A real photo with the client, shown after the design section. Files: /moments/{photo}-640.webp and -1200.webp. */
+  moment?: { photo: string; width: number; height: number; alt: Text; caption: Text; date: Text };
 }
 
 export const cases: Record<string, CaseStudy> = {
@@ -622,6 +624,22 @@ export const cases: Record<string, CaseStudy> = {
     design: {
       fr: "Un univers sombre et doré, dans l'esprit des couvertures : la nouvelle couverture est présentée comme un objet encadré, et les grandes parties du site sont numérotées en chiffres romains, comme les chapitres d'un livre. Le ton est celui d'une saga, sans jamais cacher l'essentiel : le prochain rendez-vous et où trouver les livres.",
       en: "A dark, gold world in the spirit of the covers: the new cover is shown as a framed object, and the site's main sections are numbered in Roman numerals, like the chapters of a book. The tone is that of a saga, without ever hiding what matters: the next event and where to find the books.",
+    },
+    moment: {
+      photo: "jan-stenborg-kungablod",
+      width: 1200,
+      height: 1260,
+      alt: {
+        fr: "Julien Bourgois, Jan Stenborg et Antony Addy, souriants, tiennent ensemble un exemplaire de Kungablod.",
+        en: "Julien Bourgois, Jan Stenborg and Antony Addy, smiling, holding a copy of Kungablod together.",
+        it: "Julien Bourgois, Jan Stenborg e Antony Addy, sorridenti, tengono insieme una copia di Kungablod.",
+      },
+      caption: {
+        fr: "Julien et Antony avec Jan Stenborg et son nouveau roman, Kungablod, au retour de sa séance de dédicaces à Stockholm.",
+        en: "Julien and Antony with Jan Stenborg and his new novel, Kungablod, just back from his book signing in Stockholm.",
+        it: "Julien e Antony con Jan Stenborg e il suo nuovo romanzo, Kungablod, di ritorno dalla firma copie a Stoccolma.",
+      },
+      date: { fr: "Novembre 2026", en: "November 2026", it: "Novembre 2026" },
     },
   },
 };
